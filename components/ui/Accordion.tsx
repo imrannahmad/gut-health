@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface AccordionItem {
@@ -24,7 +24,7 @@ export function Accordion({
   };
 
   return (
-    <div className="divide-y divide-[#E6E1D3] border-y border-[#E6E1D3]">
+    <div className="divide-y divide-[#E8E8E8] border-y border-[#E8E8E8]">
       {items.map((item) => {
         const isOpen = openId === item.id;
         return (
@@ -35,16 +35,16 @@ export function Accordion({
               className="w-full flex items-center justify-between text-left focus:outline-none group"
               aria-expanded={isOpen}
             >
-              <span className="text-base font-serif text-[#173D32] group-hover:text-[#0E2921] transition-colors pr-4">
+              <span className="text-sm sm:text-base font-semibold text-[#111111] group-hover:text-[#333333] transition-colors pr-4">
                 {item.title}
               </span>
-              <motion.span
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-[#575D52] group-hover:text-[#173D32] shrink-0"
-              >
-                <ChevronDown className="w-5 h-5 stroke-[1.5]" />
-              </motion.span>
+              <span className="text-[#111111] shrink-0 p-1">
+                {isOpen ? (
+                  <Minus className="w-4 h-4 stroke-[1.75]" />
+                ) : (
+                  <Plus className="w-4 h-4 stroke-[1.75]" />
+                )}
+              </span>
             </button>
 
             <AnimatePresence initial={false}>
@@ -53,10 +53,10 @@ export function Accordion({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-3 pb-2 text-sm text-[#575D52] leading-relaxed">
+                  <div className="pt-2 pb-2 text-xs sm:text-sm text-[#777777] leading-relaxed">
                     {item.content}
                   </div>
                 </motion.div>

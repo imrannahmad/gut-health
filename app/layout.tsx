@@ -1,36 +1,37 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { ClientProviders } from "@/components/providers/ClientProviders";
 
-const playfair = Playfair_Display({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-serif",
+  variable: "--font-inter",
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-manrope",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gutglow.com"),
-  title: "GutGlow | Wellness From Within",
+  title: "GutGlow — Thoughtful Gut Wellness",
   description:
-    "A thoughtful approach to everyday gut wellness. Supporting digestive balance, nutritional harmony, and your well-being from within.",
+    "Thoughtful gut wellness for a healthier approach to everyday living. Premium minimalist digestive care.",
   keywords: [
     "gut health",
     "gut wellness",
     "digestive wellness",
-    "wellness from within",
     "GutGlow",
+    "minimalist wellness",
   ],
   openGraph: {
-    title: "GutGlow | Wellness From Within",
+    title: "GutGlow — Thoughtful Gut Wellness",
     description:
-      "A thoughtful approach to everyday gut wellness. Supporting digestive balance, nutritional harmony, and your well-being from within.",
+      "Thoughtful gut wellness for a healthier approach to everyday living.",
     url: "https://gutglow.com",
     siteName: "GutGlow",
     images: [
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
         url: "/images/gutglow-logo.png",
         width: 1200,
         height: 630,
-        alt: "GutGlow - Wellness From Within",
+        alt: "GutGlow",
       },
     ],
     locale: "en_US",
@@ -54,9 +55,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#F8F6EF] text-[#252923]">
+      <body className="min-h-full flex flex-col font-sans bg-[#FFFFFF] text-[#111111]">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

@@ -1,105 +1,87 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Shield, Heart } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const columns = [
   {
     number: "01",
-    title: "DIGESTIVE WELLNESS",
-    tagline: "The Core of Nutrient Breakdown & Gut Motility",
-    icon: Shield,
-    description:
-      "A resilient digestive tract is the gateway to systemic health. The intestinal barrier and trillions of symbiotic microorganisms actively process nutrients, maintain regular motility, and support the body's immune surveillance. When digestion functions smoothly, you experience everyday lightness, reduced post-meal discomfort, and reliable physical ease.",
-    note: "Focuses on digestive transit, enzyme activity, and microbial balance.",
+    title: "GUT HEALTH",
+    description: "The core foundation of daily digestion, nutrient assimilation, and internal balance.",
+    link: "/philosophy",
   },
   {
     number: "02",
     title: "SKIN WELLNESS",
-    tagline: "The Gut-Skin Axis & Nutritional Balance",
-    icon: Sparkles,
-    description:
-      "Modern dermatological and biochemical research highlights the profound two-way dialogue between your gut microbiome and your skin barrier. Optimal nutrient absorption, balanced intestinal flora, and reduced oxidative stress create internal conditions that support your body's normal skin defense mechanisms, hydration balance, and cellular repair.",
-    note: "Supports the physiological gut-skin axis without making cosmetic claims.",
+    description: "The gut-skin axis connects internal equilibrium with everyday dermal comfort and barrier health.",
+    link: "/philosophy",
   },
   {
     number: "03",
     title: "HAIR WELLNESS",
-    tagline: "Cellular Nutrition & Micro-Nutrient Uptake",
-    icon: Heart,
-    description:
-      "Healthy hair follicles require a continuous, bioavailable supply of amino acids, minerals, and vitamins. Even the most nutritious diet is ineffective if the intestinal tract cannot absorb these building blocks effectively. Nurturing digestive efficiency supports the systemic delivery of micronutrients essential for maintaining normal hair follicle vitality.",
-    note: "Supports foundational nutrition; does not promise hair regrowth or cure hair fall.",
+    description: "Effective cellular nutrient absorption provides the building blocks for normal follicle vitality.",
+    link: "/philosophy",
   },
 ];
 
 export function WellnessConnectionSection() {
   return (
-    <section className="py-24 lg:py-32 bg-[#F8F6EF] border-b border-[#E6E1D3]">
+    <section className="py-20 lg:py-28 bg-[#F7F7F7] border-b border-[#E8E8E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20 space-y-4">
-          <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#173D32]">
-            THE FOUNDATIONAL CONNECTION
+        <div className="mb-12 sm:mb-16">
+          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#777777] block mb-2">
+            THE WELLNESS CONNECTION
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#173D32]">
-            How Everything Connects
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
+            More Than Just Digestion.
           </h2>
-          <p className="text-sm sm:text-base text-[#575D52] leading-relaxed">
-            Your digestive system isn't just about digestion — it is an intricate
-            command center influencing how you feel, how nutrients circulate, and
-            how your body renews itself each day.
-          </p>
         </div>
 
-        {/* 3 Distinct Editorial Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-          {columns.map((col, index) => {
-            const Icon = col.icon;
-            return (
-              <motion.div
-                key={col.number}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="bg-[#EEEBDD]/50 border border-[#E6E1D3] rounded-3xl p-8 lg:p-10 flex flex-col justify-between hover:border-[#173D32]/30 transition-all duration-300 hover:shadow-sm"
-              >
-                <div>
-                  {/* Number & Icon */}
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="font-serif text-3xl text-[#173D32] opacity-80 font-normal">
-                      {col.number}
-                    </span>
-                    <div className="w-10 h-10 rounded-full bg-[#F8F6EF] border border-[#E6E1D3] flex items-center justify-center text-[#173D32]">
-                      <Icon className="w-4 h-4 stroke-[1.6]" />
-                    </div>
-                  </div>
+        {/* Mobile Swipe Indicator */}
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#777777] uppercase tracking-wider mb-3">
+          <span>Swipe to explore</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </div>
 
-                  {/* Title & Tagline */}
-                  <h3 className="text-lg font-serif tracking-wide text-[#173D32] mb-1">
-                    {col.title}
-                  </h3>
-                  <p className="text-xs uppercase tracking-wider text-[#B99A63] font-medium mb-4">
-                    {col.tagline}
-                  </p>
+        {/* Cards: Mobile Swipeable (snap-x) + Desktop Grid */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible">
+          {columns.map((col, index) => (
+            <motion.div
+              key={col.number}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="shrink-0 w-[84vw] max-w-[340px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E8E8E8] rounded-2xl p-7 sm:p-8 flex flex-col justify-between hover:border-[#111111] transition-colors"
+            >
+              <div>
+                <span className="text-xs font-semibold text-[#777777] block mb-6 tracking-widest">
+                  {col.number}
+                </span>
 
-                  {/* Description */}
-                  <p className="text-sm text-[#575D52] leading-relaxed font-normal">
-                    {col.description}
-                  </p>
-                </div>
+                <h3 className="text-base font-bold text-[#111111] mb-2 tracking-wide">
+                  {col.title}
+                </h3>
 
-                {/* Responsible Disclaimer Pill */}
-                <div className="mt-8 pt-6 border-t border-[#E6E1D3]/80">
-                  <p className="text-[11px] text-[#575D52]/80 italic">
-                    {col.note}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+                <p className="text-xs sm:text-sm text-[#777777] leading-relaxed line-clamp-2">
+                  {col.description}
+                </p>
+              </div>
+
+              <div className="pt-8 mt-auto">
+                <Link
+                  href={col.link}
+                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#333333] transition-colors group"
+                >
+                  <span>Learn More</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

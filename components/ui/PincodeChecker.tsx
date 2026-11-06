@@ -15,14 +15,13 @@ export function PincodeChecker() {
     const clean = pincode.trim();
     if (!/^[1-9][0-9]{5}$/.test(clean)) {
       setStatus("error");
-      setMessage("Please enter a valid 6-digit Indian PIN code");
+      setMessage("Please enter a valid 6-digit PIN code");
       return;
     }
 
     setStatus("checking");
     setTimeout(() => {
       setStatus("success");
-      // Calculate realistic delivery date (3 days from now)
       const deliveryDate = new Date();
       deliveryDate.setDate(deliveryDate.getDate() + 3);
       const formatted = deliveryDate.toLocaleDateString("en-IN", {
@@ -30,14 +29,14 @@ export function PincodeChecker() {
         month: "short",
         day: "numeric",
       });
-      setMessage(`Standard Delivery by ${formatted} · Free Express Shipping`);
-    }, 400);
+      setMessage(`Express Delivery by ${formatted} · Free Shipping`);
+    }, 350);
   };
 
   return (
-    <div className="border border-[#E6E1D3] rounded-xl p-4 bg-[#EEEBDD]/40">
-      <div className="flex items-center gap-2 text-xs font-medium text-[#173D32] mb-2">
-        <Truck className="w-4 h-4 text-[#7D9273]" />
+    <div className="border border-[#E8E8E8] rounded-xl p-4 bg-[#F7F7F7]">
+      <div className="flex items-center gap-2 text-xs font-semibold text-[#111111] mb-2">
+        <Truck className="w-3.5 h-3.5 text-[#111111]" />
         <span>Estimated Delivery Check</span>
       </div>
 
@@ -50,13 +49,13 @@ export function PincodeChecker() {
             setPincode(e.target.value.replace(/\D/g, ""));
             if (status !== "idle") setStatus("idle");
           }}
-          placeholder="Enter 6-digit PIN code"
-          className="flex-1 bg-[#F8F6EF] border border-[#E6E1D3] rounded-lg px-3 py-2 text-xs text-[#252923] placeholder-[#575D52]/60 focus:outline-none focus:border-[#173D32]"
+          placeholder="Enter 6-digit PIN"
+          className="flex-1 bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3 py-2 text-xs text-[#111111] placeholder-[#777777] focus:outline-none focus:border-[#111111]"
         />
         <button
           type="submit"
           disabled={status === "checking"}
-          className="bg-[#173D32] text-[#F8F6EF] hover:bg-[#122e26] text-xs px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-1"
+          className="bg-[#111111] text-[#FFFFFF] hover:bg-[#333333] text-xs px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-1"
         >
           {status === "checking" ? "Checking..." : "Verify"}
           <ArrowRight className="w-3 h-3" />
@@ -64,8 +63,8 @@ export function PincodeChecker() {
       </form>
 
       {status === "success" && (
-        <div className="flex items-center gap-2 mt-2.5 text-xs text-[#173D32]">
-          <Check className="w-3.5 h-3.5 text-[#173D32] shrink-0" />
+        <div className="flex items-center gap-2 mt-2.5 text-xs text-[#111111]">
+          <Check className="w-3.5 h-3.5 text-[#111111] shrink-0" />
           <span>{message}</span>
         </div>
       )}

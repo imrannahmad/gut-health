@@ -1,80 +1,76 @@
 "use client";
 
 import React from "react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const steps = [
   {
     step: "01",
-    title: "Understand Your Wellness",
-    eyebrow: "Listen To Your Body's Cues",
-    description:
-      "Every individual's gut microbiome is as unique as a fingerprint. Sustainable wellness begins by understanding how daily diet, hydration, sleep, and stress influence your digestive comfort and vitality.",
+    title: "Understand",
+    description: "Listen to your body's digestive rhythms, hydration, and nutritional cues.",
   },
   {
     step: "02",
-    title: "Make Thoughtful Choices",
-    eyebrow: "Quality Over Complexity",
-    description:
-      "Rather than chasing rapid detoxes or aggressive cleanses, choose clean, bioavailable nutrients and gentle prebiotics that support your digestive enzymes and epithelial barrier integrity.",
+    title: "Choose Thoughtfully",
+    description: "Focus on clean, bioavailable prebiotics rather than harsh instant purges.",
   },
   {
     step: "03",
-    title: "Build Consistent Habits",
-    eyebrow: "The Power Of Daily Ritual",
-    description:
-      "Microbial ecosystems adapt gradually. Integrating one focused scoop of GutGlow into your quiet morning routine creates compounding digestive stability and holistic well-being over time.",
+    title: "Stay Consistent",
+    description: "Build a compounding daily morning habit for sustained internal balance.",
   },
 ];
 
 export function OurApproachSection() {
   return (
-    <section className="py-24 lg:py-32 bg-[#F8F6EF] border-b border-[#E6E1D3]">
+    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E8E8E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="max-w-2xl mx-auto text-center mb-16 lg:mb-20 space-y-4">
-          <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[#173D32]">
-            OUR METHODOLOGY
+        {/* Section Heading */}
+        <div className="mb-12 sm:mb-16">
+          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#777777] block mb-2">
+            METHODOLOGY
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#173D32]">
-            A Thoughtful Path Forward
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
+            A Simpler Approach To Wellness.
           </h2>
-          <p className="text-sm sm:text-base text-[#575D52] leading-relaxed">
-            True wellness is not a 3-day miracle or an aggressive cleanse. It is a
-            calm, mindful dialogue between your nutrition and your inner physiology.
-          </p>
         </div>
 
-        {/* 3 Step Editorial Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 relative">
-          {steps.map((stepItem, idx) => (
+        {/* Mobile Swipe Indicator */}
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#777777] uppercase tracking-wider mb-3">
+          <span>Swipe to explore steps</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </div>
+
+        {/* Cards: Mobile Swipeable (snap-x) + Desktop 3-col Grid */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible">
+          {steps.map((item, idx) => (
             <motion.div
-              key={stepItem.step}
-              initial={{ opacity: 0, y: 24 }}
+              key={item.step}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="relative p-8 rounded-3xl bg-[#EEEBDD]/50 border border-[#E6E1D3] flex flex-col justify-between"
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="shrink-0 w-[84vw] max-w-[340px] snap-start sm:w-auto sm:max-w-none bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-7 sm:p-8 flex flex-col justify-between hover:border-[#111111] transition-colors"
             >
               <div>
-                <span className="font-serif text-5xl font-light text-[#173D32]/30 block mb-6">
-                  {stepItem.step}
+                <span className="text-3xl font-bold text-[#111111] block mb-6">
+                  {item.step}
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#B99A63] block mb-2">
-                  {stepItem.eyebrow}
-                </span>
-                <h3 className="text-xl font-serif text-[#173D32] mb-4">
-                  {stepItem.title}
+
+                <h3 className="text-lg font-bold text-[#111111] mb-2">
+                  {item.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-[#575D52] leading-relaxed font-normal">
-                  {stepItem.description}
+
+                <p className="text-xs sm:text-sm text-[#777777] leading-relaxed">
+                  {item.description}
                 </p>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-[#E6E1D3]/60 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#173D32]" />
-                <span className="text-[11px] text-[#173D32] uppercase tracking-wider font-medium">
-                  Step {stepItem.step} of 03
+              <div className="pt-8 mt-auto flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#111111]" />
+                <span className="text-[10px] uppercase tracking-widest text-[#777777] font-medium">
+                  Phase {item.step} of 03
                 </span>
               </div>
             </motion.div>

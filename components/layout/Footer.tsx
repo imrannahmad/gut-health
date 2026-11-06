@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Check, ShieldCheck, Leaf, HeartHandshake } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { newsletterSchema } from "@/lib/validations";
 
 export function Footer() {
@@ -24,164 +24,85 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#173D32] text-[#F8F6EF] pt-20 pb-12 border-t border-[#122e26] selection:bg-[#F8F6EF] selection:text-[#173D32]">
-      {/* Brand Trust Badges Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 border-b border-[#255547]">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#255547] flex items-center justify-center text-[#A9B9A0] shrink-0">
-              <Leaf className="w-5 h-5 stroke-[1.5]" />
-            </div>
-            <div>
-              <h4 className="text-sm font-medium tracking-wide text-[#F8F6EF]">
-                Plant-Derived Actives
-              </h4>
-              <p className="text-xs text-[#A9B9A0] mt-0.5">
-                Thoughtfully formulated without harsh laxatives or synthetic fillers
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center md:justify-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#255547] flex items-center justify-center text-[#A9B9A0] shrink-0">
-              <ShieldCheck className="w-5 h-5 stroke-[1.5]" />
-            </div>
-            <div>
-              <h4 className="text-sm font-medium tracking-wide text-[#F8F6EF]">
-                Verified Manufacturing
-              </h4>
-              <p className="text-xs text-[#A9B9A0] mt-0.5">
-                Produced in ISO & GMP certified facilities with batch transparency
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center md:justify-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#255547] flex items-center justify-center text-[#A9B9A0] shrink-0">
-              <HeartHandshake className="w-5 h-5 stroke-[1.5]" />
-            </div>
-            <div>
-              <h4 className="text-sm font-medium tracking-wide text-[#F8F6EF]">
-                Honest & Responsible
-              </h4>
-              <p className="text-xs text-[#A9B9A0] mt-0.5">
-                Realistic wellness insights rooted in microbiome research
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
+    <footer className="bg-[#FFFFFF] text-[#111111] pt-16 pb-12 border-t border-[#E8E8E8]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 pb-16 border-b border-[#E8E8E8]">
           {/* Brand Info */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="md:col-span-5 space-y-4">
             <Link href="/" className="inline-block relative">
-              <div className="relative h-12 w-44 bg-[#F8F6EF] px-3 py-1.5 rounded-lg">
+              <div className="relative h-8 w-28 sm:h-9 sm:w-36">
                 <Image
                   src="/images/gutglow-logo.png"
-                  alt="GutGlow - Wellness From Within"
+                  alt="GutGlow"
                   fill
-                  sizes="176px"
-                  className="object-contain p-1"
+                  sizes="144px"
+                  className="object-contain object-left brightness-0"
                 />
               </div>
             </Link>
-            <p className="text-sm text-[#A9B9A0] leading-relaxed max-w-sm">
-              GutGlow is an editorial wellness house dedicated to digestive harmony,
-              mindful formulation, and the foundational connection between gut health
-              and holistic vitality.
+            <p className="text-xs text-[#777777] leading-relaxed max-w-sm">
+              Thoughtful gut wellness for everyday living. Formulated to support
+              digestive balance and holistic well-being from within.
             </p>
-            <div className="text-xs text-[#A9B9A0]/80 tracking-widest uppercase">
-              Brand Positioning: <span className="text-[#F8F6EF] font-medium">Wellness From Within</span>
-            </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-2 space-y-4">
-            <h5 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#A9B9A0]">
-              Discover
-            </h5>
-            <ul className="space-y-2.5 text-sm">
+          {/* Navigation Links */}
+          <div className="md:col-span-2 space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-[#111111]">
+              Navigation
+            </p>
+            <ul className="space-y-2 text-xs">
               <li>
-                <Link
-                  href="/"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
+                <Link href="/" className="text-[#777777] hover:text-[#111111] transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/product"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors font-medium text-[#B99A63]"
-                >
-                  Daily Wellness Formula
+                <Link href="/product" className="text-[#777777] hover:text-[#111111] transition-colors">
+                  Daily Formula
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/philosophy"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
-                  The Science
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
+                <Link href="/about" className="text-[#777777] hover:text-[#111111] transition-colors">
                   Our Story
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/faq"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
-                  FAQ
+                <Link href="/philosophy" className="text-[#777777] hover:text-[#111111] transition-colors">
+                  The Science
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/contact"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
-                  Contact Us
+                <Link href="/faq" className="text-[#777777] hover:text-[#111111] transition-colors">
+                  FAQ
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Policies & Legal */}
-          <div className="lg:col-span-2 space-y-4">
-            <h5 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#A9B9A0]">
-              Policies
-            </h5>
-            <ul className="space-y-2.5 text-sm">
+          {/* Policies & Support */}
+          <div className="md:col-span-2 space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-[#111111]">
+              Information
+            </p>
+            <ul className="space-y-2 text-xs">
               <li>
-                <Link
-                  href="/policies/privacy"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
+                <Link href="/contact" className="text-[#777777] hover:text-[#111111] transition-colors">
+                  Customer Support
+                </Link>
+              </li>
+              <li>
+                <Link href="/policies/privacy" className="text-[#777777] hover:text-[#111111] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/policies/terms"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
+                <Link href="/policies/terms" className="text-[#777777] hover:text-[#111111] transition-colors">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/policies/shipping"
-                  className="text-[#F8F6EF]/80 hover:text-[#F8F6EF] transition-colors"
-                >
+                <Link href="/policies/shipping" className="text-[#777777] hover:text-[#111111] transition-colors">
                   Shipping & Returns
                 </Link>
               </li>
@@ -190,29 +111,27 @@ export function Footer() {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#A9B9A0] hover:text-[#F8F6EF] transition-colors flex items-center gap-1.5 pt-2"
+                  className="text-[#777777] hover:text-[#111111] transition-colors inline-block"
                 >
-                  <span>Instagram</span>
-                  <ArrowRight className="w-3 h-3" />
+                  Instagram ↗
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter Subscription */}
-          <div className="lg:col-span-3 space-y-4">
-            <h5 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#A9B9A0]">
-              The Journal
-            </h5>
-            <p className="text-xs text-[#A9B9A0] leading-relaxed">
-              Receive thoughtful essays on digestive physiology, seasonal nutrition,
-              and mindful wellness habits. No spam, ever.
+          {/* Newsletter */}
+          <div className="md:col-span-3 space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-[#111111]">
+              Newsletter
+            </p>
+            <p className="text-xs text-[#777777] leading-relaxed">
+              Updates on digestive wellness and new batch releases.
             </p>
 
             {subscribed ? (
-              <div className="bg-[#255547] text-[#F8F6EF] p-4 rounded-xl text-xs flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#A9B9A0] shrink-0" />
-                <span>Thank you. Welcome to the GutGlow community.</span>
+              <div className="p-3 bg-[#F7F7F7] border border-[#E8E8E8] rounded-xl text-xs flex items-center gap-2 text-[#111111]">
+                <Check className="w-3.5 h-3.5 text-[#111111]" />
+                <span>Thank you for subscribing.</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-2">
@@ -222,44 +141,28 @@ export function Footer() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#0E2921] border border-[#255547] rounded-full px-4 py-2.5 text-xs text-[#F8F6EF] placeholder-[#A9B9A0]/60 focus:outline-none focus:border-[#B99A63] transition-colors pr-10"
-                    aria-label="Email address for newsletter"
+                    className="w-full bg-[#F7F7F7] border border-[#E8E8E8] rounded-full px-4 py-2.5 text-xs text-[#111111] placeholder-[#777777] focus:outline-none focus:border-[#111111] pr-10"
+                    aria-label="Email for newsletter"
                   />
                   <button
                     type="submit"
-                    className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-[#A9B9A0] text-[#173D32] hover:bg-[#F8F6EF] rounded-full transition-colors flex items-center justify-center"
-                    aria-label="Submit newsletter subscription"
+                    className="absolute right-1 top-1 bottom-1 px-3 bg-[#111111] text-[#FFFFFF] rounded-full hover:bg-[#333333] transition-colors flex items-center justify-center"
+                    aria-label="Subscribe"
                   >
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                {error && <p className="text-[11px] text-[#ff9999]">{error}</p>}
+                {error && <p className="text-[11px] text-[#c0392b]">{error}</p>}
               </form>
             )}
           </div>
         </div>
 
-        {/* Responsible Medical Disclaimer */}
-        <div className="mt-16 pt-8 border-t border-[#255547]/60">
-          <div className="bg-[#0E2921]/60 border border-[#255547] rounded-xl p-5 text-[11px] text-[#A9B9A0] leading-relaxed">
-            <span className="font-semibold text-[#F8F6EF] block mb-1">
-              Responsible Wellness Notice:
-            </span>
-            These statements have not been evaluated by the Food Safety and Standards
-            Authority of India (FSSAI) or the US FDA. This product is a dietary
-            wellness supplement designed for nutritional balance and is not intended to
-            diagnose, treat, cure, or prevent any medical condition, gastrointestinal
-            disease, hair loss, or cosmetic dermatological conditions. Individual
-            responses may vary. Always consult your personal physician before beginning
-            any new nutritional regimen.
-          </div>
-        </div>
-
-        {/* Copyright & Signoff */}
-        <div className="mt-8 pt-6 border-t border-[#255547]/40 flex flex-col sm:flex-row items-center justify-between text-xs text-[#A9B9A0] gap-4">
-          <p>© 2026 GutGlow Wellness Pvt. Ltd. All rights reserved.</p>
-          <p className="text-[11px] tracking-wider uppercase text-[#A9B9A0]/80">
-            Thoughtfully Crafted in India
+        {/* Copyright */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#777777]">
+          <p>© 2026 GutGlow Wellness. All rights reserved.</p>
+          <p className="text-[11px] uppercase tracking-wider">
+            Premium Minimalist Digestive Care
           </p>
         </div>
       </div>

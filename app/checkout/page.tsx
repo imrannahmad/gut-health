@@ -6,14 +6,11 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ShieldCheck,
-  Truck,
   CreditCard,
   Lock,
   ArrowRight,
   CheckCircle,
   AlertCircle,
-  HelpCircle,
   Smartphone,
   Banknote,
 } from "lucide-react";
@@ -50,11 +47,9 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     setGatewayMessage(null);
 
-    // Simulate validation and API dispatch
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
     if (data.paymentMethod === "cod") {
-      // Cash on delivery can be placed directly without mock payment gateway
       const order: OrderConfirmation = {
         orderId: `GG-${Math.floor(100000 + Math.random() * 900000)}`,
         date: new Date().toLocaleDateString("en-IN", {
@@ -79,103 +74,74 @@ export default function CheckoutPage() {
           state: data.state,
           pincode: data.pincode,
         },
-        paymentMethod: "Cash on Delivery (Pay upon delivery)",
+        paymentMethod: "Cash on Delivery",
       };
 
       setConfirmedOrder(order);
       clearCart();
       setIsSubmitting(false);
     } else {
-      // Online payment (Razorpay / UPI / Cards)
-      // Per instructions: Do not create a fake successful payment flow.
-      // Keep payment gateway integration modular and ready for Razorpay.
       setIsSubmitting(false);
       setGatewayMessage(
-        "Payment Gateway Integration: Your order details have been validated. To trigger the live Razorpay modal, configure NEXT_PUBLIC_RAZORPAY_KEY_ID in your environment. Alternatively, select Cash on Delivery to place an offline verified order."
+        "Payment Gateway Integration: Your order details are validated. To trigger the live payment modal, configure NEXT_PUBLIC_RAZORPAY_KEY_ID in your environment. Alternatively, select Cash on Delivery to place an offline verified order."
       );
     }
   };
 
   if (confirmedOrder) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F8F6EF]">
+      <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
         <AnnouncementBar />
         <Header />
 
         <main className="flex-grow py-16 lg:py-24">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6">
-            <div className="bg-[#EEEBDD]/70 border border-[#E6E1D3] rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-sm">
-              <div className="w-16 h-16 rounded-full bg-[#173D32] text-[#F8F6EF] flex items-center justify-center mx-auto shadow-md">
-                <CheckCircle className="w-8 h-8" />
+          <div className="max-w-xl mx-auto px-4 sm:px-6">
+            <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-8 sm:p-10 text-center space-y-6">
+              <div className="w-12 h-12 rounded-full bg-[#111111] text-[#FFFFFF] flex items-center justify-center mx-auto">
+                <CheckCircle className="w-6 h-6" />
               </div>
 
-              <div className="space-y-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#B99A63]">
-                  Order Placed Successfully
+              <div className="space-y-1">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+                  Order Confirmed
                 </span>
-                <h1 className="text-3xl font-serif text-[#173D32]">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#111111]">
                   Thank You, {confirmedOrder.customerName}
                 </h1>
-                <p className="text-xs text-[#575D52]">
-                  Order ID: <span className="font-semibold text-[#173D32]">{confirmedOrder.orderId}</span>
-                </p>
-                <p className="text-xs text-[#575D52]">
-                  A confirmation email with tracking updates has been scheduled for{" "}
-                  <span className="font-medium text-[#173D32]">{confirmedOrder.email}</span>.
+                <p className="text-xs text-[#777777]">
+                  Order ID: <span className="font-semibold text-[#111111]">{confirmedOrder.orderId}</span>
                 </p>
               </div>
 
-              {/* Order breakdown card */}
-              <div className="text-left bg-[#F8F6EF] rounded-2xl p-6 border border-[#E6E1D3] space-y-4 text-xs">
-                <div className="border-b border-[#E6E1D3] pb-3">
-                  <h4 className="font-serif font-medium text-[#173D32] text-sm">
-                    Items in This Shipment
-                  </h4>
-                  <div className="mt-2 space-y-2">
-                    {confirmedOrder.items.map((i, idx) => (
-                      <div key={idx} className="flex justify-between text-[#575D52]">
-                        <span>
-                          {i.name} ({i.packName}) × {i.quantity}
-                        </span>
-                        <span className="font-medium text-[#173D32]">
-                          {formatPrice(i.price)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="text-left bg-[#FFFFFF] rounded-xl p-5 border border-[#E8E8E8] space-y-3 text-xs">
+                <div className="border-b border-[#E8E8E8] pb-3">
+                  <h4 className="font-semibold text-[#111111] mb-2">Order Items</h4>
+                  {confirmedOrder.items.map((i, idx) => (
+                    <div key={idx} className="flex justify-between text-[#777777] py-0.5">
+                      <span>{i.name} ({i.packName}) × {i.quantity}</span>
+                      <span className="font-medium text-[#111111]">{formatPrice(i.price)}</span>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="flex justify-between text-xs pt-1">
-                  <span className="text-[#575D52]">Shipping (Express)</span>
-                  <span className="text-[#173D32] font-medium">Free</span>
-                </div>
-
-                <div className="flex justify-between text-sm font-serif border-t border-[#E6E1D3] pt-3 font-medium text-[#173D32]">
+                <div className="flex justify-between font-bold text-sm pt-1 text-[#111111]">
                   <span>Total Amount</span>
                   <span>{formatPrice(confirmedOrder.total)}</span>
                 </div>
 
-                <div className="pt-2 text-[11px] text-[#575D52] border-t border-[#E6E1D3]/80">
-                  <span className="font-semibold text-[#173D32] block">Shipping To:</span>
-                  <p>{confirmedOrder.shippingAddress.address}</p>
-                  <p>
-                    {confirmedOrder.shippingAddress.city},{" "}
-                    {confirmedOrder.shippingAddress.state} —{" "}
-                    {confirmedOrder.shippingAddress.pincode}
-                  </p>
-                  <p className="mt-1 font-medium text-[#173D32]">
-                    Payment Mode: {confirmedOrder.paymentMethod}
-                  </p>
+                <div className="pt-2 text-[11px] text-[#777777] border-t border-[#E8E8E8]">
+                  <span className="font-semibold text-[#111111] block">Delivery Address:</span>
+                  <p>{confirmedOrder.shippingAddress.address}, {confirmedOrder.shippingAddress.city}, {confirmedOrder.shippingAddress.state} — {confirmedOrder.shippingAddress.pincode}</p>
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div>
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center gap-2 bg-[#173D32] text-[#F8F6EF] px-8 py-3.5 rounded-full text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#122e26] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors"
                 >
-                  <span>Return to Homepage</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Return to Home</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
@@ -189,21 +155,21 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F8F6EF]">
+      <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
         <AnnouncementBar />
         <Header />
         <main className="flex-grow py-20 flex items-center justify-center">
           <div className="text-center space-y-4 max-w-md px-4">
-            <h1 className="text-2xl font-serif text-[#173D32]">Your Bag Is Empty</h1>
-            <p className="text-xs text-[#575D52]">
-              Please add the GutGlow Daily Wellness Formula to your bag before checking out.
+            <h1 className="text-2xl font-bold text-[#111111]">Your Bag Is Empty</h1>
+            <p className="text-xs text-[#777777]">
+              Please add GutGlow Daily Wellness Formula to your bag before checking out.
             </p>
             <Link
               href="/product"
-              className="inline-flex items-center gap-2 bg-[#173D32] text-[#F8F6EF] px-6 py-3 rounded-full text-xs uppercase tracking-wider font-medium"
+              className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-full text-xs uppercase tracking-wider font-medium"
             >
               <span>Explore Formula</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </main>
@@ -213,381 +179,288 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F6EF]">
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
       <AnnouncementBar />
       <Header />
 
       <main className="flex-grow py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center sm:text-left">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#B99A63]">
-              SECURE CHECKOUT
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+              CHECKOUT
             </span>
-            <h1 className="text-3xl sm:text-4xl font-serif text-[#173D32] mt-1">
-              Finalize Your Wellness Order
+            <h1 className="text-3xl font-bold text-[#111111] mt-1">
+              Finalize Your Order
             </h1>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-              {/* Form Fields Column */}
-              <div className="lg:col-span-7 space-y-8">
+              {/* Form Fields */}
+              <div className="lg:col-span-7 space-y-6">
                 {/* 1. Contact Information */}
-                <div className="bg-[#EEEBDD]/50 border border-[#E6E1D3] rounded-3xl p-6 sm:p-8 space-y-4">
-                  <h3 className="text-base font-serif font-medium text-[#173D32] flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[#173D32] text-[#F8F6EF] text-xs flex items-center justify-center font-sans">
+                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                  <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       1
                     </span>
                     <span>Contact Information</span>
                   </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
-                        Email Address for Order Updates *
+                  <div className="space-y-3 pt-1">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
+                        Email Address *
                       </label>
                       <input
                         type="email"
                         {...register("email")}
-                        placeholder="you@example.com"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="name@example.com"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.email && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.email.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.email.message}</p>
                       )}
                     </div>
 
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
-                        Mobile Phone (for delivery SMS & dispatch) *
+                    <div>
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
+                        Phone Number *
                       </label>
                       <input
                         type="tel"
                         {...register("phone")}
                         placeholder="+91 98765 43210"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.phone && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.phone.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.phone.message}</p>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Shipping Address */}
-                <div className="bg-[#EEEBDD]/50 border border-[#E6E1D3] rounded-3xl p-6 sm:p-8 space-y-4">
-                  <h3 className="text-base font-serif font-medium text-[#173D32] flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[#173D32] text-[#F8F6EF] text-xs flex items-center justify-center font-sans">
+                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                  <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       2
                     </span>
                     <span>Shipping Address</span>
                   </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
                         First Name *
                       </label>
                       <input
                         type="text"
                         {...register("firstName")}
-                        placeholder="Rohan"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="First Name"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.firstName && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.firstName.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.firstName.message}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
                         Last Name *
                       </label>
                       <input
                         type="text"
                         {...register("lastName")}
-                        placeholder="Sharma"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="Last Name"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.lastName && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.lastName.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.lastName.message}</p>
                       )}
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
-                        Street Address / Apartment / Suite *
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
+                        Street Address *
                       </label>
                       <input
                         type="text"
                         {...register("addressLine1")}
-                        placeholder="Flat 402, Green Meadows, 14th Main Road"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="House / Flat / Street address"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.addressLine1 && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.addressLine1.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.addressLine1.message}</p>
                       )}
                     </div>
 
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
-                        Landmark / Floor (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        {...register("addressLine2")}
-                        placeholder="Near City Botanical Garden"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
-                      />
-                    </div>
-
                     <div>
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
                         City *
                       </label>
                       <input
                         type="text"
                         {...register("city")}
-                        placeholder="Mumbai"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="City"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.city && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.city.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.city.message}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
                         PIN Code (6 Digits) *
                       </label>
                       <input
                         type="text"
                         maxLength={6}
                         {...register("pincode")}
-                        placeholder="400001"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="PIN Code"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.pincode && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.pincode.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.pincode.message}</p>
                       )}
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-medium text-[#252923] mb-1">
+                      <label className="block text-xs font-semibold text-[#111111] mb-1">
                         State *
                       </label>
                       <input
                         type="text"
                         {...register("state")}
-                        placeholder="Maharashtra"
-                        className="w-full bg-[#F8F6EF] border border-[#E6E1D3] rounded-xl px-3.5 py-2.5 text-xs text-[#252923] focus:outline-none focus:border-[#173D32]"
+                        placeholder="State"
+                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.state && (
-                        <p className="text-[11px] text-[#c0392b] mt-1">
-                          {errors.state.message}
-                        </p>
+                        <p className="text-[11px] text-[#c0392b] mt-1">{errors.state.message}</p>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* 3. Payment Method */}
-                <div className="bg-[#EEEBDD]/50 border border-[#E6E1D3] rounded-3xl p-6 sm:p-8 space-y-4">
-                  <h3 className="text-base font-serif font-medium text-[#173D32] flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[#173D32] text-[#F8F6EF] text-xs flex items-center justify-center font-sans">
+                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                  <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       3
                     </span>
                     <span>Payment Method</span>
                   </h3>
 
-                  <div className="space-y-3 pt-2">
-                    {/* UPI */}
-                    <label className="flex items-center justify-between p-4 rounded-2xl border border-[#E6E1D3] bg-[#F8F6EF] cursor-pointer hover:border-[#173D32]/50 transition-colors">
-                      <div className="flex items-center gap-3">
+                  <div className="space-y-2 pt-1">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
                           value="upi"
                           {...register("paymentMethod")}
-                          className="w-4 h-4 text-[#173D32] focus:ring-[#173D32]"
+                          className="w-4 h-4 text-[#111111]"
                         />
-                        <div className="flex items-center gap-2">
-                          <Smartphone className="w-4 h-4 text-[#173D32]" />
-                          <span className="text-xs font-medium text-[#173D32]">
-                            UPI / QR (Google Pay, PhonePe, Paytm, BHIM)
-                          </span>
-                        </div>
+                        <span className="text-xs font-semibold text-[#111111]">
+                          UPI (Google Pay, PhonePe, Paytm, BHIM)
+                        </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#B99A63]">
-                        Instant
-                      </span>
+                      <span className="text-[10px] uppercase font-semibold text-[#777777]">Instant</span>
                     </label>
 
-                    {/* Card */}
-                    <label className="flex items-center justify-between p-4 rounded-2xl border border-[#E6E1D3] bg-[#F8F6EF] cursor-pointer hover:border-[#173D32]/50 transition-colors">
-                      <div className="flex items-center gap-3">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
                           value="card"
                           {...register("paymentMethod")}
-                          className="w-4 h-4 text-[#173D32] focus:ring-[#173D32]"
+                          className="w-4 h-4 text-[#111111]"
                         />
-                        <div className="flex items-center gap-2">
-                          <CreditCard className="w-4 h-4 text-[#173D32]" />
-                          <span className="text-xs font-medium text-[#173D32]">
-                            Credit / Debit Card (Visa, MasterCard, RuPay, Amex)
-                          </span>
-                        </div>
+                        <span className="text-xs font-semibold text-[#111111]">
+                          Credit / Debit Card (Visa, MasterCard, RuPay)
+                        </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#575D52]">
-                        256-Bit SSL
-                      </span>
+                      <span className="text-[10px] uppercase font-semibold text-[#777777]">SSL Encrypted</span>
                     </label>
 
-                    {/* Cash on Delivery */}
-                    <label className="flex items-center justify-between p-4 rounded-2xl border border-[#E6E1D3] bg-[#F8F6EF] cursor-pointer hover:border-[#173D32]/50 transition-colors">
-                      <div className="flex items-center gap-3">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
                           value="cod"
                           {...register("paymentMethod")}
-                          className="w-4 h-4 text-[#173D32] focus:ring-[#173D32]"
+                          className="w-4 h-4 text-[#111111]"
                         />
-                        <div className="flex items-center gap-2">
-                          <Banknote className="w-4 h-4 text-[#173D32]" />
-                          <span className="text-xs font-medium text-[#173D32]">
-                            Cash on Delivery (COD)
-                          </span>
-                        </div>
+                        <span className="text-xs font-semibold text-[#111111]">
+                          Cash on Delivery (COD)
+                        </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#7D9273]">
-                        Verified Dispatch
-                      </span>
+                      <span className="text-[10px] uppercase font-semibold text-[#777777]">Pay at door</span>
                     </label>
                   </div>
-
-                  {errors.paymentMethod && (
-                    <p className="text-[11px] text-[#c0392b]">
-                      {errors.paymentMethod.message}
-                    </p>
-                  )}
                 </div>
               </div>
 
-              {/* Order Summary Column */}
+              {/* Order Summary */}
               <div className="lg:col-span-5">
-                <div className="bg-[#EEEBDD]/70 border border-[#E6E1D3] rounded-3xl p-6 sm:p-8 space-y-6 sticky top-28">
-                  <h3 className="text-lg font-serif font-medium text-[#173D32]">
-                    Order Summary ({totalItems})
+                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-5 sticky top-24">
+                  <h3 className="text-base font-bold text-[#111111]">
+                    Summary ({totalItems})
                   </h3>
 
-                  {/* Items list */}
-                  <div className="divide-y divide-[#E6E1D3] border-y border-[#E6E1D3] py-2 max-h-60 overflow-y-auto">
+                  <div className="divide-y divide-[#E8E8E8] border-y border-[#E8E8E8] py-2 max-h-56 overflow-y-auto">
                     {items.map((item) => (
-                      <div key={item.packOption.id} className="py-3 flex gap-3 text-xs">
-                        <div className="relative w-12 h-14 bg-[#EEEBDD] rounded-lg overflow-hidden shrink-0 border border-[#E6E1D3]">
-                          <Image
-                            src={item.image}
-                            alt={item.productName}
-                            fill
-                            className="object-cover"
-                          />
+                      <div key={item.packOption.id} className="py-2.5 flex justify-between text-xs">
+                        <div>
+                          <p className="font-semibold text-[#111111]">{item.productName}</p>
+                          <p className="text-[11px] text-[#777777]">{item.packOption.name} × {item.quantity}</p>
                         </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-[#173D32] leading-tight">
-                            {item.productName}
-                          </p>
-                          <p className="text-[11px] text-[#B99A63] mt-0.5">
-                            {item.packOption.name} · Qty {item.quantity}
-                          </p>
-                        </div>
-                        <div className="text-right font-medium text-[#173D32]">
+                        <div className="font-bold text-[#111111]">
                           {formatPrice(item.packOption.price * item.quantity)}
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  {/* Calculations */}
-                  <div className="space-y-2.5 text-xs text-[#575D52] pb-2">
+                  <div className="space-y-2 text-xs text-[#777777] pb-1">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span className="text-[#173D32] font-medium">{formatPrice(subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-1.5">
-                        <Truck className="w-3.5 h-3.5 text-[#7D9273]" />
-                        <span>Nationwide Express Shipping</span>
-                      </span>
-                      <span className="text-[#173D32] font-semibold text-[11px]">FREE</span>
+                      <span className="text-[#111111] font-semibold">{formatPrice(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Taxes & Packaging</span>
-                      <span className="text-[#173D32]">Included</span>
+                      <span>Express Shipping</span>
+                      <span className="text-[#111111] font-semibold uppercase text-[10px]">FREE</span>
                     </div>
                   </div>
 
-                  {/* Total */}
-                  <div className="flex items-baseline justify-between border-t border-[#E6E1D3] pt-4">
-                    <span className="text-base font-serif font-medium text-[#173D32]">
-                      Total Payable
-                    </span>
-                    <span className="text-2xl font-serif font-semibold text-[#173D32]">
+                  <div className="flex items-baseline justify-between border-t border-[#E8E8E8] pt-3">
+                    <span className="font-semibold text-[#111111]">Total Payable</span>
+                    <span className="text-2xl font-bold text-[#111111]">
                       {formatPrice(subtotal)}
                     </span>
                   </div>
 
-                  {/* Gateway Notice / Feedback */}
                   {gatewayMessage && (
-                    <div className="p-4 bg-[#F8F6EF] border border-[#B99A63]/50 rounded-2xl text-xs text-[#575D52] space-y-1.5">
-                      <div className="flex items-center gap-1.5 text-[#173D32] font-medium">
-                        <AlertCircle className="w-4 h-4 text-[#B99A63] shrink-0" />
-                        <span>Integration Notice</span>
-                      </div>
-                      <p className="text-[11px] leading-relaxed">
-                        {gatewayMessage}
-                      </p>
+                    <div className="p-3.5 bg-[#FFFFFF] border border-[#E8E8E8] rounded-xl text-xs text-[#777777] space-y-1">
+                      <p className="font-semibold text-[#111111]">Integration Notice</p>
+                      <p className="text-[11px] leading-relaxed">{gatewayMessage}</p>
                     </div>
                   )}
 
-                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 bg-[#173D32] text-[#F8F6EF] py-4 rounded-full text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#122e26] transition-all shadow-md disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors disabled:opacity-50"
                   >
-                    <Lock className="w-4 h-4" />
+                    <Lock className="w-3.5 h-3.5" />
                     <span>
                       {isSubmitting
-                        ? "Verifying Order..."
+                        ? "Verifying..."
                         : selectedPaymentMethod === "cod"
                         ? "Place Verified COD Order"
-                        : "Proceed to Payment Gateway"}
+                        : "Proceed to Payment"}
                     </span>
                   </button>
-
-                  <div className="pt-2 text-center space-y-1.5">
-                    <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#575D52]">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#7D9273]" />
-                      <span>Zero Risk · 30-Day Happiness Guarantee</span>
-                    </div>
-                    <p className="text-[10px] text-[#A9B9A0]">
-                      Modular payment gateway architecture ready for Razorpay
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

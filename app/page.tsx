@@ -14,7 +14,7 @@ import { FinalCtaSection } from "@/components/home/FinalCtaSection";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F6EF]">
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
       <AnnouncementBar />
       <Header />
       <main className="flex-grow">

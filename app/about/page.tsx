@@ -1,82 +1,70 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Leaf, Shield, Heart, Compass } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
-  title: "Our Story | GutGlow",
-  description:
-    "The journey and principles behind GutGlow. Why we believe true wellness begins with a calm, balanced digestive ecosystem.",
+  title: "Our Story — GutGlow",
+  description: "A thoughtful approach to digestive wellness and everyday balance.",
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F6EF]">
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
       <AnnouncementBar />
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="py-20 lg:py-28 bg-[#EEEBDD]/40 border-b border-[#E6E1D3]">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#173D32]">
-              THE GUTGLOW ESSAY
+        {/* Header */}
+        <section className="py-16 lg:py-24 bg-[#F7F7F7] border-b border-[#E8E8E8]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+              OUR STORY
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-[#173D32] leading-tight">
-              Crafted Around One Simple Conviction: <br />
-              <span className="italic font-normal text-[#252923]">
-                Wellness Starts From Within.
-              </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#111111]">
+              Wellness Starts Within.
             </h1>
-            <p className="text-base sm:text-lg text-[#575D52] max-w-2xl mx-auto leading-relaxed font-light">
-              We started GutGlow because modern wellness had grown needlessly noisy,
-              over-complicated, and obsessed with superficial quick fixes.
+            <p className="text-base text-[#777777] max-w-xl mx-auto leading-relaxed">
+              GutGlow brings a thoughtful approach to digestive wellness and
+              everyday living.
             </p>
           </div>
         </section>
 
-        {/* Narrative & Visual Split */}
-        <section className="py-20 lg:py-28 bg-[#F8F6EF] border-b border-[#E6E1D3]">
+        {/* Narrative & Visual */}
+        <section className="py-16 lg:py-24 bg-[#FFFFFF] border-b border-[#E8E8E8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-              <div className="lg:col-span-6 space-y-6">
-                <span className="text-xs uppercase tracking-[0.2em] font-semibold text-[#B99A63]">
-                  ORIGINS & PURPOSE
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-6 space-y-5">
+                <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#777777]">
+                  PURPOSE
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-serif text-[#173D32]">
-                  The Shift From External Cover-Ups to Inner Harmony
+                <h2 className="text-3xl font-bold text-[#111111]">
+                  A Focus on Essentials
                 </h2>
-                <p className="text-sm sm:text-base text-[#575D52] leading-relaxed">
-                  For decades, consumer health treated skin, hair, energy, and digestion
-                  as completely isolated silos. If your skin felt dull, you were told
-                  to buy a dozen topical serums. If you felt sluggish after meals, you
-                  were handed aggressive stimulant laxatives.
+                <p className="text-sm text-[#777777] leading-relaxed">
+                  We built GutGlow on a simple principle: true vitality begins in the
+                  digestive ecosystem. Rather than offering multi-product clutter,
+                  we engineered one daily formula to support your body's natural
+                  equilibrium.
                 </p>
-                <p className="text-sm text-[#575D52] leading-relaxed">
-                  Gastrointestinal biology tells an entirely different story. Over 70%
-                  of immune cells reside in the gut lining. Trillions of microbial
-                  partners synthesize essential short-chain fatty acids, modulate
-                  inflammatory signals, and govern how every single micronutrient is
-                  absorbed.
-                </p>
-                <p className="text-sm text-[#575D52] leading-relaxed">
-                  GutGlow was created to give you a single, elegant daily ritual that
-                  respects this physiology — nurturing your inner ecosystem rather than
-                  shocking it.
+                <p className="text-sm text-[#777777] leading-relaxed">
+                  Clean, plant-derived ingredients and zero synthetic fillers.
+                  Simple, sustainable, and designed for real everyday living.
                 </p>
               </div>
 
               <div className="lg:col-span-6">
-                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-[#EEEBDD] border border-[#E6E1D3] shadow-md">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#F7F7F7] border border-[#E8E8E8]">
                   <Image
                     src="/images/product-lifestyle-routine.jpg"
-                    alt="GutGlow peaceful morning wellness ritual"
+                    alt="GutGlow Morning Routine"
                     fill
                     sizes="(max-width: 1024px) 100vw, 600px"
-                    className="object-cover"
+                    className="object-cover grayscale contrast-110"
                   />
                 </div>
               </div>
@@ -84,81 +72,53 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Core Principles */}
-        <section className="py-20 lg:py-28 bg-[#EEEBDD]/30 border-b border-[#E6E1D3]">
+        {/* 3 Core Principles */}
+        <section className="py-16 lg:py-24 bg-[#F7F7F7] border-b border-[#E8E8E8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#173D32]">
-                OUR VALUES
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-serif text-[#173D32]">
-                What We Stand For
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-[#F8F6EF] p-8 rounded-3xl border border-[#E6E1D3] space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#EEEBDD] flex items-center justify-center text-[#173D32]">
-                  <Leaf className="w-6 h-6 stroke-[1.5]" />
-                </div>
-                <h3 className="text-lg font-serif text-[#173D32]">
-                  Singular Focus
-                </h3>
-                <p className="text-xs text-[#575D52] leading-relaxed">
-                  We don’t produce 40 different redundant pills. We focus entirely on
-                  one flagship daily formula, engineering it with obsessive care and
-                  uncompromising ingredient quality.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E8E8E8] space-y-3">
+                <span className="text-xs font-bold text-[#111111]">01</span>
+                <h3 className="text-base font-bold text-[#111111]">One Product Focus</h3>
+                <p className="text-xs text-[#777777] leading-relaxed">
+                  We channel all our formulation resources into a single, exceptional
+                  daily formula.
                 </p>
               </div>
 
-              <div className="bg-[#F8F6EF] p-8 rounded-3xl border border-[#E6E1D3] space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#EEEBDD] flex items-center justify-center text-[#173D32]">
-                  <Shield className="w-6 h-6 stroke-[1.5]" />
-                </div>
-                <h3 className="text-lg font-serif text-[#173D32]">
-                  Zero False Claims
-                </h3>
-                <p className="text-xs text-[#575D52] leading-relaxed">
-                  We will never claim our supplement cures illness, erases wrinkles
-                  overnight, or stops genetic hair fall. We promise truthful,
-                  responsible science rooted in digestive support.
+              <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E8E8E8] space-y-3">
+                <span className="text-xs font-bold text-[#111111]">02</span>
+                <h3 className="text-base font-bold text-[#111111]">Transparent Science</h3>
+                <p className="text-xs text-[#777777] leading-relaxed">
+                  Clear, honest communication without exaggerated before-and-after
+                  claims.
                 </p>
               </div>
 
-              <div className="bg-[#F8F6EF] p-8 rounded-3xl border border-[#E6E1D3] space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#EEEBDD] flex items-center justify-center text-[#173D32]">
-                  <Heart className="w-6 h-6 stroke-[1.5]" />
-                </div>
-                <h3 className="text-lg font-serif text-[#173D32]">
-                  Sustainable Elegance
-                </h3>
-                <p className="text-xs text-[#575D52] leading-relaxed">
-                  Our forest-green glass jars protect delicate botanical actives from
-                  UV light while eliminating single-use plastics from your bathroom
-                  counter.
+              <div className="bg-[#FFFFFF] p-7 rounded-2xl border border-[#E8E8E8] space-y-3">
+                <span className="text-xs font-bold text-[#111111]">03</span>
+                <h3 className="text-base font-bold text-[#111111]">Sustainable Packaging</h3>
+                <p className="text-xs text-[#777777] leading-relaxed">
+                  Recyclable glass jars protecting active botanicals from UV light.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA to Formula */}
-        <section className="py-20 bg-[#173D32] text-[#F8F6EF] text-center">
-          <div className="max-w-2xl mx-auto px-4 space-y-6">
-            <h2 className="text-3xl font-serif">
-              Begin Your Morning Ritual
-            </h2>
-            <p className="text-xs sm:text-sm text-[#A9B9A0] leading-relaxed font-light">
-              Experience the difference of a thoughtfully nurtured digestive
-              microbiome with GutGlow Daily Wellness Formula.
+        {/* CTA */}
+        <section className="py-20 bg-[#111111] text-[#FFFFFF] text-center">
+          <div className="max-w-xl mx-auto px-4 space-y-5">
+            <h2 className="text-3xl font-bold">Experience GutGlow</h2>
+            <p className="text-xs text-[#FFFFFF]/70">
+              One simple daily habit for digestive wellness.
             </p>
             <div>
               <Link
                 href="/product"
-                className="inline-flex items-center gap-2 bg-[#F8F6EF] text-[#173D32] px-8 py-3.5 rounded-full text-xs uppercase tracking-[0.18em] font-semibold hover:bg-[#EEEBDD] transition-colors shadow"
+                className="inline-flex items-center gap-2 bg-[#FFFFFF] text-[#111111] px-7 py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#F7F7F7] transition-colors"
               >
-                <span>Shop The Flagship Formula</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Shop Formula</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
