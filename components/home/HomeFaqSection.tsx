@@ -10,7 +10,7 @@ const faqItems = [
     id: "faq-1",
     title: "What is GutGlow?",
     content:
-      "GutGlow is a minimalist wellness brand focused on digestive balance and the foundational connection between gut health and everyday vitality.",
+      "GutGlow is a minimalist wellness brand focused on digestive balance and everyday living through a single flagship daily formula.",
   },
   {
     id: "faq-2",
@@ -22,7 +22,7 @@ const faqItems = [
     id: "faq-3",
     title: "What ingredients are included?",
     content:
-      "Clean prebiotic fibers, soothing botanical rhizome extracts, and spore probiotic culture. Full quantitative batch disclosure will be released upon manufacturer testing.",
+      "Clean prebiotic fibers, soothing botanical rhizome extracts, and spore probiotic culture. Full batch details will be published upon manufacturing release.",
   },
   {
     id: "faq-4",
@@ -52,11 +52,11 @@ const faqItems = [
 
 export function HomeFaqSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E8E8E8]">
+    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="mb-12 text-center">
-          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#777777] block mb-2">
+          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             QUESTIONS & ANSWERS
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
@@ -70,7 +70,7 @@ export function HomeFaqSection() {
         <div className="text-center mt-10">
           <Link
             href="/faq"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#333333] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#666666] transition-colors"
           >
             <span>View All FAQs</span>
             <ArrowRight className="w-3.5 h-3.5" />

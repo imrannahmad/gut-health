@@ -27,7 +27,7 @@ export default function CartPage() {
               <h1 className="text-3xl sm:text-4xl font-bold text-[#111111]">
                 Your Bag
               </h1>
-              <p className="text-xs text-[#777777] mt-1">
+              <p className="text-xs text-[#666666] mt-1">
                 {totalItems} {totalItems === 1 ? "item" : "items"} selected
               </p>
             </div>
@@ -42,17 +42,17 @@ export default function CartPage() {
           </div>
 
           {items.length === 0 ? (
-            <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-12 text-center max-w-md mx-auto space-y-4">
+            <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-12 text-center max-w-md mx-auto space-y-4">
               <h3 className="text-lg font-bold text-[#111111]">
                 Your bag is empty
               </h3>
-              <p className="text-xs text-[#777777]">
+              <p className="text-xs text-[#666666]">
                 Begin your wellness routine with GutGlow Daily Wellness Formula.
               </p>
               <div className="pt-2">
                 <Link
                   href="/product"
-                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-full text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
                 >
                   <span>Shop Formula</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -63,16 +63,16 @@ export default function CartPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               {/* Items List */}
               <div className="lg:col-span-7 space-y-4">
-                <div className="bg-[#FFFFFF] border border-[#E8E8E8] rounded-2xl p-6 divide-y divide-[#E8E8E8]">
+                <div className="bg-[#FFFFFF] border border-[#E5E5E5] rounded-2xl p-6 divide-y divide-[#E5E5E5]">
                   {items.map((item) => (
                     <div key={item.packOption.id} className="py-6 first:pt-0 last:pb-0 flex gap-4">
-                      <div className="relative w-20 h-24 bg-[#F7F7F7] rounded-xl overflow-hidden shrink-0 border border-[#E8E8E8]">
+                      <div className="relative w-20 h-24 bg-[#F5F5F5] rounded-xl overflow-hidden shrink-0 border border-[#E5E5E5]">
                         <Image
                           src={item.image}
                           alt={item.productName}
                           fill
                           sizes="100px"
-                          className="object-cover grayscale contrast-125"
+                          className="object-cover"
                         />
                       </div>
 
@@ -83,14 +83,14 @@ export default function CartPage() {
                               <h3 className="text-sm font-bold text-[#111111]">
                                 {item.productName}
                               </h3>
-                              <p className="text-xs text-[#777777] mt-0.5">
+                              <p className="text-xs text-[#666666] mt-0.5">
                                 {item.packOption.name} · {item.packOption.servings} Servings
                               </p>
                             </div>
                             <button
                               type="button"
                               onClick={() => removeItem(item.packOption.id)}
-                              className="text-[#777777] hover:text-[#111111] p-1"
+                              className="text-[#666666] hover:text-[#111111] p-1"
                               aria-label="Remove item"
                             >
                               <Trash2 className="w-4 h-4 stroke-[1.5]" />
@@ -99,13 +99,13 @@ export default function CartPage() {
                         </div>
 
                         <div className="flex items-center justify-between pt-4">
-                          <div className="flex items-center border border-[#E8E8E8] rounded-full bg-[#F7F7F7] px-2.5 py-1">
+                          <div className="flex items-center border border-[#E5E5E5] rounded-lg bg-[#F5F5F5] px-2.5 py-1">
                             <button
                               type="button"
                               onClick={() =>
                                 updateQuantity(item.packOption.id, item.quantity - 1)
                               }
-                              className="p-1 text-[#777777] hover:text-[#111111]"
+                              className="p-1 text-[#666666] hover:text-[#111111]"
                               aria-label="Decrease quantity"
                             >
                               <Minus className="w-3.5 h-3.5" />
@@ -118,7 +118,7 @@ export default function CartPage() {
                               onClick={() =>
                                 updateQuantity(item.packOption.id, item.quantity + 1)
                               }
-                              className="p-1 text-[#777777] hover:text-[#111111]"
+                              className="p-1 text-[#666666] hover:text-[#111111]"
                               aria-label="Increase quantity"
                             >
                               <Plus className="w-3.5 h-3.5" />
@@ -137,12 +137,12 @@ export default function CartPage() {
 
               {/* Order Summary */}
               <div className="lg:col-span-5">
-                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-8 space-y-6 sticky top-24">
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-xl p-6 sm:p-8 space-y-6 sticky top-24">
                   <h3 className="text-base font-bold text-[#111111]">
                     Order Summary
                   </h3>
 
-                  <div className="space-y-3 text-xs text-[#777777] border-b border-[#E8E8E8] pb-4">
+                  <div className="space-y-3 text-xs text-[#666666] border-b border-[#E5E5E5] pb-4">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span className="text-[#111111] font-semibold">{formatPrice(subtotal)}</span>
@@ -165,7 +165,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     onClick={() => router.push("/checkout")}
-                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
                   >
                     <span>Proceed to Checkout</span>
                     <ArrowRight className="w-3.5 h-3.5" />

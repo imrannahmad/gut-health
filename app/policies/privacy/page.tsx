@@ -17,16 +17,16 @@ export default function PrivacyPolicyPage() {
       <main className="flex-grow py-16 lg:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#666666]">
               LEGAL
             </span>
             <h1 className="text-3xl sm:text-4xl font-bold text-[#111111] mt-1">
               Privacy Policy
             </h1>
-            <p className="text-xs text-[#777777] mt-1">Last updated: November 2026</p>
+            <p className="text-xs text-[#666666] mt-1">Last updated: November 2026</p>
           </div>
 
-          <div className="text-xs leading-relaxed text-[#777777] space-y-6">
+          <div className="text-xs leading-relaxed text-[#666666] space-y-6">
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-[#111111]">1. Overview</h2>
               <p>

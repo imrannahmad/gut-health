@@ -74,7 +74,7 @@ export default function FaqPage() {
       <main className="flex-grow py-16 lg:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-3">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#666666]">
               SUPPORT
             </span>
             <h1 className="text-4xl sm:text-5xl font-bold text-[#111111]">
@@ -83,34 +83,34 @@ export default function FaqPage() {
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E8E8E8]">
+            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E5E5E5]">
               The Product
             </h2>
             <Accordion items={productFaqs} defaultOpenId="faq-1" />
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E8E8E8]">
+            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E5E5E5]">
               Daily Usage
             </h2>
             <Accordion items={usageFaqs} />
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E8E8E8]">
+            <h2 className="text-sm uppercase tracking-wider font-bold text-[#111111] pb-2 border-b border-[#E5E5E5]">
               Orders & Shipping
             </h2>
             <Accordion items={shippingFaqs} />
           </div>
 
-          <div className="p-8 rounded-2xl bg-[#F7F7F7] border border-[#E8E8E8] text-center space-y-4">
+          <div className="p-8 rounded-xl bg-[#F5F5F5] border border-[#E5E5E5] text-center space-y-4">
             <h3 className="text-base font-bold text-[#111111]">Still have questions?</h3>
-            <p className="text-xs text-[#777777] max-w-sm mx-auto">
+            <p className="text-xs text-[#666666] max-w-sm mx-auto">
               Our support team is available Monday through Friday.
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-medium hover:bg-[#333333] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-2.5 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#333333] transition-colors"
             >
               <span>Contact Us</span>
               <ArrowRight className="w-3.5 h-3.5" />

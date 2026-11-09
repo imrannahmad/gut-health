@@ -8,8 +8,8 @@ export const PRODUCT_CONFIG: ProductConfig = {
     "A clean, daily approach to digestive wellness. Formulated with targeted botanicals and prebiotic fiber to support everyday gut balance.",
   fullDescription:
     "GutGlow Daily Wellness Formula is designed to integrate effortlessly into your morning routine. A focused, non-laxative blend supporting healthy gut flora, natural digestive ease, and nutrient absorption.",
-  category: "Digestive Wellness",
-  servingSize: "1 Scoop (6g) daily with water",
+  category: "Gut Wellness Nutraceutical",
+  servingSize: "1 Scoop (~6.5g) daily with water",
   defaultPrice: 1999,
   defaultCompareAtPrice: 2499,
   packOptions: [
@@ -49,24 +49,29 @@ export const PRODUCT_CONFIG: ProductConfig = {
   ],
   images: [
     {
-      src: "/images/product-jar-hero.jpg",
-      alt: "GutGlow Daily Wellness Formula minimalist packaging",
-      label: "Studio Packaging",
+      src: "/images/gutglow-product-front.jpg",
+      alt: "GutGlow Daily Wellness Formula front view on stone pedestal with powder bowl",
+      label: "Front Packaging",
     },
     {
-      src: "/images/product-lifestyle-routine.jpg",
-      alt: "Morning wellness ritual with fresh water",
+      src: "/images/gutglow-product-angle.jpg",
+      alt: "GutGlow Daily Wellness Formula angled view on stone with wooden scoop",
+      label: "Angle & Scoop",
+    },
+    {
+      src: "/images/philosophy-ritual.webp",
+      alt: "GutGlow daily morning wellness ritual with spoon and jar on stone",
       label: "Daily Ritual",
     },
     {
-      src: "/images/product-botanicals.jpg",
-      alt: "Carefully sourced natural botanicals",
-      label: "Ingredients",
+      src: "/images/product-packaging-macro.jpg",
+      alt: "GutGlow close-up packaging detail and letterpress typography",
+      label: "Macro Detail",
     },
     {
-      src: "/images/product-packaging-macro.jpg",
-      alt: "Packaging detail and typography",
-      label: "Label Detail",
+      src: "/images/product-botanicals.jpg",
+      alt: "GutGlow carefully sourced active natural botanicals",
+      label: "Active Botanicals",
     },
   ],
   highlights: [
@@ -95,7 +100,7 @@ export const PRODUCT_CONFIG: ProductConfig = {
     },
   ],
   specifications: [
-    { label: "Net Contents", value: "180g (30 Servings)" },
+    { label: "Net Contents", value: "200g (30 Servings)" },
     { label: "Form", value: "Soluble Fine Powder" },
     { label: "Origin", value: "Formulated in India" },
     { label: "Dietary", value: "Vegetarian, Gluten-Free, Non-GMO" },

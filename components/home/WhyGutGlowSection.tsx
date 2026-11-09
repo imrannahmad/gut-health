@@ -25,11 +25,11 @@ const features = [
 
 export function WhyGutGlowSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#F7F7F7] border-b border-[#E8E8E8]">
+    <section className="py-20 lg:py-28 bg-[#F5F5F5] border-b border-[#E5E5E5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-12 sm:mb-16">
-          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#777777] block mb-2">
+        <div className="mb-10 sm:mb-16">
+          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             OUR PRINCIPLES
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
@@ -38,7 +38,7 @@ export function WhyGutGlowSection() {
         </div>
 
         {/* Mobile Swipe Indicator */}
-        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#777777] uppercase tracking-wider mb-3">
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
           <span>Swipe to explore</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </div>
@@ -52,10 +52,10 @@ export function WhyGutGlowSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.08 }}
-              className="shrink-0 w-[84vw] max-w-[300px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E8E8E8] rounded-2xl p-7 flex flex-col justify-between hover:border-[#111111] transition-colors"
+              className="shrink-0 w-[84vw] max-w-[300px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-7 flex flex-col justify-between hover:border-[#111111] transition-colors"
             >
               <div>
-                <span className="text-[11px] font-medium text-[#777777] uppercase tracking-widest block mb-4">
+                <span className="text-[11px] font-medium text-[#666666] uppercase tracking-widest block mb-4">
                   0{idx + 1}
                 </span>
 
@@ -63,7 +63,7 @@ export function WhyGutGlowSection() {
                   {feature.title}
                 </h3>
 
-                <p className="text-xs text-[#777777] leading-relaxed">
+                <p className="text-xs text-[#666666] leading-relaxed">
                   {feature.description}
                 </p>
               </div>

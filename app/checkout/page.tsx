@@ -96,28 +96,28 @@ export default function CheckoutPage() {
 
         <main className="flex-grow py-16 lg:py-24">
           <div className="max-w-xl mx-auto px-4 sm:px-6">
-            <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-8 sm:p-10 text-center space-y-6">
+            <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-8 sm:p-10 text-center space-y-6">
               <div className="w-12 h-12 rounded-full bg-[#111111] text-[#FFFFFF] flex items-center justify-center mx-auto">
                 <CheckCircle className="w-6 h-6" />
               </div>
 
               <div className="space-y-1">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#666666]">
                   Order Confirmed
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-bold text-[#111111]">
                   Thank You, {confirmedOrder.customerName}
                 </h1>
-                <p className="text-xs text-[#777777]">
+                <p className="text-xs text-[#666666]">
                   Order ID: <span className="font-semibold text-[#111111]">{confirmedOrder.orderId}</span>
                 </p>
               </div>
 
-              <div className="text-left bg-[#FFFFFF] rounded-xl p-5 border border-[#E8E8E8] space-y-3 text-xs">
-                <div className="border-b border-[#E8E8E8] pb-3">
+              <div className="text-left bg-[#FFFFFF] rounded-xl p-5 border border-[#E5E5E5] space-y-3 text-xs">
+                <div className="border-b border-[#E5E5E5] pb-3">
                   <h4 className="font-semibold text-[#111111] mb-2">Order Items</h4>
                   {confirmedOrder.items.map((i, idx) => (
-                    <div key={idx} className="flex justify-between text-[#777777] py-0.5">
+                    <div key={idx} className="flex justify-between text-[#666666] py-0.5">
                       <span>{i.name} ({i.packName}) × {i.quantity}</span>
                       <span className="font-medium text-[#111111]">{formatPrice(i.price)}</span>
                     </div>
@@ -129,7 +129,7 @@ export default function CheckoutPage() {
                   <span>{formatPrice(confirmedOrder.total)}</span>
                 </div>
 
-                <div className="pt-2 text-[11px] text-[#777777] border-t border-[#E8E8E8]">
+                <div className="pt-2 text-[11px] text-[#666666] border-t border-[#E5E5E5]">
                   <span className="font-semibold text-[#111111] block">Delivery Address:</span>
                   <p>{confirmedOrder.shippingAddress.address}, {confirmedOrder.shippingAddress.city}, {confirmedOrder.shippingAddress.state} — {confirmedOrder.shippingAddress.pincode}</p>
                 </div>
@@ -138,7 +138,7 @@ export default function CheckoutPage() {
               <div>
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-lg text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors"
                 >
                   <span>Return to Home</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -161,12 +161,12 @@ export default function CheckoutPage() {
         <main className="flex-grow py-20 flex items-center justify-center">
           <div className="text-center space-y-4 max-w-md px-4">
             <h1 className="text-2xl font-bold text-[#111111]">Your Bag Is Empty</h1>
-            <p className="text-xs text-[#777777]">
+            <p className="text-xs text-[#666666]">
               Please add GutGlow Daily Wellness Formula to your bag before checking out.
             </p>
             <Link
               href="/product"
-              className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-full text-xs uppercase tracking-wider font-medium"
+              className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#333333] transition-colors"
             >
               <span>Explore Formula</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
       <main className="flex-grow py-12 lg:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center sm:text-left">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#666666]">
               CHECKOUT
             </span>
             <h1 className="text-3xl font-bold text-[#111111] mt-1">
@@ -199,7 +199,7 @@ export default function CheckoutPage() {
               {/* Form Fields */}
               <div className="lg:col-span-7 space-y-6">
                 {/* 1. Contact Information */}
-                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-6 sm:p-7 space-y-4">
                   <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       1
@@ -216,7 +216,7 @@ export default function CheckoutPage() {
                         type="email"
                         {...register("email")}
                         placeholder="name@example.com"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.email && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.email.message}</p>
@@ -231,7 +231,7 @@ export default function CheckoutPage() {
                         type="tel"
                         {...register("phone")}
                         placeholder="+91 98765 43210"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.phone && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.phone.message}</p>
@@ -241,7 +241,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* 2. Shipping Address */}
-                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-6 sm:p-7 space-y-4">
                   <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       2
@@ -258,7 +258,7 @@ export default function CheckoutPage() {
                         type="text"
                         {...register("firstName")}
                         placeholder="First Name"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.firstName && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.firstName.message}</p>
@@ -273,7 +273,7 @@ export default function CheckoutPage() {
                         type="text"
                         {...register("lastName")}
                         placeholder="Last Name"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.lastName && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.lastName.message}</p>
@@ -288,7 +288,7 @@ export default function CheckoutPage() {
                         type="text"
                         {...register("addressLine1")}
                         placeholder="House / Flat / Street address"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.addressLine1 && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.addressLine1.message}</p>
@@ -303,7 +303,7 @@ export default function CheckoutPage() {
                         type="text"
                         {...register("city")}
                         placeholder="City"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.city && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.city.message}</p>
@@ -319,7 +319,7 @@ export default function CheckoutPage() {
                         maxLength={6}
                         {...register("pincode")}
                         placeholder="PIN Code"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.pincode && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.pincode.message}</p>
@@ -334,7 +334,7 @@ export default function CheckoutPage() {
                         type="text"
                         {...register("state")}
                         placeholder="State"
-                        className="w-full bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3.5 py-2.5 text-xs text-[#111111] focus:outline-none focus:border-[#111111]"
                       />
                       {errors.state && (
                         <p className="text-[11px] text-[#c0392b] mt-1">{errors.state.message}</p>
@@ -344,7 +344,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* 3. Payment Method */}
-                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4">
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-6 sm:p-7 space-y-4">
                   <h3 className="text-sm font-bold text-[#111111] flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] text-[10px] flex items-center justify-center font-sans font-bold">
                       3
@@ -353,7 +353,7 @@ export default function CheckoutPage() {
                   </h3>
 
                   <div className="space-y-2 pt-1">
-                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
                       <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
@@ -365,10 +365,10 @@ export default function CheckoutPage() {
                           UPI (Google Pay, PhonePe, Paytm, BHIM)
                         </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#777777]">Instant</span>
+                      <span className="text-[10px] uppercase font-semibold text-[#666666]">Instant</span>
                     </label>
 
-                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
                       <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
@@ -380,10 +380,10 @@ export default function CheckoutPage() {
                           Credit / Debit Card (Visa, MasterCard, RuPay)
                         </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#777777]">SSL Encrypted</span>
+                      <span className="text-[10px] uppercase font-semibold text-[#666666]">SSL Encrypted</span>
                     </label>
 
-                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E8E8E8] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] cursor-pointer hover:border-[#111111] transition-colors">
                       <div className="flex items-center gap-2.5">
                         <input
                           type="radio"
@@ -395,7 +395,7 @@ export default function CheckoutPage() {
                           Cash on Delivery (COD)
                         </span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold text-[#777777]">Pay at door</span>
+                      <span className="text-[10px] uppercase font-semibold text-[#666666]">Pay at door</span>
                     </label>
                   </div>
                 </div>
@@ -403,17 +403,17 @@ export default function CheckoutPage() {
 
               {/* Order Summary */}
               <div className="lg:col-span-5">
-                <div className="bg-[#F7F7F7] border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-5 sticky top-24">
+                <div className="bg-[#F5F5F5] border border-[#E5E5E5] rounded-2xl p-6 sm:p-7 space-y-5 sticky top-24">
                   <h3 className="text-base font-bold text-[#111111]">
                     Summary ({totalItems})
                   </h3>
 
-                  <div className="divide-y divide-[#E8E8E8] border-y border-[#E8E8E8] py-2 max-h-56 overflow-y-auto">
+                  <div className="divide-y divide-[#E5E5E5] border-y border-[#E5E5E5] py-2 max-h-56 overflow-y-auto">
                     {items.map((item) => (
                       <div key={item.packOption.id} className="py-2.5 flex justify-between text-xs">
                         <div>
                           <p className="font-semibold text-[#111111]">{item.productName}</p>
-                          <p className="text-[11px] text-[#777777]">{item.packOption.name} × {item.quantity}</p>
+                          <p className="text-[11px] text-[#666666]">{item.packOption.name} × {item.quantity}</p>
                         </div>
                         <div className="font-bold text-[#111111]">
                           {formatPrice(item.packOption.price * item.quantity)}
@@ -422,7 +422,7 @@ export default function CheckoutPage() {
                     ))}
                   </div>
 
-                  <div className="space-y-2 text-xs text-[#777777] pb-1">
+                  <div className="space-y-2 text-xs text-[#666666] pb-1">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span className="text-[#111111] font-semibold">{formatPrice(subtotal)}</span>
@@ -433,7 +433,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-baseline justify-between border-t border-[#E8E8E8] pt-3">
+                  <div className="flex items-baseline justify-between border-t border-[#E5E5E5] pt-3">
                     <span className="font-semibold text-[#111111]">Total Payable</span>
                     <span className="text-2xl font-bold text-[#111111]">
                       {formatPrice(subtotal)}
@@ -441,7 +441,7 @@ export default function CheckoutPage() {
                   </div>
 
                   {gatewayMessage && (
-                    <div className="p-3.5 bg-[#FFFFFF] border border-[#E8E8E8] rounded-xl text-xs text-[#777777] space-y-1">
+                    <div className="p-3.5 bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl text-xs text-[#666666] space-y-1">
                       <p className="font-semibold text-[#111111]">Integration Notice</p>
                       <p className="text-[11px] leading-relaxed">{gatewayMessage}</p>
                     </div>
@@ -450,7 +450,7 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#333333] transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors disabled:opacity-50"
                   >
                     <Lock className="w-3.5 h-3.5" />
                     <span>

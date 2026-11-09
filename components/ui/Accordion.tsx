@@ -24,7 +24,7 @@ export function Accordion({
   };
 
   return (
-    <div className="divide-y divide-[#E8E8E8] border-y border-[#E8E8E8]">
+    <div className="divide-y divide-[#E5E5E5] border-y border-[#E5E5E5]">
       {items.map((item) => {
         const isOpen = openId === item.id;
         return (
@@ -56,7 +56,7 @@ export function Accordion({
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-2 pb-2 text-xs sm:text-sm text-[#777777] leading-relaxed">
+                  <div className="pt-2 pb-2 text-xs sm:text-sm text-[#666666] leading-relaxed">
                     {item.content}
                   </div>
                 </motion.div>

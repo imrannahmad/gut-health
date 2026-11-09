@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ClientProviders } from "@/components/providers/ClientProviders";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const websiteFont = localFont({
+  src: "./fonts/website-font.otf",
+  variable: "--font-website",
   display: "swap",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -55,9 +48,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${manrope.variable} h-full antialiased`}
+      className={`${websiteFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#FFFFFF] text-[#111111]">
+      <body className="min-h-full flex flex-col bg-[#FFFFFF] text-[#111111]">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

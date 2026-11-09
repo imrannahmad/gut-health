@@ -34,7 +34,7 @@ export function PincodeChecker() {
   };
 
   return (
-    <div className="border border-[#E8E8E8] rounded-xl p-4 bg-[#F7F7F7]">
+    <div className="border border-[#E5E5E5] rounded-xl p-4 bg-[#F5F5F5]">
       <div className="flex items-center gap-2 text-xs font-semibold text-[#111111] mb-2">
         <Truck className="w-3.5 h-3.5 text-[#111111]" />
         <span>Estimated Delivery Check</span>
@@ -50,7 +50,7 @@ export function PincodeChecker() {
             if (status !== "idle") setStatus("idle");
           }}
           placeholder="Enter 6-digit PIN"
-          className="flex-1 bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg px-3 py-2 text-xs text-[#111111] placeholder-[#777777] focus:outline-none focus:border-[#111111]"
+          className="flex-1 bg-[#FFFFFF] border border-[#E5E5E5] rounded-lg px-3 py-2 text-xs text-[#111111] placeholder-[#666666] focus:outline-none focus:border-[#111111]"
         />
         <button
           type="submit"

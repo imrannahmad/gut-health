@@ -24,7 +24,7 @@ const articles = [
   {
     title: "The Gut-Skin Connection",
     category: "Physiology",
-    image: "/images/product-jar-hero.jpg",
+    image: "/images/gutglow-product-angle.jpg",
     excerpt: "Exploring the bi-directional communication between your digestive tract and dermal barrier equilibrium.",
     link: "/philosophy",
   },
@@ -32,12 +32,12 @@ const articles = [
 
 export function EducationJournalSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#F7F7F7] border-b border-[#E8E8E8]">
+    <section className="py-20 lg:py-28 bg-[#F5F5F5] border-b border-[#E5E5E5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-12 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div className="mb-10 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#777777] block mb-2">
+            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
               JOURNAL & EDUCATION
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
@@ -47,7 +47,7 @@ export function EducationJournalSection() {
 
           <Link
             href="/philosophy"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#333333] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#666666] transition-colors"
           >
             <span>Explore The Science</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ export function EducationJournalSection() {
         </div>
 
         {/* Mobile Swipe Indicator */}
-        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#777777] uppercase tracking-wider mb-3">
+        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
           <span>Swipe to read</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </div>
@@ -69,18 +69,18 @@ export function EducationJournalSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="shrink-0 w-[84vw] max-w-[340px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E8E8E8] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-colors group"
+              className="shrink-0 w-[84vw] max-w-[340px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-colors group"
             >
               <div>
-                <div className="relative aspect-[16/10] bg-[#F7F7F7] overflow-hidden">
+                <div className="relative aspect-[16/10] bg-[#F5F5F5] overflow-hidden">
                   <Image
                     src={article.image}
                     alt={article.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 400px"
-                    className="object-cover grayscale contrast-125 transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute top-3 left-3 bg-[#FFFFFF] px-2.5 py-1 rounded-full text-[9px] tracking-widest uppercase font-semibold text-[#111111] border border-[#E8E8E8]">
+                  <div className="absolute top-3 left-3 bg-[#FFFFFF] px-2.5 py-1 rounded text-[9px] tracking-widest uppercase font-semibold text-[#111111] border border-[#E5E5E5]">
                     {article.category}
                   </div>
                 </div>
@@ -90,7 +90,7 @@ export function EducationJournalSection() {
                     {article.title}
                   </h3>
 
-                  <p className="text-xs text-[#777777] leading-relaxed line-clamp-2">
+                  <p className="text-xs text-[#666666] leading-relaxed line-clamp-2">
                     {article.excerpt}
                   </p>
                 </div>

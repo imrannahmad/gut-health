@@ -19,15 +19,15 @@ export default function PhilosophyPage() {
 
       <main className="flex-grow">
         {/* Header */}
-        <section className="py-16 lg:py-24 bg-[#F7F7F7] border-b border-[#E8E8E8]">
+        <section className="py-16 lg:py-24 bg-[#F5F5F5] border-b border-[#E5E5E5]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#777777]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#666666]">
               PHYSIOLOGY & RESEARCH
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#111111]">
               The Science of Wellness.
             </h1>
-            <p className="text-base text-[#777777] max-w-xl mx-auto leading-relaxed">
+            <p className="text-base text-[#666666] max-w-xl mx-auto leading-relaxed">
               How gut health, cellular nutrition, and microbial balance connect to
               everyday living.
             </p>
@@ -35,17 +35,17 @@ export default function PhilosophyPage() {
         </section>
 
         {/* Chapter 1: Microbiome */}
-        <section className="py-16 lg:py-24 bg-[#FFFFFF] border-b border-[#E8E8E8]">
+        <section className="py-16 lg:py-24 bg-[#FFFFFF] border-b border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-6 space-y-4">
-                <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#777777]">
+                <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
                   01 — THE MICROBIOME
                 </span>
                 <h2 className="text-3xl font-bold text-[#111111]">
                   Short-Chain Fatty Acids
                 </h2>
-                <p className="text-sm text-[#777777] leading-relaxed">
+                <p className="text-sm text-[#666666] leading-relaxed">
                   Inside the gut, beneficial bacteria ferment prebiotic dietary
                   fibers to generate short-chain fatty acids (SCFAs), notably
                   butyrate. Butyrate feeds intestinal epithelial cells and helps
@@ -54,13 +54,13 @@ export default function PhilosophyPage() {
               </div>
 
               <div className="lg:col-span-6">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#F7F7F7] border border-[#E8E8E8]">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5]">
                   <Image
                     src="/images/product-botanicals.jpg"
                     alt="Botanical extracts"
                     fill
                     sizes="(max-width: 1024px) 100vw, 600px"
-                    className="object-cover grayscale contrast-125"
+                    className="object-cover"
                   />
                 </div>
               </div>
@@ -69,29 +69,29 @@ export default function PhilosophyPage() {
         </section>
 
         {/* Chapter 2: Gut-Skin */}
-        <section className="py-16 lg:py-24 bg-[#F7F7F7] border-b border-[#E8E8E8]">
+        <section className="py-16 lg:py-24 bg-[#F5F5F5] border-b border-[#E5E5E5]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-6 order-2 lg:order-1">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#FFFFFF] border border-[#E8E8E8]">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#FFFFFF] border border-[#E5E5E5]">
                   <Image
                     src="/images/product-lifestyle-routine.jpg"
                     alt="Daily Routine"
                     fill
                     sizes="(max-width: 1024px) 100vw, 600px"
-                    className="object-cover grayscale contrast-110"
+                    className="object-cover"
                   />
                 </div>
               </div>
 
               <div className="lg:col-span-6 space-y-4 order-1 lg:order-2">
-                <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#777777]">
+                <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
                   02 — THE AXIS
                 </span>
                 <h2 className="text-3xl font-bold text-[#111111]">
                   The Gut-Skin Axis
                 </h2>
-                <p className="text-sm text-[#777777] leading-relaxed">
+                <p className="text-sm text-[#666666] leading-relaxed">
                   The gut and skin communicate bi-directionally through immune and
                   metabolic pathways. Nurturing a balanced digestive barrier
                   supports the physiological conditions that influence skin barrier
@@ -103,7 +103,7 @@ export default function PhilosophyPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#111111] text-[#FFFFFF] text-center">
+        <section className="py-20 bg-[#171717] text-[#FFFFFF] text-center">
           <div className="max-w-xl mx-auto px-4 space-y-5">
             <h2 className="text-3xl font-bold">Discover GutGlow</h2>
             <p className="text-xs text-[#FFFFFF]/70">
@@ -112,7 +112,7 @@ export default function PhilosophyPage() {
             <div>
               <Link
                 href="/product"
-                className="inline-flex items-center gap-2 bg-[#FFFFFF] text-[#111111] px-7 py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#F7F7F7] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#FFFFFF] text-[#111111] px-7 py-3.5 rounded-lg text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#F5F5F5] transition-colors"
               >
                 <span>Shop Formula</span>
                 <ArrowRight className="w-3.5 h-3.5" />

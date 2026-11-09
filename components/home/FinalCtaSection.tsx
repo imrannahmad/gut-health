@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export function FinalCtaSection() {
   return (
-    <section className="bg-[#111111] text-[#FFFFFF] py-24 lg:py-36 selection:bg-[#FFFFFF] selection:text-[#111111]">
+    <section className="bg-[#171717] text-[#FFFFFF] py-24 lg:py-36 selection:bg-[#FFFFFF] selection:text-[#111111]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -28,7 +28,7 @@ export function FinalCtaSection() {
           <div className="pt-4">
             <Link
               href="/product"
-              className="inline-flex items-center justify-center gap-2.5 bg-[#FFFFFF] text-[#111111] hover:bg-[#F7F7F7] px-8 py-3.5 rounded-full text-xs uppercase tracking-[0.16em] font-medium transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#111111] hover:bg-[#F5F5F5] px-8 py-3.5 rounded-lg text-xs uppercase tracking-[0.14em] font-medium transition-colors"
             >
               <span>Explore GutGlow</span>
               <ArrowRight className="w-3.5 h-3.5" />
