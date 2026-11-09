@@ -30,17 +30,73 @@ export function Header() {
   const { totalItems, openDrawer: openCartDrawer } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const savedScrollY = useRef<number>(0);
 
-  // Lock body scroll when mobile menu is open
+  // Reliable mobile body scroll-lock with exact scroll position preservation
   useEffect(() => {
     if (mobileMenuOpen) {
+      // 1. Record current scroll offset before locking
+      const currentScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      savedScrollY.current = currentScrollY;
+
+      // 2. Prevent layout shift if desktop/tablet scrollbar disappears
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // 3. Lock document body in fixed position at the exact scroll offset (rock-solid on iOS Safari & Chrome)
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${currentScrollY}px`;
+      document.body.style.left = "0px";
+      document.body.style.right = "0px";
+      document.body.style.width = "100%";
       document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      document.documentElement.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      // 4. Restore original styles and exact scroll position
+      const restoreY = savedScrollY.current;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      document.documentElement.style.overflow = "";
+
+      if (typeof restoreY === "number" && restoreY > 0) {
+        window.scrollTo(0, restoreY);
+      }
     }
+
     return () => {
-      document.body.style.overflow = "unset";
+      // Cleanup on unmount
+      const restoreY = savedScrollY.current;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      document.documentElement.style.overflow = "";
+
+      if (typeof restoreY === "number" && restoreY > 0) {
+        window.scrollTo(0, restoreY);
+      }
     };
+  }, [mobileMenuOpen]);
+
+  // Automatically close mobile menu if viewport expands to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [mobileMenuOpen]);
 
   // Close mobile menu on Escape key press
@@ -228,7 +284,11 @@ export function Header() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.98 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="w-full mt-2.5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-[24px] p-3 sm:p-4 shadow-[0_16px_36px_rgba(40,30,20,0.12)] backdrop-blur-md md:hidden"
+                className="w-full mt-2.5 max-h-[calc(100dvh-84px)] overflow-y-auto overscroll-contain bg-[#F4EBDD] border border-[#E5DAC8] rounded-[24px] p-3 sm:p-4 shadow-[0_16px_36px_rgba(40,30,20,0.12)] backdrop-blur-md md:hidden"
+                style={{
+                  WebkitOverflowScrolling: "touch",
+                  overscrollBehavior: "contain",
+                }}
               >
                 {/* Navigation Links */}
                 <div className="space-y-1.5">
@@ -278,8 +338,9 @@ export function Header() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={() => setMobileMenuOpen(false)}
+            onTouchMove={(e) => e.preventDefault()}
             aria-hidden="true"
-            className="fixed inset-0 bg-black/30 backdrop-blur-xs z-30 md:hidden"
+            className="fixed inset-0 bg-black/30 backdrop-blur-xs z-30 md:hidden touch-none"
           />
         )}
       </AnimatePresence>
