@@ -88,7 +88,7 @@ export function HeroSection() {
               transition={fadeIn.transition}
               className="col-span-7 lg:col-span-7 relative flex items-end justify-end self-end h-full"
             >
-              <div className="relative w-full max-w-[680px] aspect-[736/618] self-end">
+              <div className="relative w-full max-w-[760px] aspect-[760/550] self-end">
                 <Image
                   src="/images/gutglow-hero-desktop.png"
                   alt="GutGlow Daily Wellness Formula jar on natural limestone pedestal"
@@ -153,7 +153,7 @@ export function HeroSection() {
           </div>
 
           {/* 2. PHYSICAL PRODUCT ON LIMESTONE PEDESTAL (SEAMLESS ON WHITE) */}
-          <div className="relative w-full max-w-[440px] mx-auto aspect-[650/590] select-none pt-2">
+          <div className="relative w-full max-w-[480px] mx-auto aspect-[720/520] select-none pt-2">
             <Image
               src="/images/gutglow-hero-mobile.png"
               alt="GutGlow Daily Wellness Formula on natural limestone pedestal"
