@@ -127,7 +127,7 @@ export function Header() {
   return (
     <>
       {/* Floating Header Container with refined fluid micro-gap */}
-      <div className="sticky top-0 z-50 w-full px-2 min-[360px]:px-3.5 sm:px-6 pt-1.5 sm:pt-2.5 pb-1 sm:pb-2 pointer-events-none">
+      <div className="sticky top-0 z-50 w-full px-2 min-[360px]:px-2.5 min-[400px]:px-3.5 sm:px-6 pt-1.5 sm:pt-2.5 pb-1 sm:pb-2 pointer-events-none">
         <div ref={menuRef} className="pointer-events-auto max-w-[1180px] mx-auto">
           
           {/* DESKTOP HEADER (≥ 900px): Warm Ivory Floating Pill with fluid spacing */}
@@ -208,13 +208,13 @@ export function Header() {
             </div>
           </header>
 
-          {/* MOBILE & TABLET HEADER (< 900px): Adaptive Warm Ivory Floating Pill (Enlarged & Premium) */}
-          <header className="flex min-[900px]:hidden items-center justify-between h-[58px] min-[360px]:h-[64px] sm:h-[68px] px-3 min-[360px]:px-4 sm:px-5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_8px_24px_rgba(40,30,20,0.08)] backdrop-blur-md">
+          {/* MOBILE & TABLET HEADER (< 900px): Adaptive Warm Ivory Floating Pill (All 5 Elements Fully Contained) */}
+          <header className="flex min-[900px]:hidden items-center justify-between h-[56px] min-[360px]:h-[60px] sm:h-[68px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_8px_24px_rgba(40,30,20,0.08)] backdrop-blur-md">
             
             {/* Left: Brand Logo in Deep Maroon */}
             <div className="flex items-center shrink-0">
               <Link href="/" aria-label="GutGlow Home" className="flex items-center min-h-[44px] py-1 focus:outline-none">
-                <div className="relative h-6 w-24 min-[360px]:h-7 min-[360px]:w-28 sm:h-8 sm:w-32">
+                <div className="relative h-5.5 w-[82px] min-[360px]:h-6 min-[360px]:w-[90px] min-[400px]:w-28 sm:h-7 sm:w-32">
                   <Image
                     src="/images/gutglow-logo-maroon.png"
                     alt="GutGlow"
@@ -228,56 +228,56 @@ export function Header() {
             </div>
 
             {/* Center: Black Shop Now CTA */}
-            <div className="shrink-0 px-1">
+            <div className="shrink-0 px-0.5 min-[360px]:px-1">
               <Link
                 href="/product"
-                className="inline-flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] px-3 min-[360px]:px-4 sm:px-5 py-1.5 min-[360px]:py-2 bg-[#171717] text-[#FFFFFF] rounded-full text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold uppercase tracking-[0.08em] hover:bg-[#333333] transition-colors shadow-xs whitespace-nowrap"
+                className="inline-flex items-center justify-center min-h-[30px] min-[360px]:min-h-[34px] sm:min-h-[38px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 py-1 min-[360px]:py-1.5 bg-[#171717] text-[#FFFFFF] rounded-full text-[9.5px] min-[360px]:text-[10px] sm:text-xs font-bold uppercase tracking-[0.06em] min-[360px]:tracking-[0.08em] hover:bg-[#333333] transition-colors shadow-xs whitespace-nowrap"
               >
                 Shop Now
               </Link>
             </div>
 
-            {/* Right: Account + Cart + Hamburger Toggle (All with minimum 44x44px clickable areas) */}
-            <div className="flex items-center gap-0.5 min-[360px]:gap-1 shrink-0">
-              {/* Account Link on Mobile (min 44x44px tap target) */}
+            {/* Right: Account + Cart + Hamburger Toggle (Refined fluid sizing perfectly contained inside pill) */}
+            <div className="flex items-center gap-0.5 min-[360px]:gap-0.5 min-[400px]:gap-1 shrink-0">
+              {/* Account Link on Mobile */}
               <Link
                 href="/account"
                 aria-label="My Account"
-                className={`w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none ${
+                className={`w-8.5 h-8.5 min-[360px]:w-9 min-[360px]:h-9 min-[400px]:w-10 min-[400px]:h-10 flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none ${
                   pathname === "/account" ? "text-[#54232F]" : ""
                 }`}
               >
-                <User className="w-5 h-5 min-[360px]:w-[21px] min-[360px]:h-[21px] stroke-[1.85]" />
+                <User className="w-[17px] h-[17px] min-[360px]:w-[18px] min-[360px]:h-[18px] min-[400px]:w-5 min-[400px]:h-5 stroke-[1.85]" />
               </Link>
 
-              {/* Cart Button on Mobile (min 44x44px tap target) */}
+              {/* Cart Button on Mobile */}
               <button
                 type="button"
                 onClick={openCartDrawer}
                 aria-label={`Shopping bag with ${totalItems} items`}
-                className="relative w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
+                className="relative w-8.5 h-8.5 min-[360px]:w-9 min-[360px]:h-9 min-[400px]:w-10 min-[400px]:h-10 flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
               >
-                <ShoppingBag className="w-5 h-5 min-[360px]:w-[21px] min-[360px]:h-[21px] stroke-[1.85]" />
+                <ShoppingBag className="w-[17px] h-[17px] min-[360px]:w-[18px] min-[360px]:h-[18px] min-[400px]:w-5 min-[400px]:h-5 stroke-[1.85]" />
                 {totalItems > 0 && (
-                  <span className="absolute top-1.5 right-1.5 flex items-center justify-center min-w-[15px] h-[15px] px-0.5 text-[8px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full shadow-xs">
+                  <span className="absolute top-0.5 right-0.5 min-[360px]:top-1 min-[360px]:right-1 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 text-[8px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full shadow-xs">
                     {totalItems}
                   </span>
                 )}
               </button>
 
-              {/* Mobile Menu Button (min 44x44px tap target, clearly visible icon) */}
+              {/* Mobile Menu Button (Hamburger) */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-navigation-dropdown"
-                className="w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
+                className="w-8.5 h-8.5 min-[360px]:w-9 min-[360px]:h-9 min-[400px]:w-10 min-[400px]:h-10 flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
               >
                 {mobileMenuOpen ? (
-                  <X className="w-5 h-5 min-[360px]:w-[22px] min-[360px]:h-[22px] stroke-[2.25]" />
+                  <X className="w-4.5 h-4.5 min-[360px]:w-5 min-[360px]:h-5 min-[400px]:w-[21px] min-[400px]:h-[21px] stroke-[2.25]" />
                 ) : (
-                  <Menu className="w-5 h-5 min-[360px]:w-[22px] min-[360px]:h-[22px] stroke-[2.25]" />
+                  <Menu className="w-4.5 h-4.5 min-[360px]:w-5 min-[360px]:h-5 min-[400px]:w-[21px] min-[400px]:h-[21px] stroke-[2.25]" />
                 )}
               </button>
             </div>
