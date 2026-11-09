@@ -92,16 +92,18 @@ export function HeroSection() {
           ========================================================================= */}
       <div className="block min-[900px]:hidden px-4 min-[360px]:px-5 sm:px-6 pt-1 pb-6 sm:pb-8 max-w-xl mx-auto">
         <div className="flex flex-col space-y-3 sm:space-y-4">
-          {/* 1. PRODUCT COMPOSITION (PROMINENT AT TOP, SHIFTED UP, ZERO UNNECESSARY EMPTY SPACE) */}
-          <div className="relative w-full max-w-[340px] min-[360px]:max-w-[370px] sm:max-w-[420px] mx-auto aspect-[720/623] select-none">
-            <Image
-              src="/images/gutglow-hero-mobile.webp"
-              alt="GutGlow Daily Wellness Formula jar on luxury architectural limestone countertop"
-              fill
-              priority
-              sizes="(max-width: 640px) 90vw, 420px"
-              className="object-contain object-top"
-            />
+          {/* 1. PRODUCT COMPOSITION (RIGHT-ALIGNED, NATURAL LIMESTONE PLATFORM, ZERO CROPPING) */}
+          <div className="w-full flex justify-end">
+            <div className="relative w-[90%] min-[360px]:w-[86%] sm:w-[82%] max-w-[380px] sm:max-w-[420px] aspect-[1024/682] select-none">
+              <Image
+                src="/images/gutglow-hero-mobile.webp"
+                alt="GutGlow Daily Wellness Formula jar on natural limestone platform"
+                fill
+                priority
+                sizes="(max-width: 640px) 90vw, 420px"
+                className="object-contain object-right"
+              />
+            </div>
           </div>
 
           {/* 2. EDITORIAL TYPOGRAPHY & CTA (IMMEDIATELY BELOW PRODUCT WITH TIGHT BALANCED SPACING) */}
