@@ -81,20 +81,20 @@ export function HeroSection() {
               </div>
             </motion.div>
 
-            {/* Right Column: Physical Product Grounded on Side (~55%) */}
+            {/* Right Column: Physical Product on Luxury Architectural Countertop (~55%) */}
             <motion.div
               initial={fadeIn.initial}
               animate={fadeIn.animate}
               transition={fadeIn.transition}
               className="col-span-7 lg:col-span-7 relative flex items-end justify-end self-end h-full"
             >
-              <div className="relative w-full max-w-[780px] aspect-[900/540] self-end">
+              <div className="relative w-full max-w-[840px] aspect-[1376/768] self-end">
                 <Image
-                  src="/images/gutglow-hero-desktop.png"
-                  alt="GutGlow Daily Wellness Formula jar on natural limestone pedestal"
+                  src="/images/gutglow-hero-desktop.webp"
+                  alt="GutGlow Daily Wellness Formula jar on luxury architectural limestone countertop"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 50vw, 780px"
+                  sizes="(max-width: 1024px) 50vw, 840px"
                   className="object-contain object-bottom object-right"
                 />
               </div>
@@ -114,13 +114,13 @@ export function HeroSection() {
           className="flex flex-col space-y-5"
         >
           {/* 1. PRODUCT COMPOSITION (FIRST VISUAL ELEMENT ON MOBILE ~40-45%) */}
-          <div className="relative w-full max-w-[460px] mx-auto aspect-[720/500] select-none">
+          <div className="relative w-full max-w-[420px] mx-auto aspect-[4/5] select-none">
             <Image
-              src="/images/gutglow-hero-mobile.png"
-              alt="GutGlow Daily Wellness Formula jar on natural limestone pedestal"
+              src="/images/gutglow-hero-mobile.webp"
+              alt="GutGlow Daily Wellness Formula jar on luxury architectural limestone countertop"
               fill
               priority
-              sizes="(max-width: 767px) 100vw, 460px"
+              sizes="(max-width: 767px) 100vw, 420px"
               className="object-contain object-bottom"
             />
           </div>
