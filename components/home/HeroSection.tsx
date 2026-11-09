@@ -90,65 +90,63 @@ export function HeroSection() {
       {/* =========================================================================
           MOBILE & TABLET HERO (< 900px): Clean, Upward-Shifted, Balanced Layout
           ========================================================================= */}
-      <div className="block min-[900px]:hidden px-4 min-[360px]:px-5 sm:px-6 pt-1 pb-6 sm:pb-8 max-w-xl mx-auto">
-        <div className="flex flex-col space-y-3 sm:space-y-4">
-          {/* 1. PRODUCT COMPOSITION (RIGHT-ALIGNED, NATURAL LIMESTONE PLATFORM, ZERO CROPPING) */}
-          <div className="w-full flex justify-end">
-            <div className="relative w-[90%] min-[360px]:w-[86%] sm:w-[82%] max-w-[380px] sm:max-w-[420px] aspect-[1024/682] select-none">
-              <Image
-                src="/images/gutglow-hero-mobile.webp"
-                alt="GutGlow Daily Wellness Formula jar on natural limestone platform"
-                fill
-                priority
-                sizes="(max-width: 640px) 90vw, 420px"
-                className="object-contain object-right"
-              />
-            </div>
+      <div className="block min-[900px]:hidden pt-1 pb-6 sm:pb-8 max-w-xl mx-auto overflow-hidden">
+        {/* 1. PRODUCT COMPOSITION (LARGER, FLUSH TO RIGHT SCREEN EDGE, NATURAL ARCHITECTURAL PERSPECTIVE) */}
+        <div className="w-full flex justify-end overflow-visible">
+          <div className="relative w-[96%] min-[360px]:w-[94%] sm:w-[88%] max-w-[460px] aspect-[1024/682] select-none ml-auto mr-0">
+            <Image
+              src="/images/gutglow-hero-mobile.webp"
+              alt="GutGlow Daily Wellness Formula jar on natural limestone platform"
+              fill
+              priority
+              sizes="(max-width: 640px) 95vw, 460px"
+              className="object-contain object-right"
+            />
           </div>
+        </div>
 
-          {/* 2. EDITORIAL TYPOGRAPHY & CTA (IMMEDIATELY BELOW PRODUCT WITH TIGHT BALANCED SPACING) */}
-          <div className="space-y-3 sm:space-y-3.5">
-            {/* Small Brand Eyebrow */}
-            <p className="text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#54232F] uppercase">
-              GUTGLOW · DAILY WELLNESS
-            </p>
+        {/* 2. EDITORIAL TYPOGRAPHY & CTA (WITH CLEAN HORIZONTAL MARGINS) */}
+        <div className="px-4 min-[360px]:px-5 sm:px-6 mt-2 space-y-3 sm:space-y-3.5">
+          {/* Small Brand Eyebrow */}
+          <p className="text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#54232F] uppercase">
+            GUTGLOW · DAILY WELLNESS
+          </p>
 
-            {/* Main Headline with fluid clamp typography */}
-            <h1
-              className="font-extrabold text-[#111111] tracking-[-0.03em]"
-              style={{
-                fontSize: "clamp(1.75rem, 7.5vw, 2.35rem)",
-                lineHeight: 1.05,
-              }}
+          {/* Main Headline with fluid clamp typography */}
+          <h1
+            className="font-extrabold text-[#111111] tracking-[-0.03em]"
+            style={{
+              fontSize: "clamp(1.75rem, 7.5vw, 2.35rem)",
+              lineHeight: 1.05,
+            }}
+          >
+            YOUR WELLNESS. <br />
+            STARTS WITHIN.
+          </h1>
+
+          {/* Short Supporting Description */}
+          <p className="text-xs min-[360px]:text-sm sm:text-base text-[#555555] leading-relaxed font-normal">
+            A thoughtful approach to everyday gut wellness, designed around
+            feeling better from within.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-1">
+            <Link
+              href="/product"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors shadow-sm text-center"
             >
-              YOUR WELLNESS. <br />
-              STARTS WITHIN.
-            </h1>
+              <span>DISCOVER GUTGLOW</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
 
-            {/* Short Supporting Description */}
-            <p className="text-xs min-[360px]:text-sm sm:text-base text-[#555555] leading-relaxed font-normal">
-              A thoughtful approach to everyday gut wellness, designed around
-              feeling better from within.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-1">
-              <Link
-                href="/product"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors shadow-sm text-center"
-              >
-                <span>DISCOVER GUTGLOW</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-
-              <Link
-                href="/philosophy"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors py-2 sm:py-3.5 sm:px-4 text-center"
-              >
-                <span>Our Philosophy</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+            <Link
+              href="/philosophy"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors py-2 sm:py-3.5 sm:px-4 text-center"
+            >
+              <span>Our Philosophy</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
           {/* 3. Minimal Trust Points */}
