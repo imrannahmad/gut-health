@@ -93,13 +93,13 @@ export function HeroSection() {
       <div className="block min-[900px]:hidden pt-1 pb-6 sm:pb-8 max-w-xl mx-auto overflow-hidden">
         {/* 1. PRODUCT COMPOSITION (LARGER, FLUSH TO RIGHT SCREEN EDGE, NATURAL ARCHITECTURAL PERSPECTIVE) */}
         <div className="w-full flex justify-end overflow-visible">
-          <div className="relative w-[96%] min-[360px]:w-[94%] sm:w-[88%] max-w-[460px] aspect-[1024/682] select-none ml-auto mr-0">
+          <div className="relative w-full max-w-[520px] aspect-[924/607] select-none ml-auto mr-0">
             <Image
               src="/images/gutglow-hero-mobile.webp"
               alt="GutGlow Daily Wellness Formula jar on natural limestone platform"
               fill
               priority
-              sizes="(max-width: 640px) 95vw, 460px"
+              sizes="(max-width: 640px) 100vw, 520px"
               className="object-contain object-right"
             />
           </div>
