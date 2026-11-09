@@ -119,7 +119,7 @@ export function Header() {
   return (
     <>
       {/* Floating Header Container with refined fluid micro-gap */}
-      <div className="sticky top-1 sm:top-2 z-40 w-full px-2 min-[360px]:px-3.5 sm:px-6 pt-1 sm:pt-2 pb-1 sm:pb-2 pointer-events-none">
+      <div className="sticky top-0 z-50 w-full px-2 min-[360px]:px-3.5 sm:px-6 pt-1.5 sm:pt-2.5 pb-1 sm:pb-2 pointer-events-none">
         <div ref={menuRef} className="pointer-events-auto max-w-[1180px] mx-auto">
           
           {/* DESKTOP HEADER (≥ 900px): Warm Ivory Floating Pill with fluid spacing */}

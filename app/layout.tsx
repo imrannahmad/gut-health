@@ -55,9 +55,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${websiteFont.variable} h-full antialiased`}
+      className={`${websiteFont.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#FFFFFF] text-[#111111]">
+      <body className="min-h-screen flex flex-col bg-[#FFFFFF] text-[#111111]">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
