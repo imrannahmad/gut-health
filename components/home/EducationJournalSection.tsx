@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 const articles = [
   {
@@ -35,7 +34,7 @@ export function EducationJournalSection() {
     <section className="py-14 sm:py-20 lg:py-28 bg-[#F5F5F5] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-8 sm:mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
               JOURNAL & EDUCATION
@@ -47,7 +46,7 @@ export function EducationJournalSection() {
 
           <Link
             href="/philosophy"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#666666] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors"
           >
             <span>Explore The Science</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -55,21 +54,17 @@ export function EducationJournalSection() {
         </div>
 
         {/* Mobile Swipe Indicator */}
-        <div className="sm:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
+        <div className="md:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
           <span>Swipe to read</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </div>
 
         {/* Cards: Mobile Swipeable (snap-x) + Desktop 3-col Grid */}
-        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible">
-          {articles.map((article, idx) => (
-            <motion.article
+        <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible">
+          {articles.map((article) => (
+            <article
               key={article.title}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="shrink-0 w-[84vw] max-w-[340px] snap-start sm:w-auto sm:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-colors group"
+              className="shrink-0 w-[82vw] max-w-[320px] snap-start md:w-auto md:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-all duration-200 group shadow-xs"
             >
               <div>
                 <div className="relative aspect-[16/10] bg-[#F5F5F5] overflow-hidden">
@@ -96,16 +91,16 @@ export function EducationJournalSection() {
                 </div>
               </div>
 
-              <div className="px-6 pb-6 pt-2 mt-auto">
+              <div className="p-6 pt-0 mt-auto">
                 <Link
                   href={article.link}
-                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] group-hover:translate-x-1 transition-transform"
+                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors group/link"
                 >
                   <span>Read Article</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
                 </Link>
               </div>
-            </motion.article>
+            </article>
           ))}
         </div>
       </div>

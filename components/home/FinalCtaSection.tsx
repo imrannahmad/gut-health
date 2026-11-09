@@ -9,13 +9,7 @@ export function FinalCtaSection() {
   return (
     <section className="bg-[#171717] text-[#FFFFFF] py-16 sm:py-24 lg:py-36 selection:bg-[#FFFFFF] selection:text-[#111111] overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 sm:space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="space-y-4 sm:space-y-6"
-        >
+        <div className="space-y-4 sm:space-y-6">
           <h2
             className="font-bold tracking-tight text-[#FFFFFF]"
             style={{
@@ -40,7 +34,7 @@ export function FinalCtaSection() {
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -12,13 +12,7 @@ export function BrandIntroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left: Large Editorial Product & Ritual Photography */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-6 relative"
-          >
+          <div className="lg:col-span-6 relative">
             <div className="relative aspect-[4/3.6] sm:aspect-[4/3.4] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#FAF6F0] border border-[#EADBCA] shadow-[0_16px_40px_rgba(40,30,20,0.06)]">
               <Image
                 src="/images/philosophy-ritual.webp"
@@ -37,16 +31,10 @@ export function BrandIntroSection() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right: Refined Brand Story & Value Pillars */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="lg:col-span-6 space-y-6 lg:pl-2"
-          >
+          <div className="lg:col-span-6 space-y-6 lg:pl-2">
             {/* Eyebrow Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4EBDD] rounded-full border border-[#E5DAC8]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#54232F]" />
@@ -107,7 +95,7 @@ export function BrandIntroSection() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

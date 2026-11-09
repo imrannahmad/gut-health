@@ -4,37 +4,20 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 
 export function HeroSection() {
-  const shouldReduceMotion = useReducedMotion();
-
-  const fadeIn = {
-    initial: shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 },
-    animate: { opacity: 1, y: 0 },
-    transition: {
-      duration: shouldReduceMotion ? 0 : 0.6,
-      ease: "easeOut" as const,
-    },
-  };
-
   return (
     <section className="relative w-full overflow-hidden bg-[#FFFFFF] border-b border-[#E8E8E8]">
       
       {/* =========================================================================
-          DESKTOP HERO (≥ 900px): Two-Column Editorial Layout Grounded on Pure White
+          DESKTOP HERO (≥ 900px): Balanced Editorial Layout with Prominent Product
           ========================================================================= */}
       <div className="hidden min-[900px]:block relative w-full overflow-hidden bg-[#FFFFFF]">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-12 gap-6 lg:gap-10 xl:gap-12 min-h-[540px] lg:min-h-[640px] items-stretch">
+          <div className="grid grid-cols-12 gap-8 lg:gap-12 min-h-[520px] lg:min-h-[580px] xl:min-h-[620px] items-center">
             
-            {/* Left Column: Brand Story (~45%) */}
-            <motion.div
-              initial={fadeIn.initial}
-              animate={fadeIn.animate}
-              transition={fadeIn.transition}
-              className="col-span-5 lg:col-span-5 min-w-0 flex flex-col justify-center py-10 lg:py-16 space-y-5 lg:space-y-7 z-10"
-            >
+            {/* Left Column: Brand Story (~45-48%) */}
+            <div className="col-span-6 lg:col-span-5 min-w-0 flex flex-col justify-center py-8 lg:py-12 space-y-5 lg:space-y-6 z-10">
               {/* Eyebrow in Deep Maroon */}
               <p className="text-xs lg:text-[13px] font-bold tracking-[0.22em] text-[#54232F] uppercase">
                 GUTGLOW · DAILY WELLNESS
@@ -44,8 +27,8 @@ export function HeroSection() {
               <h1
                 className="font-extrabold text-[#111111] tracking-[-0.03em]"
                 style={{
-                  fontSize: "clamp(2.25rem, 4.2vw, 4.25rem)",
-                  lineHeight: 0.98,
+                  fontSize: "clamp(2.35rem, 4.4vw, 4.25rem)",
+                  lineHeight: 1.0,
                 }}
               >
                 YOUR WELLNESS. <br />
@@ -59,7 +42,7 @@ export function HeroSection() {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-2">
+              <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-1">
                 <Link
                   href="/product"
                   className="inline-flex items-center justify-center gap-2.5 bg-[#111111] text-[#FFFFFF] px-6 lg:px-8 py-3.5 lg:py-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors duration-200 shadow-sm whitespace-nowrap"
@@ -85,54 +68,44 @@ export function HeroSection() {
                 <span className="text-[#CCCCCC] select-none">·</span>
                 <span>Quality Focused</span>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Right Column: Physical Product on Luxury Architectural Countertop (~55%) */}
-            <motion.div
-              initial={fadeIn.initial}
-              animate={fadeIn.animate}
-              transition={fadeIn.transition}
-              className="col-span-7 lg:col-span-7 relative flex items-end justify-end self-end h-full"
-            >
-              <div className="relative w-full max-w-[840px] aspect-[1376/768] self-end">
+            {/* Right Column: Physical Product on Luxury Architectural Countertop (~52-55%) */}
+            <div className="col-span-6 lg:col-span-7 relative flex items-center justify-center lg:justify-end h-full py-4 lg:py-6">
+              <div className="relative w-full max-w-[620px] lg:max-w-[700px] xl:max-w-[760px] aspect-[836/638]">
                 <Image
                   src="/images/gutglow-hero-desktop.webp"
                   alt="GutGlow Daily Wellness Formula jar on luxury architectural limestone countertop"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 55vw, 840px"
-                  className="object-contain object-bottom object-right"
+                  sizes="(max-width: 1024px) 50vw, 760px"
+                  className="object-contain object-center lg:object-right"
                 />
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          MOBILE & TABLET HERO (< 900px): Product FIRST (Top), Followed by Headline & CTAs
+          MOBILE & TABLET HERO (< 900px): Clean, Upward-Shifted, Balanced Layout
           ========================================================================= */}
-      <div className="block min-[900px]:hidden px-4 min-[360px]:px-5 sm:px-6 pt-2 pb-8 sm:pb-12 max-w-xl mx-auto">
-        <motion.div
-          initial={fadeIn.initial}
-          animate={fadeIn.animate}
-          transition={fadeIn.transition}
-          className="flex flex-col space-y-5"
-        >
-          {/* 1. PRODUCT COMPOSITION (FIRST VISUAL ELEMENT ON MOBILE ~40-45%) */}
-          <div className="relative w-full max-w-[360px] sm:max-w-[420px] mx-auto aspect-[4/5] select-none">
+      <div className="block min-[900px]:hidden px-4 min-[360px]:px-5 sm:px-6 pt-1 pb-6 sm:pb-8 max-w-xl mx-auto">
+        <div className="flex flex-col space-y-3 sm:space-y-4">
+          {/* 1. PRODUCT COMPOSITION (PROMINENT AT TOP, SHIFTED UP, ZERO UNNECESSARY EMPTY SPACE) */}
+          <div className="relative w-full max-w-[340px] min-[360px]:max-w-[370px] sm:max-w-[420px] mx-auto aspect-[720/623] select-none">
             <Image
               src="/images/gutglow-hero-mobile.webp"
               alt="GutGlow Daily Wellness Formula jar on luxury architectural limestone countertop"
               fill
               priority
               sizes="(max-width: 640px) 90vw, 420px"
-              className="object-contain object-bottom"
+              className="object-contain object-top"
             />
           </div>
 
-          {/* 2. EDITORIAL TYPOGRAPHY & CTA (BELOW PRODUCT) */}
-          <div className="space-y-3.5 sm:space-y-4">
+          {/* 2. EDITORIAL TYPOGRAPHY & CTA (IMMEDIATELY BELOW PRODUCT WITH TIGHT BALANCED SPACING) */}
+          <div className="space-y-3 sm:space-y-3.5">
             {/* Small Brand Eyebrow */}
             <p className="text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#54232F] uppercase">
               GUTGLOW · DAILY WELLNESS
@@ -157,7 +130,7 @@ export function HeroSection() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-1">
               <Link
                 href="/product"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors shadow-sm text-center"
@@ -177,14 +150,14 @@ export function HeroSection() {
           </div>
 
           {/* 3. Minimal Trust Points */}
-          <div className="flex flex-wrap items-center justify-center gap-x-2.5 min-[360px]:gap-x-3 gap-y-1 pt-4 border-t border-[#E8E8E8] text-[9px] min-[360px]:text-[10px] sm:text-[11px] text-[#666666] tracking-wider uppercase font-semibold text-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 min-[360px]:gap-x-3 gap-y-1 pt-3 border-t border-[#E8E8E8] text-[9px] min-[360px]:text-[10px] sm:text-[11px] text-[#666666] tracking-wider uppercase font-semibold text-center">
             <span>Thoughtful Wellness</span>
             <span className="text-[#CCCCCC] select-none">·</span>
             <span>Transparent Information</span>
             <span className="text-[#CCCCCC] select-none">·</span>
             <span>Quality Focused</span>
           </div>
-        </motion.div>
+        </div>
       </div>
 
     </section>

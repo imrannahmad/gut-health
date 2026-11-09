@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 export function CustomerFeedbackSection() {
   return (
@@ -18,13 +17,7 @@ export function CustomerFeedbackSection() {
         </h2>
 
         {/* Minimal Editorial Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="border border-[#E5E5E5] rounded-xl p-8 sm:p-12 bg-[#F5F5F5] max-w-xl mx-auto space-y-5"
-        >
+        <div className="border border-[#E5E5E5] rounded-xl p-6 sm:p-10 lg:p-12 bg-[#F5F5F5] max-w-xl mx-auto space-y-5 shadow-xs">
           <p className="text-xs sm:text-sm text-[#666666] leading-relaxed max-w-md mx-auto">
             We do not publish fabricated reviews or synthetic star ratings.
             Verified customer feedback from our founding cohort will be published
@@ -40,7 +33,7 @@ export function CustomerFeedbackSection() {
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
