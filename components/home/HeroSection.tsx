@@ -88,13 +88,13 @@ export function HeroSection() {
               transition={fadeIn.transition}
               className="col-span-7 lg:col-span-7 relative flex items-end justify-end self-end h-full"
             >
-              <div className="relative w-full max-w-[760px] aspect-[760/550] self-end">
+              <div className="relative w-full max-w-[780px] aspect-[900/540] self-end">
                 <Image
                   src="/images/gutglow-hero-desktop.png"
                   alt="GutGlow Daily Wellness Formula jar on natural limestone pedestal"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 50vw, 680px"
+                  sizes="(max-width: 1024px) 50vw, 780px"
                   className="object-contain object-bottom object-right"
                 />
               </div>
@@ -104,18 +104,30 @@ export function HeroSection() {
       </div>
 
       {/* =========================================================================
-          MOBILE HERO (< 768px): Text FIRST, Grounded Product Arrangement BELOW
+          MOBILE HERO (< 768px): Product FIRST (Top), Followed by Headline & CTAs
           ========================================================================= */}
-      <div className="block md:hidden px-5 pt-6 pb-8">
+      <div className="block md:hidden px-5 sm:px-6 pt-2 pb-8">
         <motion.div
           initial={fadeIn.initial}
           animate={fadeIn.animate}
           transition={fadeIn.transition}
-          className="flex flex-col space-y-6"
+          className="flex flex-col space-y-5"
         >
-          {/* 1. EDITORIAL TYPOGRAPHY & CTA (ON TOP) */}
+          {/* 1. PRODUCT COMPOSITION (FIRST VISUAL ELEMENT ON MOBILE ~40-45%) */}
+          <div className="relative w-full max-w-[460px] mx-auto aspect-[720/500] select-none">
+            <Image
+              src="/images/gutglow-hero-mobile.png"
+              alt="GutGlow Daily Wellness Formula jar on natural limestone pedestal"
+              fill
+              priority
+              sizes="(max-width: 767px) 100vw, 460px"
+              className="object-contain object-bottom"
+            />
+          </div>
+
+          {/* 2. EDITORIAL TYPOGRAPHY & CTA (BELOW PRODUCT) */}
           <div className="space-y-4">
-            {/* Eyebrow */}
+            {/* Small Brand Eyebrow */}
             <p className="text-[11px] font-bold tracking-[0.2em] text-[#54232F] uppercase">
               GUTGLOW · DAILY WELLNESS
             </p>
@@ -126,7 +138,7 @@ export function HeroSection() {
               STARTS WITHIN.
             </h1>
 
-            {/* Supporting Description */}
+            {/* Short Supporting Description */}
             <p className="text-sm text-[#555555] leading-relaxed font-normal">
               A thoughtful approach to everyday gut wellness, designed around
               feeling better from within.
@@ -150,18 +162,6 @@ export function HeroSection() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
-
-          {/* 2. PHYSICAL PRODUCT ON LIMESTONE PEDESTAL (SEAMLESS ON WHITE) */}
-          <div className="relative w-full max-w-[480px] mx-auto aspect-[720/520] select-none pt-2">
-            <Image
-              src="/images/gutglow-hero-mobile.png"
-              alt="GutGlow Daily Wellness Formula on natural limestone pedestal"
-              fill
-              priority
-              sizes="(max-width: 767px) 100vw, 440px"
-              className="object-contain object-bottom"
-            />
           </div>
 
           {/* 3. Minimal Trust Points */}
