@@ -8,9 +8,9 @@ import { motion } from "framer-motion";
 
 export function BrandIntroSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E8E8E8]">
+    <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E8E8E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left: Large Editorial Product & Ritual Photography */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -30,9 +30,9 @@ export function BrandIntroSection() {
               />
 
               {/* Floating Luxury Detail Pill */}
-              <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 px-3.5 py-2 sm:px-4 sm:py-2.5 bg-[#FFFFFF]/95 backdrop-blur-md rounded-full shadow-[0_6px_20px_rgba(0,0,0,0.08)] border border-[#E8E8E8] flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-[#54232F]" />
-                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-[#171717]">
+              <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 max-w-[calc(100%-1.5rem)] px-3 py-1.5 sm:px-4 sm:py-2.5 bg-[#FFFFFF]/95 backdrop-blur-md rounded-full shadow-[0_6px_20px_rgba(0,0,0,0.08)] border border-[#E8E8E8] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#54232F] shrink-0" />
+                <span className="text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.16em] text-[#171717] truncate">
                   Daily Ritual · Targeted Microbiome Care
                 </span>
               </div>

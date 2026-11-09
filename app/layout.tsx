@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ClientProviders } from "@/components/providers/ClientProviders";
@@ -8,6 +8,13 @@ const websiteFont = localFont({
   variable: "--font-website",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#54232F",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gutglow.com"),

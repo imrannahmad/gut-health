@@ -7,13 +7,13 @@ import { motion } from "framer-motion";
 
 export function CustomerFeedbackSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5]">
+    <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Section Heading */}
         <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
           VERIFIED FEEDBACK
         </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111] mb-6">
+        <h2 className="text-2xl min-[360px]:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111] mb-6">
           Real Experiences. Real Voices.
         </h2>
 

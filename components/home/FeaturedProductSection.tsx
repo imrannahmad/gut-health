@@ -34,19 +34,19 @@ export function FeaturedProductSection() {
   };
 
   return (
-    <section id="product-section" className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5]">
+    <section id="product-section" className="py-14 sm:py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-10 sm:mb-16">
+        <div className="mb-8 sm:mb-16">
           <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             FLAGSHIP PRODUCT
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
+          <h2 className="text-2xl min-[360px]:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
             Meet GutGlow.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           {/* Left Column: Large Product Image + Clean Selector */}
           <div className="lg:col-span-7 space-y-4">
             <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5]">
@@ -61,7 +61,7 @@ export function FeaturedProductSection() {
             </div>
 
             {/* Thumbnails */}
-            <div className="grid grid-cols-5 gap-2 sm:gap-3">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
               {PRODUCT_CONFIG.images.map((img, idx) => (
                 <button
                   key={idx}
@@ -92,14 +92,14 @@ export function FeaturedProductSection() {
               <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
                 {PRODUCT_CONFIG.category}
               </p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-[#111111] mt-1">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#111111] mt-1">
                 {PRODUCT_CONFIG.name}
               </h3>
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 pb-4 border-b border-[#E5E5E5]">
-              <span className="text-3xl font-bold text-[#111111]">
+            <div className="flex flex-wrap items-baseline gap-2 sm:gap-3 pb-4 border-b border-[#E5E5E5]">
+              <span className="text-2xl sm:text-3xl font-bold text-[#111111]">
                 {formatPrice(selectedPack.price)}
               </span>
               {selectedPack.compareAtPrice && (
@@ -107,7 +107,7 @@ export function FeaturedProductSection() {
                   {formatPrice(selectedPack.compareAtPrice)}
                 </span>
               )}
-              <span className="text-xs text-[#666666] uppercase tracking-wider font-medium ml-auto">
+              <span className="text-[11px] sm:text-xs text-[#666666] uppercase tracking-wider font-medium sm:ml-auto w-full sm:w-auto mt-0.5 sm:mt-0">
                 Free Express Delivery
               </span>
             </div>

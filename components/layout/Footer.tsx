@@ -24,11 +24,11 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#FFFFFF] text-[#111111] pt-16 pb-12 border-t border-[#E5E5E5]">
+    <footer className="bg-[#FFFFFF] text-[#111111] pt-12 sm:pt-16 pb-10 sm:pb-12 border-t border-[#E5E5E5] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12 pb-16 border-b border-[#E5E5E5]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 pb-12 sm:pb-16 border-b border-[#E5E5E5]">
           {/* Brand Info */}
-          <div className="md:col-span-5 space-y-4">
+          <div className="sm:col-span-2 md:col-span-5 space-y-4">
             <Link href="/" className="inline-block relative">
               <div className="relative h-7 w-28 sm:h-8 sm:w-32">
                 <Image
@@ -47,7 +47,7 @@ export function Footer() {
           </div>
 
           {/* Navigation Links */}
-          <div className="md:col-span-2 space-y-3">
+          <div className="space-y-3 md:col-span-2">
             <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-[#111111]">
               Navigation
             </p>
@@ -130,7 +130,7 @@ export function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div className="md:col-span-3 space-y-3">
+          <div className="sm:col-span-2 md:col-span-3 space-y-3">
             <p className="text-[11px] uppercase tracking-[0.16em] font-semibold text-[#111111]">
               Newsletter
             </p>

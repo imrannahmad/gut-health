@@ -52,14 +52,14 @@ const faqItems = [
 
 export function HomeFaqSection() {
   return (
-    <section className="py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5]">
+    <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-12 text-center">
+        <div className="mb-8 sm:mb-12 text-center">
           <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             QUESTIONS & ANSWERS
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
+          <h2 className="text-2xl min-[360px]:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
             Common Inquiries.
           </h2>
         </div>
