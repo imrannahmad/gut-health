@@ -32,59 +32,67 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
   const savedScrollY = useRef<number>(0);
 
-  // Reliable mobile body scroll-lock with exact scroll position preservation
+  // Non-destructive mobile scroll lock: prevents background scroll while preserving sticky header & scroll position
   useEffect(() => {
-    if (mobileMenuOpen) {
-      // 1. Record current scroll offset before locking
-      const currentScrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      savedScrollY.current = currentScrollY;
+    if (!mobileMenuOpen) return;
 
-      // 2. Prevent layout shift if desktop/tablet scrollbar disappears
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    let touchStartY = 0;
 
-      // 3. Lock document body in fixed position at the exact scroll offset (rock-solid on iOS Safari & Chrome)
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${currentScrollY}px`;
-      document.body.style.left = "0px";
-      document.body.style.right = "0px";
-      document.body.style.width = "100%";
-      document.body.style.overflow = "hidden";
-      if (scrollbarWidth > 0) {
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
       }
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      // 4. Restore original styles and exact scroll position
-      const restoreY = savedScrollY.current;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-      document.documentElement.style.overflow = "";
+    };
 
-      if (typeof restoreY === "number" && restoreY > 0) {
-        window.scrollTo(0, restoreY);
+    const handleTouchMove = (e: TouchEvent) => {
+      const menuEl = document.getElementById("mobile-navigation-dropdown");
+      if (menuEl && menuEl.contains(e.target as Node)) {
+        if (e.touches && e.touches.length > 0) {
+          const currentY = e.touches[0].clientY;
+          const deltaY = currentY - touchStartY;
+          const isAtTop = menuEl.scrollTop <= 0;
+          const isAtBottom =
+            menuEl.scrollTop + menuEl.clientHeight >= menuEl.scrollHeight - 1;
+
+          // Prevent rubber-banding from bubbling up to document
+          if ((isAtTop && deltaY > 0) || (isAtBottom && deltaY < 0)) {
+            if (e.cancelable) e.preventDefault();
+          }
+        }
+        return;
       }
-    }
+
+      // Touch outside menu (e.g. backdrop, header) -> block background scroll
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      const menuEl = document.getElementById("mobile-navigation-dropdown");
+      if (menuEl && menuEl.contains(e.target as Node)) {
+        return;
+      }
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    const origHtmlOverscroll = document.documentElement.style.overscrollBehavior;
+    const origBodyOverscroll = document.body.style.overscrollBehavior;
+    document.documentElement.style.overscrollBehavior = "none";
+    document.body.style.overscrollBehavior = "none";
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      // Cleanup on unmount
-      const restoreY = savedScrollY.current;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-      document.documentElement.style.overflow = "";
-
-      if (typeof restoreY === "number" && restoreY > 0) {
-        window.scrollTo(0, restoreY);
-      }
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("wheel", handleWheel);
+      document.documentElement.style.overscrollBehavior = origHtmlOverscroll;
+      document.body.style.overscrollBehavior = origBodyOverscroll;
     };
   }, [mobileMenuOpen]);
 
@@ -200,18 +208,18 @@ export function Header() {
             </div>
           </header>
 
-          {/* MOBILE & TABLET HEADER (< 900px): Adaptive Warm Ivory Floating Pill */}
-          <header className="flex min-[900px]:hidden items-center justify-between h-[52px] min-[360px]:h-[58px] sm:h-[62px] px-2.5 min-[360px]:px-3.5 sm:px-5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_6px_20px_rgba(40,30,20,0.06)] backdrop-blur-md">
+          {/* MOBILE & TABLET HEADER (< 900px): Adaptive Warm Ivory Floating Pill (Enlarged & Premium) */}
+          <header className="flex min-[900px]:hidden items-center justify-between h-[58px] min-[360px]:h-[64px] sm:h-[68px] px-3 min-[360px]:px-4 sm:px-5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_8px_24px_rgba(40,30,20,0.08)] backdrop-blur-md">
             
             {/* Left: Brand Logo in Deep Maroon */}
             <div className="flex items-center shrink-0">
-              <Link href="/" className="inline-block relative focus:outline-none">
-                <div className="relative h-5 w-20 min-[360px]:h-6 min-[360px]:w-24 sm:h-7 sm:w-28">
+              <Link href="/" aria-label="GutGlow Home" className="flex items-center min-h-[44px] py-1 focus:outline-none">
+                <div className="relative h-6 w-24 min-[360px]:h-7 min-[360px]:w-28 sm:h-8 sm:w-32">
                   <Image
                     src="/images/gutglow-logo-maroon.png"
                     alt="GutGlow"
                     fill
-                    sizes="(max-width: 640px) 96px, 112px"
+                    sizes="(max-width: 640px) 112px, 128px"
                     className="object-contain object-left"
                     priority
                   />
@@ -223,74 +231,74 @@ export function Header() {
             <div className="shrink-0 px-1">
               <Link
                 href="/product"
-                className="inline-flex items-center justify-center bg-[#171717] text-[#FFFFFF] px-2.5 min-[360px]:px-3.5 sm:px-4 py-1 min-[360px]:py-1.5 rounded-full text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs whitespace-nowrap"
+                className="inline-flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] px-3 min-[360px]:px-4 sm:px-5 py-1.5 min-[360px]:py-2 bg-[#171717] text-[#FFFFFF] rounded-full text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold uppercase tracking-[0.08em] hover:bg-[#333333] transition-colors shadow-xs whitespace-nowrap"
               >
                 Shop Now
               </Link>
             </div>
 
-            {/* Right: Account + Cart + Hamburger Toggle */}
+            {/* Right: Account + Cart + Hamburger Toggle (All with minimum 44x44px clickable areas) */}
             <div className="flex items-center gap-0.5 min-[360px]:gap-1 shrink-0">
-              {/* Account Link on Mobile */}
+              {/* Account Link on Mobile (min 44x44px tap target) */}
               <Link
                 href="/account"
                 aria-label="My Account"
-                className={`p-1.5 sm:p-2 text-[#171717] hover:bg-[#EADBCA] transition-colors rounded-full focus:outline-none ${
+                className={`w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none ${
                   pathname === "/account" ? "text-[#54232F]" : ""
                 }`}
               >
-                <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.75]" />
+                <User className="w-5 h-5 min-[360px]:w-[21px] min-[360px]:h-[21px] stroke-[1.85]" />
               </Link>
 
-              {/* Cart Button on Mobile */}
+              {/* Cart Button on Mobile (min 44x44px tap target) */}
               <button
                 type="button"
                 onClick={openCartDrawer}
                 aria-label={`Shopping bag with ${totalItems} items`}
-                className="relative p-1.5 sm:p-2 text-[#171717] hover:bg-[#EADBCA] transition-colors rounded-full focus:outline-none"
+                className="relative w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
               >
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.75]" />
+                <ShoppingBag className="w-5 h-5 min-[360px]:w-[21px] min-[360px]:h-[21px] stroke-[1.85]" />
                 {totalItems > 0 && (
-                  <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 flex items-center justify-center min-w-[13px] h-[13px] min-[360px]:min-w-[14px] min-[360px]:h-[14px] sm:min-w-[15px] sm:h-[15px] px-0.5 text-[7px] min-[360px]:text-[8px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full">
+                  <span className="absolute top-1.5 right-1.5 flex items-center justify-center min-w-[15px] h-[15px] px-0.5 text-[8px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full shadow-xs">
                     {totalItems}
                   </span>
                 )}
               </button>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Button (min 44x44px tap target, clearly visible icon) */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-navigation-dropdown"
-                className="p-1.5 sm:p-2 text-[#171717] hover:bg-[#EADBCA] transition-colors rounded-full focus:outline-none"
+                className="w-10 h-10 min-[360px]:w-11 min-[360px]:h-11 min-w-[40px] min-[360px]:min-w-[44px] flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none"
               >
                 {mobileMenuOpen ? (
-                  <X className="w-4 h-4 min-[360px]:w-5 min-[360px]:h-5 stroke-[2]" />
+                  <X className="w-5 h-5 min-[360px]:w-[22px] min-[360px]:h-[22px] stroke-[2.25]" />
                 ) : (
-                  <Menu className="w-4 h-4 min-[360px]:w-5 min-[360px]:h-5 stroke-[2]" />
+                  <Menu className="w-5 h-5 min-[360px]:w-[22px] min-[360px]:h-[22px] stroke-[2.25]" />
                 )}
               </button>
             </div>
           </header>
 
-          {/* MOBILE EXPANDED NAVIGATION MENU DROPDOWN (Warm Ivory Theme) */}
+          {/* MOBILE EXPANDED NAVIGATION MENU DROPDOWN (Warm Ivory Theme, crisp, above backdrop) */}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
                 id="mobile-navigation-dropdown"
-                initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="w-full mt-2 max-h-[calc(100dvh-76px)] overflow-y-auto overscroll-contain bg-[#F4EBDD] border border-[#E5DAC8] rounded-[24px] p-3 sm:p-4 shadow-[0_16px_36px_rgba(40,30,20,0.12)] backdrop-blur-md min-[900px]:hidden"
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="relative z-50 w-full mt-2 max-h-[calc(100dvh-84px)] min-[360px]:max-h-[calc(100dvh-92px)] overflow-y-auto overscroll-contain bg-[#F4EBDD] border border-[#E5DAC8] rounded-[26px] p-3.5 sm:p-5 shadow-[0_20px_40px_rgba(40,30,20,0.14)] backdrop-blur-md min-[900px]:hidden"
                 style={{
                   WebkitOverflowScrolling: "touch",
                   overscrollBehavior: "contain",
                 }}
               >
-                {/* Navigation Links */}
+                {/* Navigation Links (min 44px tap target each) */}
                 <div className="space-y-1 sm:space-y-1.5">
                   {mobileNavLinks.map((link) => {
                     const isActive = pathname === link.href;
@@ -299,10 +307,10 @@ export function Header() {
                         key={link.href}
                         href={link.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`block px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-colors ${
+                        className={`flex items-center min-h-[44px] px-4 sm:px-5 py-3 rounded-xl text-xs min-[360px]:text-[13px] sm:text-sm font-semibold tracking-wide transition-colors ${
                           isActive
                             ? "bg-[#E5D8C5] text-[#54232F]"
-                            : "text-[#171717]/80 hover:text-[#171717] hover:bg-[#EADBCA]"
+                            : "text-[#171717]/85 hover:text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD]"
                         }`}
                       >
                         {link.label}
@@ -312,11 +320,11 @@ export function Header() {
                 </div>
 
                 {/* Bottom Prominent Shop GutGlow CTA */}
-                <div className="pt-3 mt-3 border-t border-[#E5DAC8]">
+                <div className="pt-3.5 mt-3.5 border-t border-[#E5DAC8]">
                   <Link
                     href="/product"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center gap-2 bg-[#171717] text-[#FFFFFF] py-3 sm:py-3.5 px-6 rounded-full text-xs uppercase tracking-wider font-bold hover:bg-[#333333] transition-colors shadow-sm text-center"
+                    className="w-full min-h-[46px] flex items-center justify-center gap-2 bg-[#171717] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs uppercase tracking-wider font-bold hover:bg-[#333333] transition-colors shadow-sm text-center"
                   >
                     <span>Shop GutGlow</span>
                     <ArrowRight className="w-4 h-4" />
@@ -338,9 +346,8 @@ export function Header() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={() => setMobileMenuOpen(false)}
-            onTouchMove={(e) => e.preventDefault()}
             aria-hidden="true"
-            className="fixed inset-0 bg-black/30 backdrop-blur-xs z-30 min-[900px]:hidden touch-none"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 min-[900px]:hidden touch-none"
           />
         )}
       </AnimatePresence>
