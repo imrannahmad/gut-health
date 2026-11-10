@@ -8,9 +8,6 @@ import { FeaturedProductSection } from "@/components/home/FeaturedProductSection
 import { WhyGutGlowSection } from "@/components/home/WhyGutGlowSection";
 import { OurApproachSection } from "@/components/home/OurApproachSection";
 import { EducationJournalSection } from "@/components/home/EducationJournalSection";
-import { CustomerFeedbackSection } from "@/components/home/CustomerFeedbackSection";
-import { HomeFaqSection } from "@/components/home/HomeFaqSection";
-import { FinalCtaSection } from "@/components/home/FinalCtaSection";
 
 export default function HomePage() {
   return (
@@ -25,9 +22,6 @@ export default function HomePage() {
         <WhyGutGlowSection />
         <OurApproachSection />
         <EducationJournalSection />
-        <CustomerFeedbackSection />
-        <HomeFaqSection />
-        <FinalCtaSection />
       </main>
       <Footer />
     </div>
