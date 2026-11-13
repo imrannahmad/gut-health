@@ -1,14 +1,23 @@
 # GUTGLOW — BACKEND & ADMIN PANEL DEVELOPMENT MASTER CHECKLIST
 
 **Project:** GutGlow D2C E-Commerce Platform  
-**Document Version:** 2.2.0 (Confirmed Partial COD & Prepaid Payment Architecture)  
+**Document Version:** 2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)  
 **Target Architecture:** Next.js 16.4.5 (App Router) · React 19 · Firebase (Firestore, Auth, Storage) · Shiprocket · Fastrr  
 **Strict Completion Rule:** No phase is marked complete based solely on code generation. A phase is officially complete ONLY when all phase-specific automated test suites and manual verification tests execute with zero errors.  
 
 ---
 
-## REVISION CHANGE LOG (v2.2.0 Payment Architecture Update)
+## REVISION CHANGE LOG
 
+### v2.3.0 (Final Pre-Build Technical Audit Corrections)
+- **Phased Firebase Setup**: Phase 01 now creates **ONLY `gutglow-development`** and configures the Firebase Local Emulator Suite. Creation of `gutglow-production` and Vercel production secrets configuration are strictly **deferred to Phase 18**.
+- **Permanent Region Approval Gate**: Clarified that Firestore locations are permanent and cannot be altered. Cloud database provisioning in Phase 02 remains blocked until explicit user written approval for `asia-south1` (Mumbai).
+- **Fastrr Checkout Initiation Handshake**: Added tasks in Phase 17 for `POST /api/v1/checkout/fastrr/initiate` with 15-minute stock reservation holds in `inventoryReservations`.
+- **Sequential vs Sharded Counter Tasks**: Clarified Task 10.1 single-document transaction for strict sequential orders vs distributed shards for flash sale uniqueness.
+- **Courier Remittance Reconciliation**: Added specific tasks in Phase 15 and 16 for matching Shiprocket Remittance Advice (CRN/UTR) to reconcile balances from `collected` to `remitted`.
+- **Safe Health-Check Version**: Updated Task 1.9 to assert `{ status: "healthy", version: "2.3.0" }`.
+
+### v2.2.0 (Confirmed Partial COD & Prepaid Payment Architecture)
 - **Confirmed Payment Modes**: Eliminated generic/full COD. All payment tasks now strictly reflect **Full Prepaid** and **Partial COD** (online advance + remaining balance on delivery).
 - **Payment & Balance Separation**: Added tasks across Phase 02, 10, 15, and 16 tracking `advancePaymentStatus` and `balanceCollectionStatus` independently.
 - **Partial COD Fulfillment Gate**: Phase 10 now enforces that online advance payment must be verified before an order moves to warehouse fulfillment.
@@ -18,25 +27,24 @@
 
 ---
 
-## PHASE 01 — Firebase Project Creation & Multi-Environment Setup
+## PHASE 01 — Firebase Project Creation & Development Environment Setup
 
 - [ ] **Task 1.1 (USER APPROVAL GATE)**: Verify user has provided explicit written approval to proceed with region **`asia-south1` (Mumbai, India)**, acknowledging that Firestore database locations cannot be altered after creation.
 - [ ] **Task 1.2**: Create Firebase Project `gutglow-development` in Google Cloud / Firebase Console.
-- [ ] **Task 1.3**: Create Firebase Project `gutglow-production` in Google Cloud / Firebase Console.
-- [ ] **Task 1.4**: Register Web Apps in both projects and extract Client SDK configuration objects.
-- [ ] **Task 1.5**: Set up Firebase Local Emulator Suite (`firebase-tools`) for local development (Auth on port 9099, Firestore on port 8080) so local development requires zero cloud credentials.
-- [ ] **Task 1.6**: Configure production secrets (`FIREBASE_ADMIN_PROJECT_ID`, `FIREBASE_ADMIN_CLIENT_EMAIL`, `FIREBASE_ADMIN_PRIVATE_KEY`) in Vercel Secret Manager.
-- [ ] **Task 1.7**: Ensure `.env.local` and any local credential files are strictly gitignored in `.gitignore`.
-- [ ] **Task 1.8**: Install `firebase` and `firebase-admin` dependencies in `package.json`.
-- [ ] **Task 1.9**: Implement singleton client module `lib/firebase/client.ts` with lazy initialization guard for Next.js HMR.
-- [ ] **Task 1.10**: Implement singleton admin module `lib/firebase/admin.ts` ensuring private key newline parsing.
-- [ ] **Task 1.11**: Implement safe, read-only server smoke-test route `app/api/v1/health/route.ts` (zero writes) and verify HTTP 200 response `{ status: "healthy", version: "2.2.0" }`.
+- [ ] **Task 1.3**: Register Web App in `gutglow-development` and extract Client SDK configuration object.
+- [ ] **Task 1.4**: Set up Firebase Local Emulator Suite (`firebase-tools`) for local development (Auth on port 9099, Firestore on port 8080) so local development requires zero cloud credentials.
+- [ ] **Task 1.5**: Configure `.env.local` for development and emulator use, strictly verifying it is gitignored in `.gitignore`.
+- [ ] **Task 1.6**: Install `firebase` and `firebase-admin` dependencies in `package.json`.
+- [ ] **Task 1.7**: Implement singleton client module `lib/firebase/client.ts` with lazy initialization guard for Next.js HMR and emulator connect support.
+- [ ] **Task 1.8**: Implement singleton admin module `lib/firebase/admin.ts` ensuring private key newline parsing.
+- [ ] **Task 1.9**: Implement safe, read-only server smoke-test route `app/api/v1/health/route.ts` (zero writes) and verify HTTP 200 response `{ status: "healthy", version: "2.3.0" }`.
+- *Note: Production Firebase project creation (`gutglow-production`) and Vercel production secrets configuration are strictly deferred to Phase 18.*
 
 ---
 
 ## PHASE 02 — Cloud Firestore Architecture & Schema Modeling
 
-- [ ] **Task 2.1**: Provision Cloud Firestore in Native Mode in region `asia-south1` (Mumbai) across Dev and Prod projects (post user approval).
+- [ ] **Task 2.1**: Provision Cloud Firestore in Native Mode in region `asia-south1` (Mumbai) in `gutglow-development` project only (post user approval).
 - [ ] **Task 2.2**: Author TypeScript interfaces in `types/firestore/*.ts` enforcing the **integer paise standard** for all monetary values.
 - [ ] **Task 2.3**: Model physical base SKU `GG-DWF-200G` with standardized fields `quantityAvailable`, `quantityReserved`, `quantityTotal`.
 - [ ] **Task 2.4**: Model batch/lot tracking schema (`inventory/{sku}/batches`) with `quantityInitial`, `quantityAvailable`, `quantitySold`, `quantityQuarantined`, and `status`.
@@ -232,17 +240,21 @@
 
 ---
 
-## PHASE 18 — Quality Assurance, Security Audit & Production Launch
+## PHASE 18 — Production Infrastructure Provisioning, Security Audit & Launch
 
-- [ ] **Task 18.1**: Execute automated end-to-end test suite (`tests/e2e/checkout-flow.test.ts`).
-- [ ] **Task 18.2**: Execute concurrency stress test on physical inventory reservations.
-- [ ] **Task 18.3**: Perform security audit asserting zero credential leaks, least-privilege IAM, and CSRF protection.
-- [ ] **Task 18.4**: Configure HTTP security headers (CSP, HSTS, X-Frame-Options) in `next.config.ts`.
-- [ ] **Task 18.5**: Configure automated daily Cloud Firestore backups via Google Cloud Scheduled Backups.
-- [ ] **Task 18.6**: Perform production cutover to `gutglow-production` Firebase project.
-- [ ] **Task 18.7**: Execute live ₹1 production purchase test and verify in Admin Panel.
-- [ ] **Task 18.8**: Void test transaction and confirm physical stock reconciliation.
-- [ ] **Task 18.9**: Final Go-Live Sign-Off.
+- [ ] **Task 18.1**: Create isolated production Firebase Project `gutglow-production` in Google Cloud / Firebase Console.
+- [ ] **Task 18.2**: Provision production Cloud Firestore Native Mode database in approved region (`asia-south1`).
+- [ ] **Task 18.3**: Provision production Firebase Storage bucket in approved region (`asia-south1`).
+- [ ] **Task 18.4**: Configure production credentials (`FIREBASE_ADMIN_PROJECT_ID`, `FIREBASE_ADMIN_CLIENT_EMAIL`, `FIREBASE_ADMIN_PRIVATE_KEY`, production Fastrr & Shiprocket keys) in Vercel Secret Manager.
+- [ ] **Task 18.5**: Deploy declarative Firestore Security Rules, Storage Rules, and Composite Indexes to production.
+- [ ] **Task 18.6**: Execute automated end-to-end test suite (`tests/e2e/checkout-flow.test.ts`) across Full Prepaid and Partial COD flows.
+- [ ] **Task 18.7**: Execute concurrency stress test on physical inventory reservations and delayed webhook recovery.
+- [ ] **Task 18.8**: Perform security audit asserting zero credential leaks, least-privilege IAM, and CSRF protection.
+- [ ] **Task 18.9**: Configure HTTP security headers (CSP, HSTS, X-Frame-Options) in `next.config.ts`.
+- [ ] **Task 18.10**: Configure automated daily Cloud Firestore backups via Google Cloud Scheduled Backups.
+- [ ] **Task 18.11**: Execute live ₹1 production purchase test and verify in Admin Panel.
+- [ ] **Task 18.12**: Void test transaction and confirm physical stock reconciliation.
+- [ ] **Task 18.13**: Final Go-Live Sign-Off.
 
 ---
 
