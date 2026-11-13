@@ -131,7 +131,7 @@ export function Header() {
         <div ref={menuRef} className="pointer-events-auto max-w-[1180px] mx-auto">
           
           {/* DESKTOP HEADER (≥ 900px): Warm Ivory Floating Pill with fluid spacing */}
-          <header className="hidden min-[900px]:flex items-center justify-between h-[68px] min-[1040px]:h-[74px] lg:h-[78px] px-4 min-[1040px]:px-6 lg:px-8 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_10px_28px_rgba(40,30,20,0.06)] backdrop-blur-md">
+          <header className="hidden min-[900px]:flex items-center justify-between h-[68px] min-[1040px]:h-[74px] lg:h-[78px] px-4 min-[1040px]:px-6 lg:px-8 bg-[#F4EBDE] border border-[#E5DAC8] rounded-full shadow-[0_10px_28px_rgba(40,30,20,0.06)] backdrop-blur-md">
             
             {/* Left: Brand Logo in Deep Maroon */}
             <div className="flex items-center shrink-0">
@@ -159,7 +159,7 @@ export function Header() {
                     href={link.href}
                     className={`px-2.5 min-[1040px]:px-3.5 lg:px-4 py-1.5 lg:py-2 rounded-full text-[11px] lg:text-xs uppercase tracking-[0.08em] lg:tracking-[0.12em] transition-all duration-200 whitespace-nowrap ${
                       isActive
-                        ? "bg-[#E5D8C5] text-[#54232F] font-bold"
+                        ? "bg-[#E5D8C5] text-[#3B2418] font-bold"
                         : "text-[#171717]/80 hover:text-[#171717] hover:bg-[#EADBCA] font-medium"
                     }`}
                   >
@@ -177,7 +177,7 @@ export function Header() {
                 aria-label="My Account & Orders"
                 title="My Account & Orders"
                 className={`relative p-2 lg:p-2.5 text-[#171717] hover:bg-[#EADBCA] transition-colors rounded-full focus:outline-none ${
-                  pathname === "/account" ? "bg-[#E5D8C5] text-[#54232F]" : ""
+                  pathname === "/account" ? "bg-[#E5D8C5] text-[#3B2418]" : ""
                 }`}
               >
                 <User className="w-4 h-4 lg:w-5 lg:h-5 stroke-[1.75]" />
@@ -192,16 +192,16 @@ export function Header() {
               >
                 <ShoppingBag className="w-4 h-4 lg:w-5 lg:h-5 stroke-[1.75]" />
                 {totalItems > 0 && (
-                  <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex items-center justify-center min-w-[15px] h-[15px] lg:min-w-[16px] lg:h-[16px] px-1 text-[8px] lg:text-[9px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full shadow-xs">
+                  <span className="absolute top-1 right-1 lg:top-1.5 lg:right-1.5 flex items-center justify-center min-w-[15px] h-[15px] lg:min-w-[16px] lg:h-[16px] px-1 text-[8px] lg:text-[9px] font-bold text-[#111111] bg-[#8BC5FF] rounded-full shadow-xs">
                     {totalItems}
                   </span>
                 )}
               </button>
 
-              {/* Shop Now CTA (Black Pill with White Text) */}
+              {/* Shop Now CTA (Baby Blue Pill with Dark Text) */}
               <Link
                 href="/product"
-                className="inline-flex items-center justify-center bg-[#171717] text-[#FFFFFF] px-4 min-[1040px]:px-5 lg:px-6 py-2 lg:py-2.5 rounded-full text-[11px] lg:text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors duration-200 shadow-xs whitespace-nowrap"
+                className="inline-flex items-center justify-center bg-[#8BC5FF] text-[#111111] px-4 min-[1040px]:px-5 lg:px-6 py-2 lg:py-2.5 rounded-full text-[11px] lg:text-xs font-bold uppercase tracking-wider hover:bg-[#7ABBF7] transition-colors duration-200 shadow-xs whitespace-nowrap"
               >
                 Shop Now
               </Link>
@@ -209,7 +209,7 @@ export function Header() {
           </header>
 
           {/* MOBILE & TABLET HEADER (< 900px): Adaptive Warm Ivory Floating Pill (All 5 Elements Fully Contained) */}
-          <header className="flex min-[900px]:hidden items-center justify-between h-[56px] min-[360px]:h-[60px] sm:h-[68px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 bg-[#F4EBDD] border border-[#E5DAC8] rounded-full shadow-[0_8px_24px_rgba(40,30,20,0.08)] backdrop-blur-md">
+          <header className="flex min-[900px]:hidden items-center justify-between h-[56px] min-[360px]:h-[60px] sm:h-[68px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 bg-[#F4EBDE] border border-[#E5DAC8] rounded-full shadow-[0_8px_24px_rgba(40,30,20,0.08)] backdrop-blur-md">
             
             {/* Left: Brand Logo in Deep Maroon */}
             <div className="flex items-center shrink-0">
@@ -227,11 +227,11 @@ export function Header() {
               </Link>
             </div>
 
-            {/* Center: Black Shop Now CTA */}
+            {/* Center: Baby Blue Shop Now CTA */}
             <div className="shrink-0 px-0.5 min-[360px]:px-1">
               <Link
                 href="/product"
-                className="inline-flex items-center justify-center min-h-[30px] min-[360px]:min-h-[34px] sm:min-h-[38px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 py-1 min-[360px]:py-1.5 bg-[#171717] text-[#FFFFFF] rounded-full text-[9.5px] min-[360px]:text-[10px] sm:text-xs font-bold uppercase tracking-[0.06em] min-[360px]:tracking-[0.08em] hover:bg-[#333333] transition-colors shadow-xs whitespace-nowrap"
+                className="inline-flex items-center justify-center min-h-[30px] min-[360px]:min-h-[34px] sm:min-h-[38px] px-2.5 min-[360px]:px-3 min-[400px]:px-4 sm:px-5 py-1 min-[360px]:py-1.5 bg-[#8BC5FF] text-[#111111] rounded-full text-[9.5px] min-[360px]:text-[10px] sm:text-xs font-bold uppercase tracking-[0.06em] min-[360px]:tracking-[0.08em] hover:bg-[#7ABBF7] transition-colors shadow-xs whitespace-nowrap"
               >
                 Shop Now
               </Link>
@@ -244,7 +244,7 @@ export function Header() {
                 href="/account"
                 aria-label="My Account"
                 className={`w-8.5 h-8.5 min-[360px]:w-9 min-[360px]:h-9 min-[400px]:w-10 min-[400px]:h-10 flex items-center justify-center rounded-full text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD] transition-colors focus:outline-none ${
-                  pathname === "/account" ? "text-[#54232F]" : ""
+                  pathname === "/account" ? "text-[#3B2418]" : ""
                 }`}
               >
                 <User className="w-[17px] h-[17px] min-[360px]:w-[18px] min-[360px]:h-[18px] min-[400px]:w-5 min-[400px]:h-5 stroke-[1.85]" />
@@ -259,7 +259,7 @@ export function Header() {
               >
                 <ShoppingBag className="w-[17px] h-[17px] min-[360px]:w-[18px] min-[360px]:h-[18px] min-[400px]:w-5 min-[400px]:h-5 stroke-[1.85]" />
                 {totalItems > 0 && (
-                  <span className="absolute top-0.5 right-0.5 min-[360px]:top-1 min-[360px]:right-1 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 text-[8px] font-bold text-[#FFFFFF] bg-[#54232F] rounded-full shadow-xs">
+                  <span className="absolute top-0.5 right-0.5 min-[360px]:top-1 min-[360px]:right-1 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 text-[8px] font-bold text-[#111111] bg-[#8BC5FF] rounded-full shadow-xs">
                     {totalItems}
                   </span>
                 )}
@@ -292,7 +292,7 @@ export function Header() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.98 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="relative z-50 w-full mt-2 max-h-[calc(100dvh-84px)] min-[360px]:max-h-[calc(100dvh-92px)] overflow-y-auto overscroll-contain bg-[#F4EBDD] border border-[#E5DAC8] rounded-[26px] p-3.5 sm:p-5 shadow-[0_20px_40px_rgba(40,30,20,0.14)] backdrop-blur-md min-[900px]:hidden"
+                className="relative z-50 w-full mt-2 max-h-[calc(100dvh-84px)] min-[360px]:max-h-[calc(100dvh-92px)] overflow-y-auto overscroll-contain bg-[#F4EBDE] border border-[#E5DAC8] rounded-[26px] p-3.5 sm:p-5 shadow-[0_20px_40px_rgba(40,30,20,0.14)] backdrop-blur-md min-[900px]:hidden"
                 style={{
                   WebkitOverflowScrolling: "touch",
                   overscrollBehavior: "contain",
@@ -309,7 +309,7 @@ export function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center min-h-[44px] px-4 sm:px-5 py-3 rounded-xl text-xs min-[360px]:text-[13px] sm:text-sm font-semibold tracking-wide transition-colors ${
                           isActive
-                            ? "bg-[#E5D8C5] text-[#54232F]"
+                            ? "bg-[#E5D8C5] text-[#3B2418]"
                             : "text-[#171717]/85 hover:text-[#171717] hover:bg-[#EADBCA] active:bg-[#E2D2BD]"
                         }`}
                       >
@@ -324,7 +324,7 @@ export function Header() {
                   <Link
                     href="/product"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full min-h-[46px] flex items-center justify-center gap-2 bg-[#171717] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs uppercase tracking-wider font-bold hover:bg-[#333333] transition-colors shadow-sm text-center"
+                    className="w-full min-h-[46px] flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-full text-xs uppercase tracking-wider font-bold hover:bg-[#7ABBF7] transition-colors shadow-sm text-center"
                   >
                     <span>Shop GutGlow</span>
                     <ArrowRight className="w-4 h-4" />

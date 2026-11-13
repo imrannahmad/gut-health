@@ -289,7 +289,7 @@ export default function ProductDetailPage() {
                               {pack.name}
                             </span>
                             {pack.badge && (
-                              <span className="text-[9px] uppercase tracking-wider font-semibold bg-[#111111] text-[#FFFFFF] px-2 py-0.5 rounded-full">
+                              <span className="text-[9px] uppercase tracking-wider font-semibold bg-[#8BC5FF] text-[#111111] px-2 py-0.5 rounded-full">
                                 {pack.badge}
                               </span>
                             )}
@@ -337,7 +337,7 @@ export default function ProductDetailPage() {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     <span>Add to Cart</span>
@@ -354,7 +354,7 @@ export default function ProductDetailPage() {
                 </button>
 
                 {addedNotice && (
-                  <div className="bg-[#111111] text-[#FFFFFF] text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+                  <div className="bg-[#3B2418] text-[#FFFFFF] text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-2">
                     <Check className="w-3.5 h-3.5" />
                     <span>Added {selectedPack.name} to your bag</span>
                   </div>
@@ -388,7 +388,7 @@ export default function ProductDetailPage() {
           <button
             type="button"
             onClick={handleAddToCart}
-            className="flex-1 max-w-[200px] flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-2.5 px-4 rounded-lg text-xs uppercase tracking-[0.14em] font-medium"
+            className="flex-1 max-w-[200px] flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-2.5 px-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Add to Cart</span>

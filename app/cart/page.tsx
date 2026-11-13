@@ -52,7 +52,7 @@ export default function CartPage() {
               <div className="pt-2">
                 <Link
                   href="/product"
-                  className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] px-6 py-3 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
                 >
                   <span>Shop Formula</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -165,7 +165,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     onClick={() => router.push("/checkout")}
-                    className="w-full flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 rounded-lg text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#333333] transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
                   >
                     <span>Proceed to Checkout</span>
                     <ArrowRight className="w-3.5 h-3.5" />

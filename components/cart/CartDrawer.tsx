@@ -84,7 +84,7 @@ export function CartDrawer() {
                     <Link
                       href="/product"
                       onClick={closeDrawer}
-                      className="text-xs uppercase tracking-[0.14em] font-medium bg-[#111111] text-[#FFFFFF] px-6 py-3 rounded-lg hover:bg-[#333333] transition-colors"
+                      className="text-xs uppercase tracking-[0.14em] font-semibold bg-[#8BC5FF] text-[#111111] px-6 py-3 rounded-lg hover:bg-[#7ABBF7] transition-colors"
                     >
                       Shop Flagship Formula
                     </Link>
@@ -185,7 +185,7 @@ export function CartDrawer() {
                     <Link
                       href="/checkout"
                       onClick={closeDrawer}
-                      className="w-full flex items-center justify-center gap-2 text-xs uppercase tracking-[0.14em] font-medium bg-[#111111] text-[#FFFFFF] py-3.5 rounded-lg hover:bg-[#333333] transition-colors"
+                      className="w-full flex items-center justify-center gap-2 text-xs uppercase tracking-[0.14em] font-semibold bg-[#8BC5FF] text-[#111111] py-3.5 rounded-lg hover:bg-[#7ABBF7] transition-colors"
                     >
                       <span>Proceed to Checkout</span>
                       <ArrowRight className="w-3.5 h-3.5" />

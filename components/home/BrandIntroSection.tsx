@@ -25,7 +25,7 @@ export function BrandIntroSection() {
 
               {/* Floating Luxury Detail Pill */}
               <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 max-w-[calc(100%-1.5rem)] px-3 py-1.5 sm:px-4 sm:py-2.5 bg-[#FFFFFF]/95 backdrop-blur-md rounded-full shadow-[0_6px_20px_rgba(0,0,0,0.08)] border border-[#E8E8E8] flex items-center gap-2">
-                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#54232F] shrink-0" />
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#3B2418] shrink-0" />
                 <span className="text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.16em] text-[#171717] truncate">
                   Daily Ritual · Targeted Microbiome Care
                 </span>
@@ -36,9 +36,9 @@ export function BrandIntroSection() {
           {/* Right: Refined Brand Story & Value Pillars */}
           <div className="lg:col-span-6 space-y-6 lg:pl-2">
             {/* Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4EBDD] rounded-full border border-[#E5DAC8]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#54232F]" />
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#54232F]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4EBDE] rounded-full border border-[#E5DAC8]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3B2418]" />
+              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#3B2418]">
                 OUR PHILOSOPHY
               </span>
             </div>
@@ -81,7 +81,7 @@ export function BrandIntroSection() {
             <div className="flex flex-wrap items-center gap-5 pt-3">
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs"
+                className="inline-flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#7ABBF7] transition-colors shadow-xs"
               >
                 <span>Discover Our Story</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -89,7 +89,7 @@ export function BrandIntroSection() {
 
               <Link
                 href="/philosophy"
-                className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors py-1"
+                className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#3B2418] transition-colors py-1"
               >
                 <span>The Science</span>
                 <ArrowRight className="w-3.5 h-3.5" />

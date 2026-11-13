@@ -19,7 +19,7 @@ export function HeroSection() {
             {/* Left Column: Brand Story (~45-48%) */}
             <div className="col-span-6 lg:col-span-5 min-w-0 flex flex-col justify-center py-8 lg:py-12 space-y-5 lg:space-y-6 z-10">
               {/* Eyebrow in Deep Maroon */}
-              <p className="text-xs lg:text-[13px] font-bold tracking-[0.22em] text-[#54232F] uppercase">
+              <p className="text-xs lg:text-[13px] font-bold tracking-[0.22em] text-[#3B2418] uppercase">
                 GUTGLOW · DAILY WELLNESS
               </p>
 
@@ -45,7 +45,7 @@ export function HeroSection() {
               <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-1">
                 <Link
                   href="/product"
-                  className="inline-flex items-center justify-center gap-2.5 bg-[#111111] text-[#FFFFFF] px-6 lg:px-8 py-3.5 lg:py-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors duration-200 shadow-sm whitespace-nowrap"
+                  className="inline-flex items-center justify-center gap-2.5 bg-[#8BC5FF] text-[#111111] px-6 lg:px-8 py-3.5 lg:py-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors duration-200 shadow-sm whitespace-nowrap"
                 >
                   <span>DISCOVER GUTGLOW</span>
                   <ArrowRight className="w-4 h-4" />
@@ -53,7 +53,7 @@ export function HeroSection() {
 
                 <Link
                   href="/philosophy"
-                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors duration-200 py-1 whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#3B2418] transition-colors duration-200 py-1 whitespace-nowrap"
                 >
                   <span>Our Philosophy</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -108,7 +108,7 @@ export function HeroSection() {
         {/* 2. EDITORIAL TYPOGRAPHY & CTA (WITH CLEAN HORIZONTAL MARGINS) */}
         <div className="px-4 min-[360px]:px-5 sm:px-6 mt-2 space-y-3 sm:space-y-3.5">
           {/* Small Brand Eyebrow */}
-          <p className="text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#54232F] uppercase">
+          <p className="text-[10px] min-[360px]:text-[11px] sm:text-xs font-bold tracking-[0.2em] text-[#3B2418] uppercase">
             GUTGLOW · DAILY WELLNESS
           </p>
 
@@ -134,7 +134,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-1">
             <Link
               href="/product"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#333333] transition-colors shadow-sm text-center"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors shadow-sm text-center"
             >
               <span>DISCOVER GUTGLOW</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -142,7 +142,7 @@ export function HeroSection() {
 
             <Link
               href="/philosophy"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors py-2 sm:py-3.5 sm:px-4 text-center"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#3B2418] transition-colors py-2 sm:py-3.5 sm:px-4 text-center"
             >
               <span>Our Philosophy</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -3,7 +3,7 @@ export function AnnouncementBar() {
     <div
       role="region"
       aria-label="Announcement"
-      className="bg-[#54232F] text-[#FFFFFF] py-2 sm:py-2.5 px-2 min-[360px]:px-3 sm:px-4 text-center font-medium border-b border-[#3D1822] select-none uppercase whitespace-nowrap overflow-hidden"
+      className="bg-[#3B2418] text-[#FFFFFF] py-2 sm:py-2.5 px-2 min-[360px]:px-3 sm:px-4 text-center font-medium border-b border-[#2C1A11] select-none uppercase whitespace-nowrap overflow-hidden"
       style={{
         fontSize: "clamp(0.5625rem, 2.2vw, 0.6875rem)", // 9px to 11px
         letterSpacing: "clamp(0.08em, 0.4vw, 0.2em)",
