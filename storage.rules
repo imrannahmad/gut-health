@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default Deny All: Direct unauthenticated uploads are prohibited.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

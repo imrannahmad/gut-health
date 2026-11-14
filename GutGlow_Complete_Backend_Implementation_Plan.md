@@ -1,6 +1,6 @@
 # GUTGLOW — COMPLETE BACKEND & ADMIN PANEL IMPLEMENTATION MASTER PLAN
 
-**Document Version:** 2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)  
+**Document Version:** 2.3.1 (Final Pre-Build Consistency Corrections)  
 **Target Environment:** Next.js 16.4.5 (App Router) · React 19.3.0 · Firebase Platform · Tailwind CSS v4  
 **Scope:** Complete Backend Infrastructure, Security, Firestore Database, Physical Inventory & Batch Engine, GST & Invoicing, Confirmed Payment Modes (Full Prepaid & Partial COD), Admin Panel, Logistics, and Headless Checkout Architecture  
 **Status:** Architecture Specification & Implementation Roadmap (Pre-Execution Review)  
@@ -21,7 +21,7 @@
 10. [GST Compliance, Tax Invoicing, Returns & Restocking Policies](#10-gst-compliance-tax-invoicing-returns--restocking-policies)
 11. [Target Codebase & Directory Structure](#11-target-codebase--directory-structure)
 12. [Complete Phase-Wise Development Roadmap (Phases 01 to 18)](#12-complete-phase-wise-development-roadmap)
-    - [Phase 01: Firebase Project Creation & Multi-Environment Setup](#phase-01--firebase-project-creation--multi-environment-setup)
+    - [Phase 01: Firebase Project Creation & Development Environment Setup](#phase-01--firebase-project-creation--development-environment-setup)
     - [Phase 02: Cloud Firestore Architecture & Schema Modeling](#phase-02--cloud-firestore-architecture--schema-modeling)
     - [Phase 03: Firebase Authentication & Admin RBAC Security](#phase-03--firebase-authentication--admin-rbac-security)
     - [Phase 04: Firestore & Storage Security Rules, App Check](#phase-04--firestore--storage-security-rules--app-check)
@@ -38,7 +38,7 @@
     - [Phase 15: Shiprocket Logistics & Real-Time Tracking Engine](#phase-15--shiprocket-logistics--real-time-tracking-engine)
     - [Phase 16: Complete Custom Admin Panel Development](#phase-16--complete-custom-admin-panel-development)
     - [Phase 17: Fastrr Headless Checkout Integration (Final Checkout Phase)](#phase-17--fastrr-headless-checkout-integration-final-checkout-phase)
-    - [Phase 18: Quality Assurance, Security Audit & Production Launch](#phase-18--quality-assurance-security-audit--production-launch)
+    - [Phase 18: Production Infrastructure Provisioning, Security Audit & Launch](#phase-18--production-infrastructure-provisioning-security-audit--launch)
 13. [Cross-Document Consistency Matrix](#13-cross-document-consistency-matrix)
 14. [Unresolved Decisions & External Dependencies](#14-unresolved-decisions--external-dependencies)
 15. [Decisions Requiring User Approval Before Implementation](#15-decisions-requiring-user-approval-before-implementation)
@@ -67,6 +67,15 @@ The initial flagship product is **GutGlow Daily Wellness Formula** (200g net wei
 6. **Checkout Staging Isolation**: Fastrr Headless Checkout is strictly isolated to **Phase 17**. All catalog, inventory, order lifecycle, GST invoicing, shipping, and admin capabilities will be fully operational and tested before external checkout connectivity.
 
 ### 1.3 Revision Change Log
+
+#### v2.3.1 (Final Pre-Build Consistency Corrections)
+
+| Section / Topic | v2.3.0 State | v2.3.1 Confirmed Standard | Rationale & Architectural Impact |
+| :--- | :--- | :--- | :--- |
+| **Delivery vs COD Collection Decoupling** | Conflated physical delivery scan (`DELIVERED`) with cash collection. | **Strictly decoupled**: Physical delivery scan updates `shipmentStatus: "delivered"`, but `balanceCollectionStatus` moves to `"awaiting_collection_confirmation"`. Cash collection is verified via explicit courier COD API *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]* or manual operational reconciliation in `/admin/cod-reconciliation`. | Prevents recording unverified cash receipts merely because a courier parcel was scanned delivered. |
+| **Order Number Generation Non-Gapless** | Claimed counter "guarantees gapless, globally sequential order numbers". | **Unique sequential allocation, NOT gapless**: Order numbers (`GG-YYMM-XXXXXX`) guarantee **uniqueness**. Abandoned carts, payment failures, gateway timeouts, and concurrent checkouts naturally create sequence gaps. Consecutive gapless numbering is reserved strictly for statutory tax invoices (`GG/26-27/00001`) under CGST Rule 46. | Reflects realistic e-commerce behavior and eliminates misleading gapless sequence assertions. |
+| **Fastrr Partner Confirmation Marking** | Some endpoints/payloads lacked partner tags. | **Every Fastrr API method, endpoint, payload field, webhook event name, and signature header is explicitly marked `[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]`.** All code payloads are labeled as illustrative. | Eliminates assumptions about third-party proprietary checkout APIs while preserving core validation requirements. |
+| **Firebase Pricing & Region Architecture** | Combined pricing figures; included unsupported latency estimates. | **Clearly categorized**: 1. Firestore pricing, 2. Cloud Storage pricing, 3. Firebase plan allowances (Spark vs Blaze), 4. Google Cloud billing. Removed unsupported latency (~15-35ms) and cost-saving guarantees. Re-verified independent availability of Firestore and Storage in `asia-south1`. Region remains strictly **proposed**, pending user written approval. | Grounds operational infrastructure in verified cloud specifications with zero unverified claims. |
 
 #### v2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)
 
@@ -316,16 +325,19 @@ GutGlow supports **exclusively two payment options**:
      • Shiprocket assigns AWB, courier partner, and schedules pickup.
      • Order transitions to `orderStatus = "processing"`, `shipmentStatus = "manifest_generated"`.
 
-  6. PHYSICAL DELIVERY & COURIER BALANCE COLLECTION
+  6. PHYSICAL DELIVERY & COD COLLECTION VERIFICATION
      Courier delivers parcel to customer doorstep:
-     • Courier collects remaining cash / UPI balance (`balanceAmountInPaise`).
+     • Courier presents package and collects remaining cash / UPI balance (`balanceAmountInPaise`).
      • Shiprocket Webhook: `DELIVERED` event ──> POST /api/v1/webhooks/shiprocket
      • Decoupled update:
        - `shipmentStatus = "delivered"`.
-       - `balanceCollectionStatus = "collected"`.
+       - `balanceCollectionStatus = "awaiting_collection_confirmation"`.
        > [!IMPORTANT]
-       > Courier has collected the funds; GutGlow's bank account has NOT received remittance.
-       > The order is NOT financially settled yet.
+       > Physical parcel delivery is NOT proof of cash collection. A courier delivery scan merely
+       > confirms that the parcel changed custody. Cash collection must be independently confirmed.
+     • Cash Collection Confirmation:
+       - Automated Path: Ingested if Shiprocket broadcasts a distinct verified COD collected event *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]*.
+       - Operational Path: Admin / Ops team verifies the courier delivery run-sheet via `/admin/cod-reconciliation` and transitions status to `"collected"`.
 
   7. COURIER REMITTANCE RECONCILIATION & FINANCIAL SETTLEMENT
      Shiprocket settles collected COD funds periodically (Remittance Cycle):
@@ -345,14 +357,22 @@ GutGlow supports **exclusively two payment options**:
      - **If stock is still available**: The handler re-reserves the stock, allocates batches via FEFO, creates the order as `confirmed`, and continues normal fulfillment.
      - **If stock was sold out**: The order is set to `orderStatus: "stock_exhausted_pending_refund"`, `advancePaymentStatus: "captured"`, an urgent admin alert is generated, and a refund transaction is initiated. This guarantees zero inventory overselling under any edge condition.
 
-### 5.5 Order Reference & Sequential vs Sharded Counter Architecture
-- **Strict Sequential Order Numbers (`GG-YYMM-XXXXXX`)**:
-  - Generated via transactional increment on a single Firestore document `counters/orders_YYYYMM`.
-  - Guarantees **gapless, globally sequential order numbers** (e.g. `GG-2611-000001`, `GG-2611-000002`).
-  - Capable of sustaining standard D2C traffic (<5-10 orders/second) with exponential backoff retries.
-- **Distributed Sharded Counters (Flash Sale Mode)**:
-  - If transaction volume exceeds Firestore single-document write limits (>10-50 orders/sec), 10 distributed shards (`counters/orders_YYYYMM/shards/shard_0..9`) are used.
-  - **Clarification of Guarantees**: Sharded counters guarantee **mathematical uniqueness** (e.g. `GG-YYMM-S3-000142`), but sequential ordering is per-shard, **NOT globally monotonic across all orders**. Sequentiality and uniqueness are strictly separated in this architecture.
+### 5.5 Order Number Generation: Unique Sequential Allocation (Non-Gapless)
+- **Human-Readable Format**: `GG-YYMM-XXXXXX` (e.g. `GG-2611-000001`, `GG-2611-000002`).
+- **Transactional Counter Allocation**: Generated via atomic transaction on `counters/orders_YYYYMM`.
+- **Explicit Non-Gapless Architectural Reality**:
+  - Customer-facing order numbers guarantee **mathematical uniqueness**, but **CANNOT and DO NOT guarantee gapless consecutive sequences**.
+  - **Why Gaps Naturally Occur in E-Commerce**:
+    1. **Abandoned Checkouts**: When a customer clicks "Proceed to Checkout", an order reference is allocated (`GG-2611-000042`) to bind the Fastrr checkout session. If the user closes their browser or abandons the payment screen, this number is never confirmed.
+    2. **Failed Payments & Session Restarts**: If an initial UPI/Card attempt fails on Fastrr and the user restarts checkout in a new window, a subsequent number (`GG-2611-000043`) is allocated, leaving the prior number in an uncommitted or failed state.
+    3. **Network Retries & Timeouts**: If a transaction times out between the server and Fastrr, the counter increment may commit while the checkout session is discarded.
+    4. **Concurrent High-Traffic Checkouts**: Concurrent shoppers are assigned numbers in the order their transactions hit Firestore, but their completion order varies based on payment authorization speed.
+- **Strict Distinction from Statutory Tax Invoices (Rule 46 CGST Rules)**:
+  - By contrast, legal Tax Invoices (`invoiceNumber`, e.g. `GG/26-27/00001`) are governed by statutory tax compliance and **must be consecutive and gapless**.
+  - To achieve this, tax invoices are NOT allocated at checkout initiation; they are generated **strictly upon order confirmation / warehouse dispatch**, ensuring that every tax invoice number corresponds to a legally finalized commercial sale without gaps.
+- **Distributed Sharded Counters (Flash Sale Fallback)**:
+  - If checkout traffic exceeds Firestore single-document write limits (>10–50 orders/sec), 10 distributed shards (`counters/orders_YYYYMM/shards/shard_0..9`) are used (`GG-YYMM-S3-XXXXXX`).
+  - Sharded counters guarantee **high-throughput mathematical uniqueness**, with sequential ordering maintained only per shard, not globally across the entire database.
 
 ### 5.6 Unfinalized Refund & Advance-Forfeiture Policy Notice
 > [!NOTE]
@@ -383,23 +403,34 @@ To eliminate state conflicts, every order maintains four logically independent s
 ├─────────────────────────────────┤   ├───────────────────────────────┤
 │ • not_applicable (Prepaid)      │   │ • unfulfilled                  │
 │ • pending_delivery              │   │ • manifest_generated           │
-│ • collected                     │   │ • pickup_scheduled             │
-│ • remitted                      │   │ • in_transit                   │
-│ • discrepancy                   │   │ • out_for_delivery             │
-│                                 │   │ • delivered                    │
+│ • awaiting_collection_confirmation│ │ • pickup_scheduled             │
+│ • collected                     │   │ • in_transit                   │
+│ • remitted                      │   │ • out_for_delivery             │
+│ • discrepancy                   │   │ • delivered                    │
 │                                 │   │ • ndr_pending                  │
 │                                 │   │ • rto_initiated                │
 │                                 │   │ • rto_delivered                │
 └─────────────────────────────────┘   └───────────────────────────────┘
 ```
 
-### 6.2 Key State Transition Rules
+### 6.2 Key State Transition Rules & Verified Sources
 1. **Advance Gate**: An order **CANNOT** transition from `pending_payment` to `confirmed` or `processing` unless `advancePaymentStatus === "captured"`.
-2. **Partial COD Delivery Rule**: When `shipmentStatus` becomes `delivered`, `balanceCollectionStatus` transitions to `collected`. It does **NOT** transition to `remitted` until bank funds settlement is confirmed.
-3. **Completion Rule**:
+   - *Verified Source*: Fastrr Webhook HMAC-verified payload (`payment.successful` / `order.successful`).
+2. **Partial COD Physical Delivery vs Collection Decoupling**:
+   - When Shiprocket broadcasts `DELIVERED`, `shipmentStatus` transitions to `"delivered"`.
+   - `balanceCollectionStatus` transitions to `"awaiting_collection_confirmation"` (NOT `"collected"`).
+   - *Verified Source*: Shiprocket Tracking Webhook (`current_status: "DELIVERED"`).
+3. **Partial COD Cash Collection Confirmation**:
+   - `balanceCollectionStatus` transitions from `"awaiting_collection_confirmation"` to `"collected"`.
+   - *Verified Source*: EITHER verified Shiprocket COD collection event *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]* OR operations team manual run-sheet verification in `/admin/cod-reconciliation`.
+4. **Bank Remittance & Financial Settlement**:
+   - `balanceCollectionStatus` transitions to `"remitted"`.
+   - *Verified Source*: Shiprocket Remittance Advice (CRN / Bank UTR) ingested via `/api/v1/admin/cod/reconcile`.
+   - If remitted amount < collectible balance, transitions to `"discrepancy"`.
+5. **Completion Rule**:
    - For `prepaid`: `orderStatus` transitions to `completed` upon verified delivery (`shipmentStatus === "delivered"`).
    - For `partial_cod`: `orderStatus` transitions to `completed` only when both `shipmentStatus === "delivered"` and `balanceCollectionStatus === "remitted"`.
-4. **RTO Rule**: If delivery is refused, `shipmentStatus = "rto_delivered"` and `orderStatus = "cancelled"`. The outstanding balance remains uncollected. Any refund or forfeiture of the advance follows the future finalized policy.
+6. **RTO Rule**: If delivery is refused, `shipmentStatus = "rto_delivered"` and `orderStatus = "cancelled"`. The outstanding balance remains uncollected. Any refund or forfeiture of the advance follows the future finalized policy.
 
 ---
 
@@ -424,37 +455,58 @@ To eliminate state conflicts, every order maintains four logically independent s
 
 ## 8. FIREBASE INFRASTRUCTURE, REGIONAL STRATEGY & ENVIRONMENT GATES
 
-### 8.1 Regional Strategy & Verified Cloud Pricing: `asia-south1` (Mumbai, India)
-- **Firestore Native Mode Availability**: Fully supported in `asia-south1` (Mumbai) and `asia-south2` (Delhi).
-- **Official Firestore Usage-Based Pricing (`asia-south1`)**:
-  - **Document Reads**: $0.06 per 100,000 documents.
-  - **Document Writes**: $0.18 per 100,000 documents.
-  - **Document Deletes**: $0.02 per 100,000 documents.
-  - **Database Storage**: $0.18 per GiB per month.
-  - **Daily Free Quota (Spark & Blaze tiers)**: 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, and 1 GiB stored data free every day.
-- **Firebase / Cloud Storage Pricing (`asia-south1`)**:
-  - **Storage (Standard Regional Class)**: $0.023 per GiB per month.
-  - **Class A Operations (Uploads/List)**: $0.05 per 10,000 operations.
-  - **Class B Operations (Downloads/Get)**: $0.004 per 10,000 operations.
-  - **Co-location Advantage**: Placing Cloud Storage in `asia-south1` alongside Firestore eliminates cross-region data transfer latency and inter-region egress fees.
-- **Network Egress Pricing**:
-  - Inbound traffic: Free.
-  - Intra-region traffic (Cloud Functions / compute within `asia-south1`): Free.
-  - Internet egress to clients: First 10 GiB/month free, then standard Google Cloud egress tier ($0.12 per GiB).
-- **Regional Comparison Matrix**:
-  | Location Option | Type | Round-Trip Latency (India) | Monthly Base Cost | Architectural Assessment |
-  | :--- | :--- | :--- | :--- | :--- |
-  | **`asia-south1` (Mumbai)** | Regional (Native) | **~15ms – 35ms** | Pay-as-you-go | **Recommended**: Optimal latency for core Indian customer base; full Firebase service parity. |
-  | **`asia-south2` (Delhi)** | Regional (Native) | **~25ms – 45ms** | Pay-as-you-go | Valid alternative if Northern India infrastructure co-location is desired. |
-  | **`nam5` / `eur3` (US/EU)** | Multi-Region | **~180ms – 260ms** | Higher storage/write rate | Not recommended for Indian D2C: cross-continental latency degrades cart conversion. |
-- **PERMANENT LOCATION APPROVAL GATE**:
-  > [!CAUTION]
-  > **Cloud Firestore database locations are permanent and cannot be changed after creation.**
-  > No cloud database will be created until explicit user approval of region `asia-south1` is granted in writing.
-- **Official Documentation Sources** (Checked: November 2026):
-  - *Firestore Locations*: [https://firebase.google.com/docs/firestore/locations](https://firebase.google.com/docs/firestore/locations)
-  - *Cloud Firestore Pricing*: [https://cloud.google.com/firestore/pricing](https://cloud.google.com/firestore/pricing)
-  - *Google Cloud Storage Pricing*: [https://cloud.google.com/storage/pricing](https://cloud.google.com/storage/pricing)
+### 8.1 Proposed Regional Architecture & Verified Cloud Pricing: `asia-south1` (Mumbai, India)
+
+> [!CAUTION]
+> **PROPOSED REGION ONLY — SUBJECT TO EXPLICIT USER APPROVAL**
+> Cloud Firestore database locations are permanent and cannot be modified after initial database creation.
+> The region `asia-south1` (Mumbai, India) is currently proposed for evaluation. No cloud database or storage bucket will be provisioned until the user provides explicit written approval.
+
+#### 8.1.1 Independent Location Availability Verification
+- **Cloud Firestore (Native Mode)**: Independently verified as available in both `asia-south1` (Mumbai) and `asia-south2` (Delhi).
+- **Google Cloud Storage**: Independently verified as available in both `asia-south1` (Mumbai) and `asia-south2` (Delhi) as regional buckets.
+
+#### 8.1.2 Cloud Firestore Native Mode Pricing (`asia-south1`)
+*(Verified from official Google Cloud Pricing documentation, November 2026)*
+- **Document Reads**: $0.06 per 100,000 documents ($0.0006 / 1k reads).
+- **Document Writes**: $0.18 per 100,000 documents ($0.0018 / 1k writes).
+- **Document Deletes**: $0.02 per 100,000 documents ($0.0002 / 1k deletes).
+- **Database Storage**: $0.18 per GiB per month.
+- **Inbound Data Transfer**: Free ($0.00).
+- **Intra-Region Egress**: Free ($0.00) between GCP services located in `asia-south1`.
+- **Internet Egress**: First 10 GiB per month free; then standard Google Cloud internet egress tier ($0.12 per GiB for 0–1 TB).
+
+#### 8.1.3 Google Cloud Storage Pricing (`asia-south1`, Standard Regional Class)
+*(Verified from official Google Cloud Storage Pricing documentation, November 2026)*
+- **Bucket Storage**: $0.023 per GiB per month.
+- **Class A Operations (Mutations, Uploads, Bucket/Object Listing)**: $0.05 per 10,000 operations.
+- **Class B Operations (Object Downloads, Metadata Gets)**: $0.004 per 10,000 operations.
+- **Data Retrieval**: Free ($0.00) for Standard regional storage class.
+
+#### 8.1.4 Firebase Plan Quotas & Allowances
+- **Spark Plan (No-Cost Evaluation Quota)**:
+  - Firestore: 50,000 document reads/day, 20,000 document writes/day, 20,000 document deletes/day, and 1 GiB stored data.
+  - Cloud Storage: 5 GiB total storage, 1 GiB/day download bandwidth, 20,000 upload ops/day, 50,000 download ops/day.
+- **Blaze Plan (Pay-As-You-Go)**:
+  - Includes all free daily allowances from the Spark plan.
+  - Usage exceeding daily free tier limits is billed at the exact Google Cloud rates listed above.
+
+#### 8.1.5 Google Cloud Billing Structure
+- Project billing is linked to an active Google Cloud Billing Account.
+- Billing is invoiced monthly in INR or USD based on actual consumption exceeding free tier allowances, subject to applicable Indian Goods & Services Tax (GST) on cloud software services.
+
+#### 8.1.6 Regional Location Comparison
+| Location Option | Classification | Geographic Target | Operational Considerations |
+| :--- | :--- | :--- | :--- |
+| **`asia-south1` (Mumbai)** | Single-Region (Native) | West, Central & South India | **Proposed Choice**: Physical proximity to core Indian demographic; full Firestore Native, Auth, and Storage service availability. |
+| **`asia-south2` (Delhi)** | Single-Region (Native) | North & North-West India | Supported alternative if Northern India co-location is preferred. |
+| **`nam5` / `eur3`** | Multi-Region | United States / Europe | Higher write/storage rates; transatlantic network path increases round-trip latency for Indian shoppers compared to local regions. |
+
+#### 8.1.7 Official Documentation Citations (Checked: November 2026)
+- *Firestore Locations*: [https://firebase.google.com/docs/firestore/locations](https://firebase.google.com/docs/firestore/locations)
+- *Cloud Firestore Pricing*: [https://cloud.google.com/firestore/pricing](https://cloud.google.com/firestore/pricing)
+- *Google Cloud Storage Pricing*: [https://cloud.google.com/storage/pricing](https://cloud.google.com/storage/pricing)
+- *Firebase Pricing Plans*: [https://firebase.google.com/pricing](https://firebase.google.com/pricing)
 
 ### 8.2 Phased Environment Partitioning Strategy
 - **Initial Development Strategy (Phases 01 to 17)**:
@@ -471,13 +523,16 @@ To eliminate state conflicts, every order maintains four logically independent s
 
 ### 9.1 Shiprocket Logistics Integration & Remittance Architecture
 - **Fulfillment & AWB Assignment**: Post-order fulfillment creates shipments via Shiprocket API with `cod_amount` explicitly set to `balanceAmountInPaise / 100` for Partial COD orders (and `0` for Full Prepaid).
-- **Decoupled Delivery vs Settlement Lifecycle**:
-  1. **Doorstep Delivery**: Courier delivers package. Shiprocket webhook broadcasts `DELIVERED` event.
+- **Decoupled Delivery, Collection & Settlement Lifecycle**:
+  1. **Doorstep Physical Delivery**: Courier delivers package. Shiprocket webhook broadcasts `DELIVERED` event.
      - `shipmentStatus` transitions to `"delivered"`.
-     - `balanceCollectionStatus` transitions to `"collected"`.
-     - *Courier holds physical cash/UPI funds; GutGlow merchant bank account has NOT received remittance.*
-  2. **Courier Remittance Reconciliation**:
-     - Shiprocket processes courier remittances in 3–7 day financial cycles and issues a Remittance Advice with CRN (Credit Reference Number) and Bank UTR.
+     - `balanceCollectionStatus` transitions to `"awaiting_collection_confirmation"`.
+     - *A courier delivery scan is NOT automatically treated as confirmation of cash collection.*
+  2. **Cash Collection Confirmation**:
+     - *Automated Workflow*: Ingested if Shiprocket broadcasts a distinct verified COD cash collection event *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]*.
+     - *Manual Operational Workflow*: Operations team reviews courier delivery sheets in `/admin/cod-reconciliation` and manually marks balance as `"collected"`.
+  3. **Courier Remittance Reconciliation & Settlement**:
+     - Shiprocket processes courier remittances in financial cycles and issues a Remittance Advice with CRN (Credit Reference Number) and Bank UTR.
      - Ingestion of remittance data via `/api/v1/admin/cod/reconcile` updates matched orders to `balanceCollectionStatus: "remitted"` and `orderStatus: "completed"`.
      - Any short remittance or courier deduction is flagged with `balanceCollectionStatus: "discrepancy"`.
 - **Authentication**: Webhook uses static token header (`x-api-key`). *[REQUIRES_OFFICIAL_DOCS_VERIFICATION for exact Shiprocket remittance webhook or report export API]*.
@@ -639,7 +694,7 @@ Gut Health Business/
 
 ### PHASE 15 — Shiprocket Logistics & Real-Time Tracking Engine
 - Pincode serviceability, AWB assignment with collectible amount set to `balanceAmountInPaise`.
-- Delivery webhook sets `balanceCollectionStatus: "collected"`.
+- Delivery webhook sets `shipmentStatus: "delivered"` and `balanceCollectionStatus: "awaiting_collection_confirmation"` (collection confirmed via verified COD event or manual reconciliation).
 
 ---
 
@@ -673,7 +728,7 @@ Gut Health Business/
 | :--- | :--- | :--- | :--- | :--- |
 | **Supported Payment Modes** | `prepaid`, `partial_cod` (No Full COD) | `prepaid`, `partial_cod` (No Full COD) | `prepaid`, `partial_cod` (No Full COD) | `prepaid`, `partial_cod` (No Full COD) |
 | **Advance Payment Status** | `AdvancePaymentStatus` (7 states) | `AdvancePaymentStatus` (7 states) | `AdvancePaymentStatus` (7 states) | `AdvancePaymentStatus` (7 states) |
-| **Balance Collection Status**| `BalanceCollectionStatus` (5 states)| `BalanceCollectionStatus` (5 states)| `BalanceCollectionStatus` (5 states)| `BalanceCollectionStatus` (5 states)|
+| **Balance Collection Status**| `BalanceCollectionStatus` (6 states)| `BalanceCollectionStatus` (6 states)| `BalanceCollectionStatus` (6 states)| `BalanceCollectionStatus` (6 states)|
 | **Financial Fields** | `totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise` | `totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise` | `totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise` | `totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise` |
 | **Physical Base SKU** | `GG-DWF-200G` | `GG-DWF-200G` | `GG-DWF-200G` | `GG-DWF-200G` |
 | **Stock Field Names** | `quantityAvailable`, `quantityReserved`, `quantityTotal` | `quantityAvailable`, `quantityReserved`, `quantityTotal` | `quantityAvailable`, `quantityReserved`, `quantityTotal` | `quantityAvailable`, `quantityReserved`, `quantityTotal` |

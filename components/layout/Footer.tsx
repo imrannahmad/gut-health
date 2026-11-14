@@ -178,11 +178,8 @@ export function Footer() {
           </div>
 
           {/* Copyright */}
-          <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FFFFFF]/60">
+          <div className="pt-6 sm:pt-8 text-center text-xs text-[#FFFFFF]/60">
             <p>© 2026 GutGlow Wellness. All rights reserved.</p>
-            <p className="text-[11px] uppercase tracking-wider">
-              Premium Minimalist Digestive Care
-            </p>
           </div>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 # GUTGLOW — SERVER API ARCHITECTURE & ROUTE HANDLER SPECIFICATION
 
-**Document Version:** 2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)  
+**Document Version:** 2.3.1 (Final Pre-Build Consistency Corrections)  
 **Framework:** Next.js 16.4.5 (App Router Server Route Handlers)  
 **Runtime Requirement:** `export const runtime = 'nodejs'` (Explicit Node.js runtime for all Firebase Admin handlers)  
 **Authentication Standard:** Firebase ID Token & HTTP-Only Encrypted Session Cookies  
@@ -11,6 +11,12 @@
 ---
 
 ## 1. REVISION CHANGE LOG
+
+### v2.3.1 (Final Pre-Build Consistency Corrections)
+- **Delivery vs Cash Collection Separation**: Refactored Shiprocket webhook (`POST /api/v1/webhooks/shiprocket`) so that `DELIVERED` event updates `shipmentStatus: "delivered"` and sets `balanceCollectionStatus: "awaiting_collection_confirmation"`. Cash collection is confirmed via verified COD event *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]* or manual operational reconciliation in `/admin/cod-reconciliation`.
+- **Fastrr Integration Unverified Tagging**: Tagged all Fastrr SDK endpoints, payload structures, event names, and signature headers with `[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]`. Labeled all payload schemas as illustrative.
+- **Order Number Non-Gapless Alignment**: Clarified that checkout initiation allocates unique sequential references (`GG-YYMM-XXXXXX`), but does not guarantee gapless sequences due to abandoned sessions and payment retries.
+- **Safe Health Probe Bump**: Updated `/api/v1/health` response version to `2.3.1`.
 
 ### v2.3.0 (Final Pre-Build Technical Audit Corrections)
 - **Fastrr Checkout Initiation Handshake**: Added specification for `POST /api/v1/checkout/fastrr/initiate` with 15-minute stock reservation and collision-safe order reference generation (`GG-YYMM-XXXXXX`).
@@ -424,7 +430,7 @@ All administrative endpoints require a valid `gutglow_admin_session` cookie and 
   2. Parse AWB number and current tracking code from payload.
   3. Find matching order in Firestore via query `where("shipment.awbNumber", "==", awb)`.
   4. Map Shiprocket tracking status (`PICKED UP`, `DELIVERED`, `RTO`) to decoupled `shipmentStatus`.
-  5. **Partial COD Balance Separation**: If status is `DELIVERED` and `paymentMode === "partial_cod"`, set `balanceCollectionStatus: "collected"` (*courier has collected cash; merchant bank has NOT received funds*).
+  5. **Partial COD Balance Decoupling**: If status is `DELIVERED` and `paymentMode === "partial_cod"`, set `balanceCollectionStatus: "awaiting_collection_confirmation"`. A delivery scan is NOT treated as proof of cash collection. Cash collection is confirmed either via a verified Shiprocket COD event *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]* or via operations team manual reconciliation in `/admin/cod-reconciliation`, transitioning to `"collected"`.
   6. Financial settlement (`balanceCollectionStatus: "remitted"`) happens strictly via Remittance Advice ingestion (`/api/v1/admin/cod/reconcile`), NOT this delivery webhook.
   7. Append event to `orders/{orderId}/events` subcollection.
   8. If status is `DELIVERED`, trigger customer email with GutGlow morning ritual usage guide.
@@ -440,7 +446,7 @@ All administrative endpoints require a valid `gutglow_admin_session` cookie and 
 ```json
 {
   "status": "healthy",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "timestamp": "2026-11-13T17:45:00.000Z"
 }
 ```

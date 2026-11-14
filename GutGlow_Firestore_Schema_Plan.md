@@ -1,6 +1,6 @@
 # GUTGLOW — CLOUD FIRESTORE SCHEMA & DATABASE ARCHITECTURE PLAN
 
-**Document Version:** 2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)  
+**Document Version:** 2.3.1 (Final Pre-Build Consistency Corrections)  
 **Target Database:** Google Cloud Firestore (Native Mode)  
 **Proposed Region:** `asia-south1` (Mumbai, India) — *Subject to explicit user approval gate*  
 **Scope:** Complete Data Architecture, Physical Stock & Batch Subcollections, Integer Paise Standard, Confirmed Payment Modes (Full Prepaid & Partial COD), CGST Invoicing, Composite Indexing, and Query Performance  
@@ -10,6 +10,12 @@
 ## 1. ARCHITECTURAL PHILOSOPHY & REVISION CHANGE LOG
 
 ### 1.1 Revision Change Log
+
+#### v2.3.1 (Final Pre-Build Consistency Corrections)
+- **Delivery vs Cash Collection State Separation**: Added `awaiting_collection_confirmation` state to `BalanceCollectionStatus`. Physical delivery scans do NOT automatically confirm cash collection; cash receipt requires explicit courier COD verification or administrative manual reconciliation in `/admin/cod-reconciliation`.
+- **Order Number Non-Gapless Model**: Clarified that `FirestoreCounter` (`counters/orders_YYYYMM`) guarantees **unique sequential allocation**, NOT gapless sequences. Abandoned checkouts and failed payment attempts naturally produce gaps in customer-facing order numbers.
+- **Fastrr Integration Unverified Tagging**: Marked all Fastrr webhook fields, session creation payloads, and event types with `[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]`.
+- **Firebase Regional Independence**: Categorized Firestore Native Mode, Cloud Storage bucket, and Firebase Spark/Blaze quotas independently. Reinforced that `asia-south1` is strictly a **proposed region** pending explicit user written approval.
 
 #### v2.3.0 (Final Pre-Build Technical Audit Corrections)
 - **Phased Firebase Setup**: Synchronized schema plans with phased deployment. Dev project `gutglow-development` and Local Emulator Suite prioritized; production database provisioning deferred to Phase 18.
@@ -301,13 +307,14 @@ export type AdvancePaymentStatus =
   | "refunded" 
   | "refund_failed";
 
-// Remaining Balance Collection Status
+// Remaining Balance Collection Status (Decoupled Physical Delivery vs Cash Collection vs Remittance)
 export type BalanceCollectionStatus = 
-  | "not_applicable"   // Full Prepaid orders
-  | "pending_delivery" // Partial COD waiting for courier delivery
-  | "collected"        // Courier collected balance from customer
-  | "remitted"         // Courier remitted funds to merchant bank
-  | "discrepancy";     // Remittance deficit or courier dispute
+  | "not_applicable"                   // Full Prepaid orders
+  | "pending_delivery"                 // Partial COD dispatched, awaiting courier delivery
+  | "awaiting_collection_confirmation" // Parcel physically delivered; cash collection unconfirmed
+  | "collected"                        // Courier cash collection verified (API event or admin verified)
+  | "remitted"                         // Courier remitted funds to merchant bank (CRN/UTR reconciled)
+  | "discrepancy";                     // Remittance deficit, deduction, or courier dispute
 
 export type ShipmentStatus = 
   | "unfulfilled" 
@@ -415,6 +422,7 @@ export interface FirestoreOrder {
     advanceFailureReason?: string;
     // Partial COD Balance Tracking Fields
     balanceStatus: BalanceCollectionStatus;
+    balanceCollectionSource?: "shiprocket_api_event" | "manual_admin_reconciliation";
     balanceCollectedAt?: Timestamp;
     balanceRemittanceReference?: string; // Courier Remittance UTR or CRN
     balanceRemittedAt?: Timestamp;
@@ -667,7 +675,9 @@ export interface FirestoreProcessedWebhook {
   payloadHash: string;
 }
 
-// 1. Single-Document Counter (Strict Monotonic Sequence: GG-2611-000001)
+// 1. Single-Document Counter (Unique Sequential Allocation: GG-2611-000001)
+// Note: Guarantees unique sequential allocation, NOT gapless sequences.
+// Abandoned checkouts, failed payments, and uncommitted sessions naturally create sequence gaps.
 export interface FirestoreCounter {
   name: string; // "orders_202611"
   sequence: number; // e.g. 10482

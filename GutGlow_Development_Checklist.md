@@ -1,13 +1,20 @@
 # GUTGLOW — BACKEND & ADMIN PANEL DEVELOPMENT MASTER CHECKLIST
 
 **Project:** GutGlow D2C E-Commerce Platform  
-**Document Version:** 2.3.0 (Final Pre-Build Architecture Audit & Technical Corrections)  
+**Document Version:** 2.3.1 (Final Pre-Build Consistency Corrections)  
 **Target Architecture:** Next.js 16.4.5 (App Router) · React 19 · Firebase (Firestore, Auth, Storage) · Shiprocket · Fastrr  
 **Strict Completion Rule:** No phase is marked complete based solely on code generation. A phase is officially complete ONLY when all phase-specific automated test suites and manual verification tests execute with zero errors.  
 
 ---
 
 ## REVISION CHANGE LOG
+
+### v2.3.1 (Final Pre-Build Consistency Corrections)
+- **Delivery vs Cash Collection Separation**: Task 15.7 updated so that `DELIVERED` event transitions `balanceCollectionStatus` to `awaiting_collection_confirmation`. Physical delivery is not treated as proof of cash collection. Cash collection is confirmed via verified COD event or admin reconciliation in Task 16.14.
+- **Order Number Non-Gapless Model**: Task 10.1 updated to document that `GG-YYMM-XXXXXX` guarantees unique sequential allocation, but is non-gapless due to abandoned checkouts, failed payments, and retries.
+- **Fastrr Integration Partner Tagging**: Marked all Fastrr checkout tasks in Phase 17 with `[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]`.
+- **Firebase Regional Independence**: Reaffirmed independent availability of Firestore Native and Cloud Storage in `asia-south1` (Mumbai) as a proposed region pending explicit user written approval.
+- **Safe Health-Check Version**: Updated Task 1.9 to assert `{ status: "healthy", version: "2.3.1" }`.
 
 ### v2.3.0 (Final Pre-Build Technical Audit Corrections)
 - **Phased Firebase Setup**: Phase 01 now creates **ONLY `gutglow-development`** and configures the Firebase Local Emulator Suite. Creation of `gutglow-production` and Vercel production secrets configuration are strictly **deferred to Phase 18**.
@@ -29,15 +36,15 @@
 
 ## PHASE 01 — Firebase Project Creation & Development Environment Setup
 
-- [ ] **Task 1.1 (USER APPROVAL GATE)**: Verify user has provided explicit written approval to proceed with region **`asia-south1` (Mumbai, India)**, acknowledging that Firestore database locations cannot be altered after creation.
-- [ ] **Task 1.2**: Create Firebase Project `gutglow-development` in Google Cloud / Firebase Console.
-- [ ] **Task 1.3**: Register Web App in `gutglow-development` and extract Client SDK configuration object.
-- [ ] **Task 1.4**: Set up Firebase Local Emulator Suite (`firebase-tools`) for local development (Auth on port 9099, Firestore on port 8080) so local development requires zero cloud credentials.
-- [ ] **Task 1.5**: Configure `.env.local` for development and emulator use, strictly verifying it is gitignored in `.gitignore`.
-- [ ] **Task 1.6**: Install `firebase` and `firebase-admin` dependencies in `package.json`.
-- [ ] **Task 1.7**: Implement singleton client module `lib/firebase/client.ts` with lazy initialization guard for Next.js HMR and emulator connect support.
-- [ ] **Task 1.8**: Implement singleton admin module `lib/firebase/admin.ts` ensuring private key newline parsing.
-- [ ] **Task 1.9**: Implement safe, read-only server smoke-test route `app/api/v1/health/route.ts` (zero writes) and verify HTTP 200 response `{ status: "healthy", version: "2.3.0" }`.
+- [x] **Task 1.1 (USER APPROVAL GATE)**: Verify user has provided explicit written approval to proceed with region **`asia-south1` (Mumbai, India)**, acknowledging that Firestore database locations cannot be altered after creation. *(Approved on 2026-11-14)*
+- [x] **Task 1.2**: Create Firebase Project `gutglow-development` in Google Cloud / Firebase Console. *(Completed)*
+- [x] **Task 1.3**: Register Web App in `gutglow-development` and extract Client SDK configuration object. *(Completed)*
+- [x] **Task 1.4**: Set up Firebase Local Emulator Suite (`firebase-tools`) for local development (Auth on port 9099, Firestore on port 8080) so local development requires zero cloud credentials. *(Completed via `firebase.json`, `firestore.rules`, `storage.rules`)*
+- [x] **Task 1.5**: Configure `.env.local` for development and emulator use, strictly verifying it is gitignored in `.gitignore`. *(Verified & Configured)*
+- [x] **Task 1.6**: Install `firebase` and `firebase-admin` dependencies in `package.json`. *(Completed: firebase v13, firebase-admin v14)*
+- [x] **Task 1.7**: Implement singleton client module `lib/firebase/client.ts` with lazy initialization guard for Next.js HMR and emulator connect support. *(Completed)*
+- [x] **Task 1.8**: Implement singleton admin module `lib/firebase/admin.ts` ensuring private key newline parsing. *(Completed)*
+- [x] **Task 1.9**: Implement safe, read-only server smoke-test route `app/api/v1/health/route.ts` (zero writes) and verify HTTP 200 response `{ status: "healthy", version: "2.3.1" }`. *(Verified HTTP 200)*
 - *Note: Production Firebase project creation (`gutglow-production`) and Vercel production secrets configuration are strictly deferred to Phase 18.*
 
 ---
@@ -138,7 +145,7 @@
 
 ## PHASE 10 — Order Management Engine & State Machine
 
-- [ ] **Task 10.1**: Implement collision-safe Order ID generator (`GG-YYMM-XXXXXX`) via atomic transaction on `counters/orders_YYYYMM`.
+- [ ] **Task 10.1**: Implement collision-safe unique sequential Order ID generator (`GG-YYMM-XXXXXX`) via atomic transaction on `counters/orders_YYYYMM` (documenting non-gapless allocation due to abandoned checkouts, failed payments, and retries).
 - [ ] **Task 10.2**: Implement decoupled quad-status state machine (`orderStatus`, `paymentMode`, `advancePaymentStatus`, `balanceCollectionStatus`, `shipmentStatus`).
 - [ ] **Task 10.3**: Enforce Partial COD rule: advance payment must be captured before order is marked `confirmed` or eligible for fulfillment.
 - [ ] **Task 10.4**: Build transactional order creation service capturing immutable product snapshots, FEFO batch allocations, advance amount, balance due, and GST breakdown.
@@ -196,7 +203,7 @@
 - [ ] **Task 15.4**: Implement printable thermal shipping label fetcher endpoint.
 - [ ] **Task 15.5**: Create Shiprocket webhook receiver `POST /api/v1/webhooks/shiprocket`.
 - [ ] **Task 15.6**: Confirm static security token header (`x-api-key`) with official Shiprocket docs *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]*.
-- [ ] **Task 15.7**: Ensure delivery webhook sets `balanceCollectionStatus: "collected"` for Partial COD orders (not `"remitted"`).
+- [ ] **Task 15.7**: Ensure delivery webhook sets `balanceCollectionStatus: "awaiting_collection_confirmation"` for Partial COD orders (cash collection is confirmed via verified COD event or manual reconciliation, not assumed on delivery).
 - [ ] **Task 15.8**: Implement webhook idempotency check against `processedWebhooks` collection.
 
 ---
@@ -216,7 +223,7 @@
 - [ ] **Task 16.11**: Build Coupon Management view (`/admin/coupons`).
 - [ ] **Task 16.12**: Build Review Moderation view (`/admin/reviews`).
 - [ ] **Task 16.13**: Build Returns & Replacements view (`/admin/returns`).
-- [ ] **Task 16.14**: Build Partial COD Remittance & Financial Reconciliation console (`/admin/cod-reconciliation`).
+- [ ] **Task 16.14**: Build Partial COD Remittance & Financial Reconciliation console (`/admin/cod-reconciliation`) supporting both manual delivery run-sheet cash collection verification and automated Shiprocket Remittance Advice (CRN/UTR) reconciliation.
 - [ ] **Task 16.15**: Build Tax Invoices console (`/admin/invoices`) for CGST Rule 46 PDF downloads.
 - [ ] **Task 16.16**: Build Store Settings view (`/admin/settings`).
 - [ ] **Task 16.17**: Build Immutable Audit Log viewer (`/admin/logs`).
@@ -229,11 +236,11 @@
 - [ ] **Task 17.1**: Configure Full Prepaid and Partial COD payment options in Fastrr merchant dashboard.
 - [ ] **Task 17.2**: Confirm official Fastrr custom Next.js App Router headless documentation, SDK scripts, and webhook signatures with partner engineering *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
 - [ ] **Task 17.3**: Configure Fastrr Staging API keys in development environment.
-- [ ] **Task 17.4**: Implement checkout session creation endpoint `/api/v1/checkout/fastrr/initiate` verifying paise pricing and physical stock.
-- [ ] **Task 17.5**: Wire Fastrr headless checkout launcher to "Buy Now" and Cart Drawer.
-- [ ] **Task 17.6**: Implement Fastrr webhook receiver `POST /api/v1/webhooks/fastrr`.
-- [ ] **Task 17.7**: Implement HMAC-SHA256 cryptographic webhook signature verification.
-- [ ] **Task 17.8**: Ingest verified advance payment and outstanding balance from Fastrr webhook payload.
+- [ ] **Task 17.4**: Implement checkout session creation endpoint `/api/v1/checkout/fastrr/initiate` verifying paise pricing and physical stock *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
+- [ ] **Task 17.5**: Wire Fastrr headless checkout launcher to "Buy Now" and Cart Drawer *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
+- [ ] **Task 17.6**: Implement Fastrr webhook receiver `POST /api/v1/webhooks/fastrr` *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
+- [ ] **Task 17.7**: Implement HMAC-SHA256 cryptographic webhook signature verification *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
+- [ ] **Task 17.8**: Ingest verified advance payment and outstanding balance from Fastrr webhook payload *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
 - [ ] **Task 17.9**: Implement webhook idempotency check against `processedWebhooks` collection.
 - [ ] **Task 17.10**: Wire atomic Firestore order creation, FEFO batch allocation, physical stock deduction, and notification dispatch.
 - [ ] **Task 17.11**: Test end-to-end sandbox purchase flow across Full Prepaid and Partial COD.
@@ -265,10 +272,12 @@
    - Headless Next.js App Router SDK documentation and webhook signature specification *[REQUIRES_FASTRR_PARTNER_DOCS_CONFIRMATION]*.
 2. **Shiprocket Webhook Authentication Protocol** (`Phase 15`):
    - Confirmation of static token header (`x-api-key`) with Shiprocket developer docs.
-3. **Nutraceutical HSN & GST Confirmation** (`Phase 02, 10`):
+3. **Shiprocket Remittance Reconciliation Specification** (`Phase 15, 16`):
+   - Official API endpoint specification or CSV upload schema for automated courier COD remittance advice (CRN / UTR) matching *[REQUIRES_OFFICIAL_DOCS_VERIFICATION]*.
+4. **Nutraceutical HSN & GST Confirmation** (`Phase 02, 10`):
    - HSN `2106 90 99` at 18% GST confirmed with Chartered Accountant.
-4. **Final Refund & Cancellation Policy** (`Phase 13`):
-   - Specific advance forfeiture rules, cancellation deduction rules, and return refund rules will be defined in a later business planning update.
+5. **Final Refund & Cancellation Policy** (`Phase 13`):
+   - Specific advance forfeiture rules, cancellation deduction rules, and return refund rules will be defined in a later business planning update. Zero legal claims made regarding advance forfeiture.
 
 ---
 
