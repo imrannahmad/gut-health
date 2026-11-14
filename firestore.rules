@@ -2,8 +2,148 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default Deny All: All direct client writes are prohibited.
-    // Client reads/writes must go through server API Route Handlers with Firebase Admin SDK.
+
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'super_admin' || 
+         request.auth.token.role == 'admin');
+    }
+
+    // =========================================================================
+    // 1. PRODUCTS CATALOG
+    // Public read for active products; mutations restricted to Server Admin SDK.
+    // =========================================================================
+    match /products/{productId} {
+      allow read: if resource.data.status == 'active' || isAdmin();
+      allow write: if false; // All updates strictly mediated by Server Admin SDK
+    }
+
+    // =========================================================================
+    // 2. CATEGORIES
+    // Public read for active categories; mutations restricted to Server Admin SDK.
+    // =========================================================================
+    match /categories/{categoryId} {
+      allow read: if resource.data.isActive == true || isAdmin();
+      allow write: if false;
+    }
+
+    // =========================================================================
+    // 3. PHYSICAL INVENTORY & BATCH LOTS
+    // Deny-by-default: Stock levels, reservations & batch records are sensitive.
+    // =========================================================================
+    match /inventory/{sku} {
+      allow read, write: if false;
+
+      match /batches/{batchId} {
+        allow read, write: if false;
+      }
+    }
+
+    // =========================================================================
+    // 4. ORDERS & SUBCOLLECTIONS
+    // Direct client writes strictly DENIED to guarantee integer paise integrity,
+    // stock allocation, and server-side payment verification.
+    // Customers can read only their own finalized orders.
+    // =========================================================================
+    match /orders/{orderId} {
+      allow read: if (isAuthenticated() && resource.data.customerId == request.auth.uid) || isAdmin();
+      allow write: if false;
+
+      match /paymentAttempts/{attemptId} {
+        allow read: if (isAuthenticated() && get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid) || isAdmin();
+        allow write: if false;
+      }
+
+      match /events/{eventId} {
+        allow read: if (isAuthenticated() && get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid) || isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // =========================================================================
+    // 5. USER PROFILES & ADDRESS BOOK
+    // Users can read and update their personal info. Cannot elevate role,
+    // totalOrders, or totalSpendInPaise.
+    // =========================================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Allow initial client-side profile initialization during sign-up
+      allow create: if isOwner(userId) && 
+        request.resource.data.uid == userId &&
+        (!('role' in request.resource.data) || request.resource.data.role == 'customer') &&
+        (!('totalSpendInPaise' in request.resource.data) || request.resource.data.totalSpendInPaise == 0);
+
+      // Allow users to update their profile name/phone, but forbid modifying financial/role fields
+      allow update: if isOwner(userId) && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'totalOrders', 'totalSpendInPaise']);
+
+      allow delete: if false;
+
+      // User Address Book subcollection
+      match /addresses/{addressId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // =========================================================================
+    // 6. PROMOTIONAL COUPONS
+    // Deny direct client read/write. Coupons are validated server-side to
+    // prevent coupon scraping or unauthorized disclosure of discount rules.
+    // =========================================================================
+    match /coupons/{couponCode} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // 7. CUSTOMER REVIEWS
+    // Public read for approved reviews; submissions require verified purchase checks.
+    // =========================================================================
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow write: if false; // Mediated by /api/v1/reviews
+    }
+
+    // =========================================================================
+    // 8. STORE SETTINGS & PUBLIC CONFIG
+    // Public read for statutory/store metadata; updates restricted to Server Admin SDK.
+    // =========================================================================
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // =========================================================================
+    // 9. IMMUTABLE AUDIT LOGS & WEBHOOK IDEMPOTENCY
+    // Strictly confidential internal records. Zero direct client access.
+    // =========================================================================
+    match /adminLogs/{logId} {
+      allow read, write: if false;
+    }
+
+    match /processedWebhooks/{webhookId} {
+      allow read, write: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // 10. GLOBAL CATCH-ALL: DENY ALL DIRECT ACCESS
+    // Any unmapped collection or subcollection is strictly denied.
+    // =========================================================================
     match /{document=**} {
       allow read, write: if false;
     }

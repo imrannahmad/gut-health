@@ -1,15 +1,61 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Check } from "lucide-react";
 import { newsletterSchema } from "@/lib/validations";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useReducedMotion,
+} from "framer-motion";
 
 export function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  // Scroll Progress: 0 when footer container top touches viewport bottom, 1 when reached bottom
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Velvet spring physics for physical weight and inertia (syncs tightly with scrollwheel/trackpad)
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 110,
+    damping: 24,
+    restDelta: 0.001,
+  });
+
+  // Concept 1: The 3D Perspective Monolith (Tilt & Rise from Depths)
+  // Starts tilted back in 3D perspective space (18deg) and deep below (140px, scale 0.91)
+  // As the user scrolls down, it rises from the depths, stands straight (0deg), and scales to 1.0
+  // When scrolling back up, it reverses smoothly and sinks back into the depths!
+  const rotateXSpring = useTransform(smoothProgress, [0, 1], [18, 0]);
+  const ySpring = useTransform(smoothProgress, [0, 1], [140, 0]);
+  const scaleSpring = useTransform(smoothProgress, [0, 1], [0.91, 1]);
+  const shadowSpring = useTransform(
+    smoothProgress,
+    [0, 1],
+    [
+      "0px 6px 20px rgba(40,24,14,0.08)",
+      "0px 24px 60px rgba(40,24,14,0.26)",
+    ]
+  );
+
+  const rotateX = shouldReduceMotion ? 0 : rotateXSpring;
+  const y = shouldReduceMotion ? 0 : ySpring;
+  const scale = shouldReduceMotion ? 1 : scaleSpring;
+  const boxShadow = shouldReduceMotion
+    ? "0px 20px 50px rgba(40,24,14,0.22)"
+    : shadowSpring;
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,12 +70,41 @@ export function Footer() {
   };
 
   return (
-    <div className="w-full px-2.5 min-[360px]:px-3.5 sm:px-6 lg:px-8 pb-3.5 sm:pb-6 pt-3 sm:pt-4 bg-transparent">
-      <footer className="relative max-w-[1180px] mx-auto bg-[#3B2418] text-[#FFFFFF] rounded-[24px] min-[360px]:rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] border border-[#2C1A11] px-6 py-10 sm:px-10 sm:py-12 lg:px-12 lg:py-14 shadow-[0_16px_40px_rgba(40,24,14,0.18)] overflow-hidden">
+    <div
+      ref={containerRef}
+      style={{
+        perspective: "1200px",
+        perspectiveOrigin: "50% 100%",
+      }}
+      className="relative z-0 w-full px-2.5 min-[360px]:px-3.5 sm:px-6 lg:px-8 pb-4 sm:pb-8 pt-4 sm:pt-6 bg-transparent overflow-visible"
+    >
+      <motion.footer
+        style={{
+          y,
+          scale,
+          rotateX,
+          boxShadow,
+          transformOrigin: "center bottom",
+          transformStyle: "preserve-3d",
+        }}
+        className="relative max-w-[1180px] mx-auto bg-[#3B2418] text-[#FFFFFF] rounded-[24px] min-[360px]:rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] border border-[#2C1A11] px-6 py-10 sm:px-10 sm:py-12 lg:px-12 lg:py-14 overflow-hidden will-change-transform"
+      >
+        {/* Subtle Warm Rim Light along top border to emphasize curve */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-px left-1/2 -translate-x-1/2 w-3/4 max-w-[500px] h-px bg-gradient-to-r from-transparent via-[#F4EBDE]/30 to-transparent z-10"
+        />
+
+        {/* Soft Warm Radial Depth in corner */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#F4EBDE]/[0.04] blur-3xl z-0"
+        />
+
         {/* Subtle Luxury Ambient Background Watermark */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-10 -right-6 select-none text-[80px] sm:text-[120px] lg:text-[150px] font-bold tracking-tighter text-[#FFFFFF]/[0.03] uppercase font-serif"
+          className="pointer-events-none absolute -bottom-10 -right-6 select-none text-[80px] sm:text-[120px] lg:text-[150px] font-bold tracking-tighter text-[#FFFFFF]/[0.03] uppercase font-serif z-0"
         >
           GutGlow
         </div>
@@ -182,7 +257,7 @@ export function Footer() {
             <p>© 2026 GutGlow Wellness. All rights reserved.</p>
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }

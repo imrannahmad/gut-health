@@ -1,11 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { auth, db } from "@/lib/firebase/client";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from "firebase/auth";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import {
   User,
   ShoppingBag,
@@ -25,6 +36,8 @@ import {
   EyeOff,
   Bell,
   CreditCard,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 export default function AccountPage() {
@@ -44,11 +57,16 @@ export default function AccountPage() {
   const [registerPassword, setRegisterPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(true);
 
-  // Customer Profile State (Demo Mock)
+  // Auth processing state
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
+
+  // Customer Profile State
   const [customer, setCustomer] = useState({
-    name: "Imran Ahmad",
-    email: "imran@example.com",
-    phone: "+91 98765 43210",
+    name: "GutGlow Customer",
+    email: "customer@gutglow.com",
+    phone: "",
     memberSince: "November 2026",
     address: {
       line1: "Flat 402, Sea Green Apartments",
@@ -62,34 +80,142 @@ export default function AccountPage() {
 
   const [notificationMsg, setNotificationMsg] = useState("");
 
-  const handleSignIn = (e: React.FormEvent) => {
+  // Listen to live Firebase Auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const displayName = firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Ritual Member";
+        const email = firebaseUser.email || "";
+
+        setCustomer((prev) => ({
+          ...prev,
+          name: displayName,
+          email: email,
+        }));
+
+        setActiveTab("dashboard");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const syncUserToFirestore = async (uid: string, email: string, name?: string) => {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const userSnap = await getDoc(userDocRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userDocRef, {
+          uid,
+          email,
+          firstName: name?.split(" ")[0] || "",
+          lastName: name?.split(" ").slice(1).join(" ") || "",
+          totalOrders: 0,
+          totalSpendInPaise: 0,
+          isEmailVerified: true,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.warn("[Account] User sync notice:", err);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (signInEmail) {
+    setAuthError("");
+    setEmailLoading(true);
+
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, signInEmail, signInPassword);
+      const name = userCred.user.displayName || signInEmail.split("@")[0];
       setCustomer((prev) => ({
         ...prev,
-        email: signInEmail,
-        name: signInEmail.split("@")[0].replace(".", " "),
+        email: userCred.user.email || signInEmail,
+        name: name,
       }));
+      setActiveTab("dashboard");
+      setNotificationMsg("Signed in successfully. Welcome to your GutGlow portal.");
+    } catch (err: unknown) {
+      console.error("[Sign In Error]:", err);
+      const msg = err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials.";
+      setAuthError(msg);
+    } finally {
+      setEmailLoading(false);
     }
-    setActiveTab("dashboard");
-    setNotificationMsg("Signed in successfully. Welcome to your GutGlow portal.");
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError("");
+    setEmailLoading(true);
+
     const fullName = `${firstName.trim()} ${lastName.trim()}`.trim() || "GutGlow Customer";
-    setCustomer((prev) => ({
-      ...prev,
-      name: fullName,
-      email: registerEmail || "customer@example.com",
-    }));
-    setActiveTab("dashboard");
-    setNotificationMsg("Account created successfully! Welcome to the GutGlow community.");
+
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
+      await updateProfile(userCred.user, { displayName: fullName });
+      await syncUserToFirestore(userCred.user.uid, registerEmail, fullName);
+
+      setCustomer((prev) => ({
+        ...prev,
+        name: fullName,
+        email: registerEmail,
+      }));
+      setActiveTab("dashboard");
+      setNotificationMsg("Account created successfully! Welcome to the GutGlow community.");
+    } catch (err: unknown) {
+      console.error("[Register Error]:", err);
+      const msg = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      setAuthError(msg);
+    } finally {
+      setEmailLoading(false);
+    }
   };
 
-  const handleSignOut = () => {
-    setActiveTab("signin");
-    setNotificationMsg("You have been signed out.");
+  const handleGoogleSignIn = async () => {
+    setAuthError("");
+    setGoogleLoading(true);
+
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCred = await signInWithPopup(auth, provider);
+      const name = userCred.user.displayName || "GutGlow Customer";
+      const email = userCred.user.email || "";
+
+      await syncUserToFirestore(userCred.user.uid, email, name);
+
+      setCustomer((prev) => ({
+        ...prev,
+        name,
+        email,
+      }));
+      setActiveTab("dashboard");
+      setNotificationMsg("Signed in with Google successfully.");
+    } catch (err: unknown) {
+      const firebaseErr = err as { code?: string; message?: string };
+      // Ignore if user deliberately closed popup without picking account
+      if (firebaseErr?.code === 'auth/popup-closed-by-user') {
+        return;
+      }
+      console.error("[Google Auth Error]:", err);
+      const msg = err instanceof Error ? err.message : "Google authentication was cancelled or failed.";
+      setAuthError(msg);
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setActiveTab("signin");
+      setNotificationMsg("You have been signed out.");
+    } catch (err) {
+      console.error("[Sign Out Error]:", err);
+    }
   };
 
   return (
@@ -168,24 +294,54 @@ export default function AccountPage() {
                 </button>
               </div>
 
-              {/* Quick Demo Preview Button */}
-              <div className="p-3.5 rounded-xl bg-[#F4EBDD]/70 border border-[#E5DAC8] text-center">
-                <p className="text-xs text-[#54232F] font-medium mb-1.5">
-                  Want to preview the customer dashboard immediately?
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("dashboard")}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#111111] hover:text-[#54232F] transition-colors underline decoration-[#54232F]/40 underline-offset-4"
-                >
-                  <span>Preview Customer Orders Dashboard →</span>
-                </button>
-              </div>
-
               {/* --- SIGN IN FORM --- */}
               {activeTab === "signin" && (
                 <form onSubmit={handleSignIn} className="p-6 sm:p-8 rounded-2xl bg-[#FAF6F0] border border-[#EADBCA] shadow-[0_8px_24px_rgba(40,30,20,0.04)] space-y-5">
-                  <div className="space-y-1.5">
+                  {/* Google Sign In at TOP */}
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={googleLoading || emailLoading}
+                    className="w-full inline-flex items-center justify-center gap-2.5 bg-[#FFFFFF] border border-[#E5DAC8] text-[#111111] py-3 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#F4EBDD]/40 transition-colors shadow-xs disabled:opacity-50"
+                  >
+                    {googleLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-[#111111]" />
+                        <span>Connecting to Google...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                          <path
+                            fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          />
+                          <path
+                            fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          />
+                          <path
+                            fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                          />
+                          <path
+                            fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                          />
+                        </svg>
+                        <span>Sign In with Google</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="relative flex items-center justify-center py-1">
+                    <div className="border-t border-[#E5DAC8] w-full" />
+                    <span className="bg-[#FAF6F0] px-3 text-[10px] font-bold uppercase tracking-wider text-[#888888] absolute">
+                      or sign in with email
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
                     <label htmlFor="loginEmail" className="block text-xs font-bold uppercase tracking-wider text-[#171717]">
                       Email Address <span className="text-[#54232F]">*</span>
                     </label>
@@ -249,12 +405,26 @@ export default function AccountPage() {
                     </label>
                   </div>
 
+                  {authError && (
+                    <div className="p-3 bg-[#FDF2F2] border border-[#F8D7DA] rounded-xl text-xs text-[#9B1C1C] flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#9B1C1C]" />
+                      <span>{authError}</span>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs"
+                    disabled={emailLoading || googleLoading}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs disabled:opacity-50"
                   >
-                    <span>Sign In to Account</span>
-                    <ArrowRight className="w-4 h-4" />
+                    {emailLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Sign In to Account</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
 
                   <div className="text-center pt-2">
@@ -275,7 +445,51 @@ export default function AccountPage() {
               {/* --- CREATE ACCOUNT FORM --- */}
               {activeTab === "register" && (
                 <form onSubmit={handleRegister} className="p-6 sm:p-8 rounded-2xl bg-[#FAF6F0] border border-[#EADBCA] shadow-[0_8px_24px_rgba(40,30,20,0.04)] space-y-5">
-                  <div className="grid grid-cols-2 gap-3.5">
+                  {/* Google Sign Up at TOP */}
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={googleLoading || emailLoading}
+                    className="w-full inline-flex items-center justify-center gap-2.5 bg-[#FFFFFF] border border-[#E5DAC8] text-[#111111] py-3 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#F4EBDD]/40 transition-colors shadow-xs disabled:opacity-50"
+                  >
+                    {googleLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-[#111111]" />
+                        <span>Connecting to Google...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                          <path
+                            fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          />
+                          <path
+                            fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          />
+                          <path
+                            fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                          />
+                          <path
+                            fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                          />
+                        </svg>
+                        <span>Sign Up with Google</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="relative flex items-center justify-center py-1">
+                    <div className="border-t border-[#E5DAC8] w-full" />
+                    <span className="bg-[#FAF6F0] px-3 text-[10px] font-bold uppercase tracking-wider text-[#888888] absolute">
+                      or register with email
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3.5 pt-1">
                     <div className="space-y-1.5">
                       <label htmlFor="regFirst" className="block text-xs font-bold uppercase tracking-wider text-[#171717]">
                         First Name <span className="text-[#54232F]">*</span>
@@ -358,12 +572,26 @@ export default function AccountPage() {
                     </label>
                   </div>
 
+                  {authError && (
+                    <div className="p-3 bg-[#FDF2F2] border border-[#F8D7DA] rounded-xl text-xs text-[#9B1C1C] flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#9B1C1C]" />
+                      <span>{authError}</span>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs"
+                    disabled={emailLoading || googleLoading}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] py-3.5 px-6 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs disabled:opacity-50"
                   >
-                    <span>Create GutGlow Account</span>
-                    <ArrowRight className="w-4 h-4" />
+                    {emailLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Create GutGlow Account</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
 
                   <div className="text-center pt-2">

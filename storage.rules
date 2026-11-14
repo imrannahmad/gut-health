@@ -2,7 +2,63 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    // Default Deny All: Direct unauthenticated uploads are prohibited.
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'super_admin' || 
+         request.auth.token.role == 'admin');
+    }
+
+    function isImageUnder5MB() {
+      return request.resource.size <= 5 * 1024 * 1024 &&
+             request.resource.contentType.matches('image/(jpeg|png|webp|avif)');
+    }
+
+    // =========================================================================
+    // 1. PUBLIC PRODUCT & BRAND MEDIA
+    // Public read for CDN assets; write restricted to Server/Admins.
+    // =========================================================================
+    match /products/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isImageUnder5MB();
+    }
+
+    match /categories/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isImageUnder5MB();
+    }
+
+    match /brand/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // =========================================================================
+    // 2. RETURN INSPECTION & DAMAGE EVIDENCE UPLOADS
+    // Authenticated customers can upload damage photos (Max 5MB, strict MIME check).
+    // =========================================================================
+    match /returns/{orderId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isImageUnder5MB();
+    }
+
+    // =========================================================================
+    // 3. TAX INVOICE & COMPLIANCE PDFs (CGST Rule 46)
+    // Invoices are private and served via authenticated signed URLs.
+    // =========================================================================
+    match /invoices/{orderId}/{fileName} {
+      allow read: if isAdmin();
+      allow write: if false; // Generated exclusively by Server Admin SDK
+    }
+
+    // =========================================================================
+    // 4. GLOBAL CATCH-ALL: DENY ALL DIRECT ACCESS
+    // =========================================================================
     match /{allPaths=**} {
       allow read, write: if false;
     }
