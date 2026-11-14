@@ -51,18 +51,18 @@
 
 ## PHASE 02 — Cloud Firestore Architecture & Schema Modeling
 
-- [ ] **Task 2.1**: Provision Cloud Firestore in Native Mode in region `asia-south1` (Mumbai) in `gutglow-development` project only (post user approval).
-- [ ] **Task 2.2**: Author TypeScript interfaces in `types/firestore/*.ts` enforcing the **integer paise standard** for all monetary values.
-- [ ] **Task 2.3**: Model physical base SKU `GG-DWF-200G` with standardized fields `quantityAvailable`, `quantityReserved`, `quantityTotal`.
-- [ ] **Task 2.4**: Model batch/lot tracking schema (`inventory/{sku}/batches`) with `quantityInitial`, `quantityAvailable`, `quantitySold`, `quantityQuarantined`, and `status`.
-- [ ] **Task 2.5**: Model confirmed payment modes (`paymentMode: "prepaid" | "partial_cod"`) with decoupled `advancePaymentStatus` and `balanceCollectionStatus`.
-- [ ] **Task 2.6**: Model financial fields (`totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise`) in order schema.
-- [ ] **Task 2.7**: Model `orders/{orderId}/paymentAttempts` subcollection to track gateway transaction attempts independently.
-- [ ] **Task 2.8**: Model legal tax invoice metadata schema compliant with Rule 46 of CGST Rules (HSN `2106 90 99` [REQUIRES_CA_CONFIRMATION]).
-- [ ] **Task 2.9**: Model store configuration in `settings/store_config` separating business policies (`minShelfLifeMonthsAtDispatch`, `returnWindowDays`) from statutory data.
-- [ ] **Task 2.10**: Deploy composite index specifications via `firestore.indexes.json`.
-- [ ] **Task 2.11**: Implement base repository pattern abstraction in `lib/repositories/baseRepository.ts`.
-- [ ] **Task 2.12**: Author and run local Firestore schema validation test script against emulator asserting 100% type safety.
+- [x] **Task 2.1**: Provision Cloud Firestore in Native Mode in region `asia-south1` (Mumbai) in `gutglow-development` project only (post user approval). *(Completed & Verified)*
+- [x] **Task 2.2**: Author TypeScript interfaces in `types/firestore/*.ts` enforcing the **integer paise standard** for all monetary values. *(Completed in `types/firestore/`)*
+- [x] **Task 2.3**: Model physical base SKU `GG-DWF-200G` with standardized fields `quantityAvailable`, `quantityReserved`, `quantityTotal`. *(Completed in `types/firestore/inventory.ts`)*
+- [x] **Task 2.4**: Model batch/lot tracking schema (`inventory/{sku}/batches`) with `quantityInitial`, `quantityAvailable`, `quantitySold`, `quantityQuarantined`, and `status`. *(Completed in `types/firestore/inventory.ts`)*
+- [x] **Task 2.5**: Model confirmed payment modes (`paymentMode: "prepaid" | "partial_cod"`) with decoupled `advancePaymentStatus` and `balanceCollectionStatus`. *(Completed in `types/firestore/order.ts`)*
+- [x] **Task 2.6**: Model financial fields (`totalAmountInPaise`, `advanceAmountInPaise`, `balanceAmountInPaise`) in order schema. *(Completed in `types/firestore/order.ts`)*
+- [x] **Task 2.7**: Model `orders/{orderId}/paymentAttempts` subcollection to track gateway transaction attempts independently. *(Completed in `types/firestore/order.ts`)*
+- [x] **Task 2.8**: Model legal tax invoice metadata schema compliant with Rule 46 of CGST Rules (HSN `2106 90 99` [REQUIRES_CA_CONFIRMATION]). *(Completed in `types/firestore/order.ts`)*
+- [x] **Task 2.9**: Model store configuration in `settings/store_config` separating business policies (`minShelfLifeMonthsAtDispatch`, `returnWindowDays`) from statutory data. *(Completed in `types/firestore/store.ts`)*
+- [x] **Task 2.10**: Deploy composite index specifications via `firestore.indexes.json`. *(Completed in `firestore.indexes.json`)*
+- [x] **Task 2.11**: Implement base repository pattern abstraction in `lib/repositories/baseRepository.ts`. *(Completed in `lib/repositories/baseRepository.ts`)*
+- [x] **Task 2.12**: Author and run local Firestore schema validation test script against emulator asserting 100% type safety. *(Completed: 100% Pass in `scripts/validate-schemas.ts`)*
 
 ---
 
