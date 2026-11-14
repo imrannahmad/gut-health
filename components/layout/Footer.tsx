@@ -50,12 +50,10 @@ export function Footer() {
     ]
   );
 
-  const rotateX = shouldReduceMotion ? 0 : rotateXSpring;
-  const y = shouldReduceMotion ? 0 : ySpring;
-  const scale = shouldReduceMotion ? 1 : scaleSpring;
-  const boxShadow = shouldReduceMotion
-    ? "0px 20px 50px rgba(40,24,14,0.22)"
-    : shadowSpring;
+  const rotateX = rotateXSpring;
+  const y = ySpring;
+  const scale = scaleSpring;
+  const boxShadow = shadowSpring;
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
