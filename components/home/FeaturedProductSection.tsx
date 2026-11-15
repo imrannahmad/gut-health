@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Minus, ShoppingBag, ArrowRight, Check } from "lucide-react";
+import { motion } from "framer-motion";
 import { PRODUCT_CONFIG } from "@/lib/product-config";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/utils";
@@ -48,7 +49,13 @@ export function FeaturedProductSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           {/* Left Column: Large Product Image + Clean Selector */}
-          <div className="lg:col-span-7 space-y-4">
+          <motion.div
+            initial={{ y: 35 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 space-y-4 will-change-transform"
+          >
             <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5]">
               <Image
                 src={PRODUCT_CONFIG.images[selectedImageIndex]?.src || "/images/product-jar-front.jpg"}
@@ -84,10 +91,16 @@ export function FeaturedProductSection() {
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Commercial Product Information */}
-          <div className="lg:col-span-5 space-y-6">
+          <motion.div
+            initial={{ y: 35 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 space-y-6 will-change-transform"
+          >
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
                 {PRODUCT_CONFIG.category}
@@ -232,7 +245,7 @@ export function FeaturedProductSection() {
             <div className="pt-2">
               <PincodeChecker />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

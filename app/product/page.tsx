@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Minus, ShoppingBag, ArrowRight, Check, Truck, ShieldCheck, RefreshCw } from "lucide-react";
+import { Plus, Minus, ShoppingBag, ArrowRight, Check, Truck, ShieldCheck, RefreshCw, Sparkles } from "lucide-react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -13,18 +13,94 @@ import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/utils";
 import { PincodeChecker } from "@/components/ui/PincodeChecker";
 import { Accordion } from "@/components/ui/Accordion";
-import { PackOption } from "@/types/product";
+import { PackOption, ProductConfig } from "@/types/product";
 
 export default function ProductDetailPage() {
   const router = useRouter();
   const { addItem } = useCart();
 
+  const [productData, setProductData] = useState<ProductConfig>(PRODUCT_CONFIG);
   const [selectedPack, setSelectedPack] = useState<PackOption>(
     PRODUCT_CONFIG.packOptions.find((p) => p.isPopular) || PRODUCT_CONFIG.packOptions[0]
   );
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
+  const [isLiveLoaded, setIsLiveLoaded] = useState(false);
+  const [inventoryStatus, setInventoryStatus] = useState<{
+    isInStock: boolean;
+    quantityAvailable: number;
+  }>({
+    isInStock: true,
+    quantityAvailable: 1500,
+  });
+
+  // Fetch live product and warehouse inventory from Cloud Firestore
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchLiveProduct() {
+      try {
+        const res = await fetch("/api/v1/products/gutglow-daily-wellness");
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success && json.data && isMounted) {
+          const live = json.data;
+          
+          // Map Firestore integer paise format to client representation
+          const mappedPacks: PackOption[] = (live.packOptions || []).map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            subtitle: p.subtitle,
+            servings: p.servings,
+            durationMonths: p.durationMonths,
+            price: typeof p.sellingPriceInPaise === "number" ? p.sellingPriceInPaise / 100 : p.price,
+            compareAtPrice: typeof p.compareAtPriceInPaise === "number" ? p.compareAtPriceInPaise / 100 : p.compareAtPrice,
+            badge: p.badge,
+            isPopular: p.isPopular,
+          }));
+
+          if (mappedPacks.length > 0) {
+            setProductData((prev) => ({
+              ...prev,
+              name: live.name || prev.name,
+              tagline: live.tagline || prev.tagline,
+              shortDescription: live.shortDescription || prev.shortDescription,
+              fullDescription: live.fullDescription || prev.fullDescription,
+              category: live.category?.name || prev.category,
+              packOptions: mappedPacks,
+              images: live.images?.map((img: any) => ({
+                src: img.src,
+                alt: img.alt,
+                label: img.label,
+              })) || prev.images,
+            }));
+
+            // Sync selected pack with live pricing
+            setSelectedPack((current) => {
+              const matched = mappedPacks.find((p) => p.id === current.id);
+              return matched || mappedPacks.find((p) => p.isPopular) || mappedPacks[0];
+            });
+          }
+
+          if (live.inventoryStatus) {
+            setInventoryStatus({
+              isInStock: live.inventoryStatus.isInStock,
+              quantityAvailable: live.inventoryStatus.quantityAvailable,
+            });
+          }
+
+          setIsLiveLoaded(true);
+        }
+      } catch (err) {
+        console.info("[Storefront] Running with static product configuration:", err);
+      }
+    }
+
+    fetchLiveProduct();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleAddToCart = () => {
     addItem(selectedPack, quantity);
@@ -44,10 +120,10 @@ export default function ProductDetailPage() {
       content: (
         <div className="space-y-3">
           <p className="text-xs text-[#666666] leading-relaxed">
-            {PRODUCT_CONFIG.fullDescription}
+            {productData.fullDescription}
           </p>
           <div className="grid grid-cols-2 gap-2 pt-1">
-            {PRODUCT_CONFIG.specifications.map((spec, idx) => (
+            {productData.specifications.map((spec, idx) => (
               <div key={idx} className="bg-[#F5F5F5] p-2.5 rounded-lg border border-[#E5E5E5]">
                 <span className="text-[10px] uppercase tracking-wider text-[#666666] block font-medium">
                   {spec.label}
@@ -67,10 +143,10 @@ export default function ProductDetailPage() {
       content: (
         <div className="space-y-3">
           <p className="text-xs text-[#666666] italic pb-1">
-            {PRODUCT_CONFIG.ingredientsNote}
+            {productData.ingredientsNote}
           </p>
           <div className="space-y-2.5">
-            {PRODUCT_CONFIG.provisionalIngredients.map((cat, idx) => (
+            {productData.provisionalIngredients.map((cat, idx) => (
               <div key={idx} className="border-b border-[#E5E5E5] pb-2 last:border-b-0">
                 <span className="text-xs font-semibold text-[#111111] block">
                   {cat.category}
@@ -89,7 +165,7 @@ export default function ProductDetailPage() {
       title: "Directions For Use",
       content: (
         <div className="space-y-2.5">
-          {PRODUCT_CONFIG.directions.map((step, idx) => (
+          {productData.directions.map((step, idx) => (
             <div key={idx} className="flex gap-2.5 text-xs">
               <span className="w-5 h-5 rounded-full bg-[#111111] text-[#FFFFFF] flex items-center justify-center text-[10px] font-bold shrink-0">
                 {idx + 1}
@@ -111,14 +187,14 @@ export default function ProductDetailPage() {
       content: (
         <div className="space-y-2 text-xs text-[#666666]">
           <ul className="list-disc list-inside space-y-1">
-            {PRODUCT_CONFIG.safetyInformation.map((info, idx) => (
+            {productData.safetyInformation.map((info, idx) => (
               <li key={idx} className="leading-relaxed">
                 {info}
               </li>
             ))}
           </ul>
           <p className="pt-2 text-[11px] font-medium text-[#111111]">
-            Storage: {PRODUCT_CONFIG.storageInstructions}
+            Storage: {productData.storageInstructions}
           </p>
         </div>
       ),
@@ -147,7 +223,7 @@ export default function ProductDetailPage() {
               {/* Mobile Swipeable Gallery */}
               <div className="lg:hidden">
                 <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 -mx-4 px-4 pb-2">
-                  {PRODUCT_CONFIG.images.map((img, idx) => (
+                  {productData.images.map((img, idx) => (
                     <div
                       key={idx}
                       className="shrink-0 w-[88vw] snap-start relative aspect-square rounded-2xl overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5]"
@@ -161,13 +237,13 @@ export default function ProductDetailPage() {
                         className="object-cover"
                       />
                       <div className="absolute bottom-3 right-3 bg-[#FFFFFF]/90 px-2 py-0.5 rounded text-[10px] font-semibold text-[#111111]">
-                        {idx + 1} / {PRODUCT_CONFIG.images.length}
+                        {idx + 1} / {productData.images.length}
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-center gap-1.5 pt-2">
-                  {PRODUCT_CONFIG.images.map((_, idx) => (
+                  {productData.images.map((_, idx) => (
                     <div
                       key={idx}
                       className="w-1.5 h-1.5 rounded-full bg-[#111111]/30"
@@ -179,8 +255,8 @@ export default function ProductDetailPage() {
               {/* Desktop Large Image */}
               <div className="hidden lg:block relative aspect-square rounded-2xl overflow-hidden bg-[#F5F5F5] border border-[#E5E5E5]">
                 <Image
-                  src={PRODUCT_CONFIG.images[selectedImageIndex]?.src || "/images/product-jar-front.jpg"}
-                  alt={PRODUCT_CONFIG.name}
+                  src={productData.images[selectedImageIndex]?.src || "/images/product-jar-front.jpg"}
+                  alt={productData.name}
                   fill
                   priority
                   sizes="650px"
@@ -190,7 +266,7 @@ export default function ProductDetailPage() {
 
               {/* Desktop Thumbnails */}
               <div className="hidden lg:grid grid-cols-5 gap-2.5">
-                {PRODUCT_CONFIG.images.map((img, idx) => (
+                {productData.images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
@@ -233,14 +309,26 @@ export default function ProductDetailPage() {
             {/* Right: Product Actions */}
             <div className="lg:col-span-5 space-y-6">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
-                  {PRODUCT_CONFIG.category}
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#666666]">
+                    {productData.category}
+                  </p>
+                  {inventoryStatus.isInStock ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D32] animate-pulse" />
+                      In Stock · Ships in 24h
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FFEBEE] text-[#C62828] border border-[#FFCDD2]">
+                      Backorder
+                    </span>
+                  )}
+                </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-[#111111] mt-1">
-                  {PRODUCT_CONFIG.name}
+                  {productData.name}
                 </h1>
                 <p className="text-xs text-[#666666] mt-1">
-                  {PRODUCT_CONFIG.tagline}
+                  {productData.tagline}
                 </p>
               </div>
 
@@ -261,7 +349,7 @@ export default function ProductDetailPage() {
 
               {/* Short Description */}
               <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
-                {PRODUCT_CONFIG.shortDescription}
+                {productData.shortDescription}
               </p>
 
               {/* Pack Selector */}
@@ -270,7 +358,7 @@ export default function ProductDetailPage() {
                   Select Supply Pack
                 </label>
                 <div className="space-y-2">
-                  {PRODUCT_CONFIG.packOptions.map((pack) => {
+                  {productData.packOptions.map((pack) => {
                     const isSelected = selectedPack.id === pack.id;
                     return (
                       <button

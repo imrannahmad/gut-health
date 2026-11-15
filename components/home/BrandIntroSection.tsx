@@ -12,7 +12,13 @@ export function BrandIntroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left: Large Editorial Product & Ritual Photography */}
-          <div className="lg:col-span-6 relative">
+          <motion.div
+            initial={{ y: 35, scale: 0.98 }}
+            whileInView={{ y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 relative will-change-transform"
+          >
             <div className="relative aspect-[4/3.6] sm:aspect-[4/3.4] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#FAF6F0] border border-[#EADBCA] shadow-[0_16px_40px_rgba(40,30,20,0.06)]">
               <Image
                 src="/images/philosophy-ritual.webp"
@@ -31,10 +37,16 @@ export function BrandIntroSection() {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right: Refined Brand Story & Value Pillars */}
-          <div className="lg:col-span-6 space-y-6 lg:pl-2">
+          <motion.div
+            initial={{ y: 35 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 space-y-6 lg:pl-2 will-change-transform"
+          >
             {/* Eyebrow Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#F4EBDE] rounded-full border border-[#E5DAC8]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#3B2418]" />
@@ -58,23 +70,29 @@ export function BrandIntroSection() {
 
             {/* Micro Feature Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-              <div className="p-4 rounded-xl bg-[#FAF6F0] border border-[#EADBCA] space-y-1">
+              <motion.div
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                className="p-4 rounded-xl bg-[#FAF6F0] border border-[#EADBCA] space-y-1"
+              >
                 <p className="text-xs font-bold uppercase tracking-wider text-[#171717]">
                   Gentle & Non-Laxative
                 </p>
                 <p className="text-xs text-[#666666] leading-relaxed">
                   Formulated for calm, daily digestive rhythm without unexpected disruptions.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="p-4 rounded-xl bg-[#FAF6F0] border border-[#EADBCA] space-y-1">
+              <motion.div
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                className="p-4 rounded-xl bg-[#FAF6F0] border border-[#EADBCA] space-y-1"
+              >
                 <p className="text-xs font-bold uppercase tracking-wider text-[#171717]">
                   Microbiome Nourishment
                 </p>
                 <p className="text-xs text-[#666666] leading-relaxed">
                   Active prebiotics that feed beneficial flora to reinforce barrier health.
                 </p>
-              </div>
+              </motion.div>
             </div>
 
             {/* CTAs */}
@@ -95,7 +113,7 @@ export function BrandIntroSection() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

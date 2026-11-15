@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -27,14 +28,20 @@ export function WhyGutGlowSection() {
     <section className="py-14 sm:py-20 lg:py-28 bg-[#F5F5F5] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-8 sm:mb-12">
+        <motion.div
+          initial={{ y: 25 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 sm:mb-12 will-change-transform"
+        >
           <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             OUR PRINCIPLES
           </span>
           <h2 className="text-2xl min-[360px]:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
             Thoughtful By Design.
           </h2>
-        </div>
+        </motion.div>
 
         {/* Mobile Swipe Indicator */}
         <div className="md:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
@@ -45,12 +52,21 @@ export function WhyGutGlowSection() {
         {/* Cards: Mobile Swipeable (snap-x) + Desktop 4-col Grid */}
         <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible">
           {features.map((feature, idx) => (
-            <div
+            <motion.div
               key={feature.title}
-              className="shrink-0 w-[78vw] max-w-[280px] snap-start md:w-auto md:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-6 lg:p-7 flex flex-col justify-between hover:border-[#111111] transition-all duration-200 shadow-xs"
+              initial={{ y: 35 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.65,
+                delay: idx * 0.08,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="shrink-0 w-[78vw] max-w-[280px] snap-start md:w-auto md:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl p-6 lg:p-7 flex flex-col justify-between hover:border-[#111111] transition-colors duration-200 shadow-xs will-change-transform"
             >
               <div>
-                <span className="text-[11px] font-bold text-[#54232F] uppercase tracking-widest block mb-3">
+                <span className="text-[11px] font-bold text-[#3B2418] uppercase tracking-widest block mb-3">
                   0{idx + 1}
                 </span>
 
@@ -62,7 +78,7 @@ export function WhyGutGlowSection() {
                   {feature.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

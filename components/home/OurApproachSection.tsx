@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -26,14 +27,20 @@ export function OurApproachSection() {
     <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFFFF] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-8 sm:mb-12">
+        <motion.div
+          initial={{ y: 25 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 sm:mb-12 will-change-transform"
+        >
           <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
             METHODOLOGY
           </span>
           <h2 className="text-2xl min-[360px]:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111111]">
             A Simpler Approach To Wellness.
           </h2>
-        </div>
+        </motion.div>
 
         {/* Mobile Swipe Indicator */}
         <div className="md:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
@@ -43,10 +50,19 @@ export function OurApproachSection() {
 
         {/* Cards: Mobile Swipeable (snap-x) + Desktop 3-col Grid */}
         <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible">
-          {steps.map((item) => (
-            <div
+          {steps.map((item, idx) => (
+            <motion.div
               key={item.step}
-              className="shrink-0 w-[82vw] max-w-[320px] snap-start md:w-auto md:max-w-none bg-[#F5F5F5] border border-[#E5E5E5] rounded-xl p-6 sm:p-7 lg:p-8 flex flex-col justify-between hover:border-[#111111] transition-all duration-200 shadow-xs"
+              initial={{ y: 35 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.65,
+                delay: idx * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="shrink-0 w-[82vw] max-w-[320px] snap-start md:w-auto md:max-w-none bg-[#F5F5F5] border border-[#E5E5E5] rounded-xl p-6 sm:p-7 lg:p-8 flex flex-col justify-between hover:border-[#111111] transition-colors duration-200 shadow-xs will-change-transform"
             >
               <div>
                 <span className="text-2xl sm:text-3xl font-extrabold text-[#111111] block mb-4 sm:mb-6">
@@ -63,12 +79,12 @@ export function OurApproachSection() {
               </div>
 
               <div className="pt-6 sm:pt-8 mt-auto flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#54232F]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#3B2418]" />
                 <span className="text-[10px] uppercase tracking-widest text-[#666666] font-medium">
                   Phase {item.step} of 03
                 </span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

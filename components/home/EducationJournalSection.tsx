@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const articles = [
   {
@@ -34,7 +35,13 @@ export function EducationJournalSection() {
     <section className="py-14 sm:py-20 lg:py-28 bg-[#F5F5F5] border-b border-[#E5E5E5] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <motion.div
+          initial={{ y: 25 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4 will-change-transform"
+        >
           <div>
             <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#666666] block mb-2">
               JOURNAL & EDUCATION
@@ -46,12 +53,12 @@ export function EducationJournalSection() {
 
           <Link
             href="/philosophy"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#3B2418] transition-colors"
           >
             <span>Explore The Science</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
+        </motion.div>
 
         {/* Mobile Swipe Indicator */}
         <div className="md:hidden flex items-center justify-between text-[11px] text-[#666666] uppercase tracking-wider mb-3">
@@ -61,10 +68,19 @@ export function EducationJournalSection() {
 
         {/* Cards: Mobile Swipeable (snap-x) + Desktop 3-col Grid */}
         <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible">
-          {articles.map((article) => (
-            <article
+          {articles.map((article, idx) => (
+            <motion.article
               key={article.title}
-              className="shrink-0 w-[82vw] max-w-[320px] snap-start md:w-auto md:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-all duration-200 group shadow-xs"
+              initial={{ y: 40 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{
+                duration: 0.7,
+                delay: idx * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
+              className="shrink-0 w-[82vw] max-w-[320px] snap-start md:w-auto md:max-w-none bg-[#FFFFFF] border border-[#E5E5E5] rounded-xl overflow-hidden flex flex-col justify-between hover:border-[#111111] transition-colors duration-200 group shadow-xs will-change-transform"
             >
               <div>
                 <div className="relative aspect-[16/10] bg-[#F5F5F5] overflow-hidden">
@@ -94,13 +110,13 @@ export function EducationJournalSection() {
               <div className="p-6 pt-0 mt-auto">
                 <Link
                   href={article.link}
-                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#54232F] transition-colors group/link"
+                  className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold text-[#111111] hover:text-[#3B2418] transition-colors group/link"
                 >
                   <span>Read Article</span>
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
                 </Link>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

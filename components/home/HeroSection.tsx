@@ -4,8 +4,13 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function HeroSection() {
+  const { scrollY } = useScroll();
+  const heroImageY = useTransform(scrollY, [0, 600], [0, 45]);
+  const heroMobileImageY = useTransform(scrollY, [0, 500], [0, 30]);
+
   return (
     <section className="relative w-full overflow-hidden bg-[#FFFFFF] border-b border-[#E8E8E8]">
       
@@ -17,7 +22,12 @@ export function HeroSection() {
           <div className="grid grid-cols-12 gap-8 lg:gap-12 min-h-[520px] lg:min-h-[580px] xl:min-h-[620px] items-center">
             
             {/* Left Column: Brand Story (~45-48%) */}
-            <div className="col-span-6 lg:col-span-5 min-w-0 flex flex-col justify-center py-8 lg:py-12 space-y-5 lg:space-y-6 z-10">
+            <motion.div
+              initial={{ y: 25 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="col-span-6 lg:col-span-5 min-w-0 flex flex-col justify-center py-8 lg:py-12 space-y-5 lg:space-y-6 z-10"
+            >
               {/* Eyebrow in Deep Maroon */}
               <p className="text-xs lg:text-[13px] font-bold tracking-[0.22em] text-[#3B2418] uppercase">
                 GUTGLOW · DAILY WELLNESS
@@ -68,10 +78,13 @@ export function HeroSection() {
                 <span className="text-[#CCCCCC] select-none">·</span>
                 <span>Quality Focused</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Column: Physical Product on Luxury Architectural Countertop (~52-55%) */}
-            <div className="col-span-6 lg:col-span-7 relative flex items-center justify-center lg:justify-end h-full py-4 lg:py-6">
+            <motion.div
+              style={{ y: heroImageY }}
+              className="col-span-6 lg:col-span-7 relative flex items-center justify-center lg:justify-end h-full py-4 lg:py-6 will-change-transform"
+            >
               <div className="relative w-full max-w-[620px] lg:max-w-[700px] xl:max-w-[760px] aspect-[836/638]">
                 <Image
                   src="/images/gutglow-hero-desktop.webp"
@@ -82,7 +95,7 @@ export function HeroSection() {
                   className="object-contain object-center lg:object-right"
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -92,7 +105,10 @@ export function HeroSection() {
           ========================================================================= */}
       <div className="block min-[900px]:hidden pt-1 pb-6 sm:pb-8 max-w-xl mx-auto overflow-hidden">
         {/* 1. PRODUCT COMPOSITION (LARGER, FLUSH TO RIGHT SCREEN EDGE, NATURAL ARCHITECTURAL PERSPECTIVE) */}
-        <div className="w-full flex justify-end overflow-visible">
+        <motion.div
+          style={{ y: heroMobileImageY }}
+          className="w-full flex justify-end overflow-visible will-change-transform"
+        >
           <div className="relative w-full max-w-[520px] aspect-[924/607] select-none ml-auto mr-0">
             <Image
               src="/images/gutglow-hero-mobile.webp"
@@ -103,7 +119,7 @@ export function HeroSection() {
               className="object-contain object-right"
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* 2. EDITORIAL TYPOGRAPHY & CTA (WITH CLEAN HORIZONTAL MARGINS) */}
         <div className="px-4 min-[360px]:px-5 sm:px-6 mt-2 space-y-3 sm:space-y-3.5">
