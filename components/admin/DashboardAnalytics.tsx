@@ -236,15 +236,9 @@ export function DashboardAnalytics({
           ===================================================================== */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-[#ECE6DE]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-[#210D15] font-semibold tracking-tight">
-              Executive Operations & Analytics
-            </h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D32] animate-pulse" />
-              Live Storefront
-            </span>
-          </div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-[#210D15] font-semibold tracking-tight">
+            Executive Operations & Analytics
+          </h1>
           <p className="text-xs text-[#70675E] mt-1 font-sans">
             Logged in as <strong className="text-[#210D15]">{adminSession.email}</strong> ({adminSession.role})
           </p>
