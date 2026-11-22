@@ -1,4 +1,5 @@
 import { productRepository } from '@/lib/repositories/productRepository';
+import { categoryRepository } from '@/lib/repositories/categoryRepository';
 import { adminDb } from '@/lib/firebase/admin';
 import {
   CreateProductSchema,
@@ -100,7 +101,15 @@ export class ProductService {
       totalPhysicalJarsSold: 0,
     };
 
-    return productRepository.create(productId, newProductData as any);
+    const created = await productRepository.create(productId, newProductData as any);
+
+    if (validated.category?.id) {
+      await categoryRepository.updateProductCount(validated.category.id, 1).catch((err) => {
+        console.warn('[ProductService] Category count increment notice:', err);
+      });
+    }
+
+    return created;
   }
 
   /**
@@ -113,7 +122,31 @@ export class ProductService {
       throw new Error(`Product with ID "${id}" not found.`);
     }
 
+    // If category changed, adjust counts
+    if (validated.category?.id && validated.category.id !== existing.category?.id) {
+      await Promise.all([
+        categoryRepository.updateProductCount(existing.category.id, -1).catch(() => {}),
+        categoryRepository.updateProductCount(validated.category.id, 1).catch(() => {}),
+      ]);
+    }
+
     await productRepository.update(id, validated as any);
+  }
+
+  /**
+   * Permanently delete a product document
+   */
+  async deleteProduct(id: string): Promise<void> {
+    const existing = await productRepository.findById(id);
+    if (!existing) {
+      throw new Error(`Product with ID "${id}" not found.`);
+    }
+
+    if (existing.category?.id) {
+      await categoryRepository.updateProductCount(existing.category.id, -1).catch(() => {});
+    }
+
+    await productRepository.delete(id);
   }
 
   /**
@@ -126,6 +159,10 @@ export class ProductService {
     }
 
     await productRepository.update(id, { status: 'archived' } as any);
+
+    if (existing.category?.id) {
+      await categoryRepository.updateProductCount(existing.category.id, -1).catch(() => {});
+    }
   }
 
   /**

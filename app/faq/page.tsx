@@ -61,7 +61,7 @@ const shippingFaqs = [
   {
     id: "ship-3",
     title: "What is the return policy?",
-    content: "Unopened jars with safety seals intact can be returned within 14 days of delivery.",
+    content: "Unopened units with safety seals intact can be returned within 14 days of delivery.",
   },
 ];
 

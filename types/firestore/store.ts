@@ -22,6 +22,7 @@ export interface FirestoreReview {
   id: string; // Document ID: auto-generated
   productId: string; // "gutglow-daily-wellness"
   userId: string;
+  customerEmail?: string;
   orderId: string; // Verified purchase order link
   customerName: string;
   rating: 1 | 2 | 3 | 4 | 5;
@@ -31,7 +32,9 @@ export interface FirestoreReview {
   status: 'pending' | 'approved' | 'rejected';
   moderatedBy?: string;
   moderatedAt?: Timestamp;
+  moderatorNotes?: string;
   createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export type ReturnReason =
@@ -48,21 +51,28 @@ export type ReturnStatus =
   | 'completed';
 
 export interface FirestoreReturn {
-  id: string; // Document ID
+  id: string; // Document ID (e.g. "CLM-2611-XXXXXX")
   orderId: string; // "GG-2611-000001"
   customerId: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
   items: {
     baseSku: string;
     packOptionId: string;
-    physicalJarsCount: number;
+    packName?: string;
+    physicalUnitsCount?: number;
+    physicalJarsCount?: number; // backward compatibility
     reason: ReturnReason;
   }[];
   damagedImageUrls: string[]; // Evidence uploaded to Firebase Storage
   customerNotes?: string;
   status: ReturnStatus;
-  restockEligible: boolean; // true only if unopened, sealed RTO package
+  restockEligible: boolean; // false for consumable returns (strictly non-restockable)
   restocked: boolean;
   replacementOrderId?: string;
+  adminNotes?: string;
+  rejectionReason?: string;
   inspectedBy?: string;
   inspectedAt?: Timestamp;
   createdAt: Timestamp;

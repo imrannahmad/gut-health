@@ -11,6 +11,8 @@ export type AdminPermission =
   | 'returns:read'
   | 'returns:write'
   | 'coupons:manage'
+  | 'reviews:read'
+  | 'reviews:moderate'
   | 'settings:read'
   | 'settings:write'
   | 'admins:manage';
@@ -26,6 +28,8 @@ export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'returns:read',
     'returns:write',
     'coupons:manage',
+    'reviews:read',
+    'reviews:moderate',
     'settings:read',
     'settings:write',
     'admins:manage',
@@ -37,6 +41,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'returns:read',
     'returns:write',
     'products:read',
+    'reviews:read',
   ],
   product_manager: [
     'products:read',
@@ -44,12 +49,16 @@ export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'inventory:read',
     'inventory:write',
     'coupons:manage',
+    'reviews:read',
+    'reviews:moderate',
   ],
   support_manager: [
     'orders:read',
     'returns:read',
     'returns:write',
     'products:read',
+    'reviews:read',
+    'reviews:moderate',
   ],
 };
 

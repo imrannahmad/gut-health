@@ -16,6 +16,8 @@ export interface FirestoreUser {
 
 export interface FirestoreAddress {
   id: string; // Document ID: auto-generated
+  fullName?: string;
+  phone?: string;
   addressLine1: string;
   addressLine2?: string;
   landmark?: string;
@@ -28,6 +30,15 @@ export interface FirestoreAddress {
   isDefaultBilling: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+}
+
+export interface FirestoreSupportNote {
+  id: string; // Document ID
+  authorId: string;
+  authorName: string;
+  authorEmail: string;
+  note: string;
+  createdAt: Timestamp;
 }
 
 export type AdminRole =

@@ -49,6 +49,11 @@ function initializeFirebaseAdmin(): App {
 const adminApp: App = initializeFirebaseAdmin();
 const adminAuth: Auth = getAuth(adminApp);
 const adminDb: Firestore = getFirestore(adminApp);
+try {
+  adminDb.settings({ ignoreUndefinedProperties: true });
+} catch {
+  // Settings already frozen
+}
 const adminStorage: Storage = getStorage(adminApp);
 
 export { adminApp, adminAuth, adminDb, adminStorage };

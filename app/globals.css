@@ -102,3 +102,53 @@ button, input, select, textarea, p, span, a, label {
   flex-shrink: 0;
   scroll-snap-align: start;
 }
+
+/* =========================================================================
+   ADMIN PORTAL CRISP TYPOGRAPHY & LAYOUT OVERRIDES
+   Ensures professional, highly-legible system typography for tables, data,
+   currency, code and inputs instead of stylized storefront display fonts.
+   ========================================================================= */
+.admin-portal,
+.admin-portal *,
+.admin-portal button,
+.admin-portal input,
+.admin-portal select,
+.admin-portal textarea,
+.admin-portal p,
+.admin-portal span,
+.admin-portal a,
+.admin-portal label,
+.admin-portal table,
+.admin-portal th,
+.admin-portal td,
+.admin-portal h1,
+.admin-portal h2,
+.admin-portal h3,
+.admin-portal h4,
+.admin-portal h5,
+.admin-portal h6 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" !important;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.admin-portal .font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+.admin-portal .font-serif {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  letter-spacing: -0.015em;
+}
+
+.admin-portal .uppercase {
+  text-transform: uppercase !important;
+}
+
+.admin-portal .capitalize {
+  text-transform: capitalize !important;
+}
+
+.admin-portal .lowercase {
+  text-transform: lowercase !important;
+}

@@ -27,6 +27,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
   const [isLiveLoaded, setIsLiveLoaded] = useState(false);
+  const [isDraft, setIsDraft] = useState(false);
   const [inventoryStatus, setInventoryStatus] = useState<{
     isInStock: boolean;
     quantityAvailable: number;
@@ -41,9 +42,14 @@ export default function ProductDetailPage() {
     async function fetchLiveProduct() {
       try {
         const res = await fetch("/api/v1/products/gutglow-daily-wellness");
+        if (res.status === 404) {
+          if (isMounted) setIsDraft(true);
+          return;
+        }
         if (!res.ok) return;
         const json = await res.json();
         if (json.success && json.data && isMounted) {
+          setIsDraft(false);
           const live = json.data;
           
           // Map Firestore integer paise format to client representation
@@ -195,6 +201,20 @@ export default function ProductDetailPage() {
           </ul>
           <p className="pt-2 text-[11px] font-medium text-[#111111]">
             Storage: {productData.storageInstructions}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: "details-policy",
+      title: "Replacement & Safety Policy",
+      content: (
+        <div className="space-y-2 text-xs text-[#666666] leading-relaxed">
+          <p>
+            <strong className="text-[#111111]">Non-Returnable Consumable Product:</strong> In accordance with strict FSSAI food safety and hygiene protocols, GutGlow ingestible formulations are non-returnable once successfully delivered.
+          </p>
+          <p>
+            <strong className="text-[#111111]">100% Free Replacement Guarantee:</strong> If your parcel suffers courier transit damage, broken tamper seals, or incorrect fulfillment, report it on our portal within 48 hours of delivery with photo proof for an expedited, 100% free fresh replacement.
           </p>
         </div>
       ),
@@ -399,12 +419,20 @@ export default function ProductDetailPage() {
 
               {/* Quantity Stepper & Add to Cart */}
               <div className="space-y-3 pt-2">
+                {isDraft && (
+                  <div className="p-3 bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E] rounded-lg text-xs flex items-center gap-2 mb-2">
+                    <span className="font-semibold">Draft Formulation:</span>
+                    <span>This product is currently in draft mode (unlisted). Store orders are temporarily paused.</span>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3">
                   <div className="flex items-center border border-[#E5E5E5] rounded-lg bg-[#F5F5F5] px-3 py-2.5">
                     <button
                       type="button"
+                      disabled={isDraft}
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="p-1 text-[#666666] hover:text-[#111111]"
+                      className="p-1 text-[#666666] hover:text-[#111111] disabled:opacity-40"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="w-3.5 h-3.5" />
@@ -414,8 +442,9 @@ export default function ProductDetailPage() {
                     </span>
                     <button
                       type="button"
+                      disabled={isDraft}
                       onClick={() => setQuantity((q) => q + 1)}
-                      className="p-1 text-[#666666] hover:text-[#111111]"
+                      className="p-1 text-[#666666] hover:text-[#111111] disabled:opacity-40"
                       aria-label="Increase quantity"
                     >
                       <Plus className="w-3.5 h-3.5" />
@@ -424,22 +453,29 @@ export default function ProductDetailPage() {
 
                   <button
                     type="button"
+                    disabled={isDraft}
                     onClick={handleAddToCart}
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ShoppingBag className="w-4 h-4" />
-                    <span>Add to Cart</span>
+                    <span>{isDraft ? 'Unavailable (Draft)' : 'Add to Cart'}</span>
                   </button>
                 </div>
 
                 <button
                   type="button"
+                  disabled={isDraft}
                   onClick={handleBuyNow}
-                  className="w-full flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#111111] border border-[#E5E5E5] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:border-[#111111] hover:bg-[#F5F5F5] transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#111111] border border-[#E5E5E5] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:border-[#111111] hover:bg-[#F5F5F5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Buy Now · Direct Checkout</span>
+                  <span>{isDraft ? 'Orders Paused' : 'Buy Now · Direct Checkout'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
+
+                <div className="flex items-center gap-2 pt-1 text-[11px] text-[#70675E]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#54232F] shrink-0" />
+                  <span>Non-Returnable (Consumable Food Hygiene) • Free Replacement on Transit Damage</span>
+                </div>
 
                 {addedNotice && (
                   <div className="bg-[#3B2418] text-[#FFFFFF] text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-2">
@@ -475,11 +511,12 @@ export default function ProductDetailPage() {
 
           <button
             type="button"
+            disabled={isDraft}
             onClick={handleAddToCart}
-            className="flex-1 max-w-[200px] flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-2.5 px-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
+            className="flex-1 max-w-[200px] flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-2.5 px-4 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Add to Cart</span>
+            <span>{isDraft ? 'Draft' : 'Add to Cart'}</span>
           </button>
         </div>
       </main>

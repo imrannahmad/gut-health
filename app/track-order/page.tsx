@@ -17,31 +17,29 @@ import {
   ShieldCheck,
   AlertCircle,
   RotateCcw,
+  Loader2,
+  CreditCard,
 } from "lucide-react";
+import type { MaskedOrderTrackingResponse } from "@/lib/services/orderTrackingService";
 
-interface TrackingEvent {
-  title: string;
-  location: string;
-  time: string;
-  completed: boolean;
-  active?: boolean;
-}
-
-const demoShipmentData = {
+const demoShipmentData: MaskedOrderTrackingResponse = {
   orderNumber: "GG-84291",
-  trackingNumber: "EXP-BLUEDART-984210",
+  orderStatus: "confirmed",
+  shipmentStatus: "in_transit",
   courier: "Blue Dart Express Logistics",
-  status: "In Transit — On Schedule",
-  estimatedDelivery: "Thursday, Nov 12, 2026",
-  dispatchedDate: "Nov 9, 2026 · 11:30 AM",
-  destination: "Mumbai, Maharashtra · 400050",
+  trackingNumber: "EXP-BLUEDART-984210",
+  estimatedDelivery: "3–5 Business Days",
+  destination: "Mumbai, Maharashtra · 400***",
+  customerName: "I**** A****",
+  paymentMode: "partial_cod",
+  advancePaidInPaise: 98000,
+  balanceDueInPaise: 391900,
   items: [
     {
-      name: "GutGlow Daily Wellness Formula — 3-Month Ritual",
-      servings: "90 Daily Servings · Net Wt. 600g",
-      qty: 1,
+      name: "GutGlow Daily Wellness Formula",
+      packName: "3-Month Optimal Ritual (90 Servings)",
+      quantity: 1,
       image: "/images/gutglow-product-front.jpg",
-      price: "₹4,899",
     },
   ],
   timeline: [
@@ -53,13 +51,13 @@ const demoShipmentData = {
     },
     {
       title: "Quality Inspected & Sealed for Dispatch",
-      location: "Central Warehouse, New Delhi",
+      location: "Central Warehouse, Mumbai",
       time: "Nov 9, 2026 · 09:40 AM",
       completed: true,
     },
     {
       title: "Departed Origin Sort Facility",
-      location: "Blue Dart Express Hub, Delhi",
+      location: "Blue Dart Express Hub, Mumbai",
       time: "Nov 9, 2026 · 02:15 PM",
       completed: true,
       active: true,
@@ -83,39 +81,58 @@ export default function TrackOrderPage() {
   const [orderId, setOrderId] = useState("");
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [showDemo, setShowDemo] = useState(false);
+  const [trackingData, setTrackingData] = useState<MaskedOrderTrackingResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleTrackSubmit = (e: React.FormEvent) => {
+  const handleTrackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderId.trim()) {
       setErrorMessage("Please enter a valid GutGlow Order Number or AWB Tracking ID.");
       return;
     }
+    if (!emailOrPhone.trim()) {
+      setErrorMessage("Please enter your registered email address or 10-digit mobile number for verification.");
+      return;
+    }
+
     setErrorMessage("");
     setIsSearching(true);
+    setTrackingData(null);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/v1/orders/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderNumber: orderId.trim(),
+          emailOrPhone: emailOrPhone.trim(),
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Order not found. Please verify your reference number and contact info.");
+      }
+
+      setTrackingData(json.data);
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to retrieve shipment records.");
+    } finally {
       setIsSearching(false);
-      setHasSearched(true);
-      setShowDemo(true);
-    }, 600);
+    }
   };
 
   const handleLoadDemo = () => {
     setOrderId("GG-84291");
     setEmailOrPhone("customer@example.com");
     setErrorMessage("");
-    setShowDemo(true);
-    setHasSearched(true);
+    setTrackingData(demoShipmentData);
   };
 
   const handleReset = () => {
     setOrderId("");
     setEmailOrPhone("");
-    setShowDemo(false);
-    setHasSearched(false);
+    setTrackingData(null);
     setErrorMessage("");
   };
 
@@ -156,7 +173,8 @@ export default function TrackOrderPage() {
                     <input
                       id="orderId"
                       type="text"
-                      placeholder="e.g. GG-84291 or EXP-984210"
+                      required
+                      placeholder="e.g. GG-2611-000001 or EXP-984210"
                       value={orderId}
                       onChange={(e) => setOrderId(e.target.value)}
                       className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-sm text-[#111111] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#54232F]/20 focus:border-[#54232F] transition-all"
@@ -166,12 +184,13 @@ export default function TrackOrderPage() {
 
                 <div className="space-y-1.5">
                   <label htmlFor="emailOrPhone" className="block text-xs font-bold uppercase tracking-wider text-[#171717]">
-                    Email Address or Phone (Optional)
+                    Email Address or Phone <span className="text-[#54232F]">*</span>
                   </label>
                   <input
                     id="emailOrPhone"
                     type="text"
-                    placeholder="e.g. imran@example.com"
+                    required
+                    placeholder="e.g. imran@example.com or 9876543210"
                     value={emailOrPhone}
                     onChange={(e) => setEmailOrPhone(e.target.value)}
                     className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-sm text-[#111111] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#54232F]/20 focus:border-[#54232F] transition-all"
@@ -180,7 +199,7 @@ export default function TrackOrderPage() {
               </div>
 
               {errorMessage && (
-                <div className="flex items-center gap-2 text-xs font-medium text-[#B91C1C] pt-1">
+                <div className="p-3 bg-[#FDF2F2] border border-[#F8D7DA] rounded-xl flex items-center gap-2 text-xs font-medium text-[#B91C1C]">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errorMessage}</span>
                 </div>
@@ -192,8 +211,17 @@ export default function TrackOrderPage() {
                   disabled={isSearching}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-[#FFFFFF] px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs disabled:opacity-60"
                 >
-                  <Search className="w-4 h-4" />
-                  <span>{isSearching ? "Searching Transit Records..." : "Track Package"}</span>
+                  {isSearching ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Searching Transit Records...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-4 h-4" />
+                      <span>Track Package</span>
+                    </>
+                  )}
                 </button>
 
                 <button
@@ -208,30 +236,56 @@ export default function TrackOrderPage() {
           </div>
 
           {/* Results: Live Tracking Card */}
-          {showDemo && (
+          {trackingData && (
             <div className="space-y-8 animate-fadeIn">
               {/* Order Status Banner */}
               <div className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-[#FFFFFF] border border-[#E8E8E8] shadow-[0_12px_36px_rgba(0,0,0,0.06)] space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E8E8]">
                   <div className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#54232F]">
-                      Active Order #{demoShipmentData.orderNumber}
-                    </span>
-                    <h2 className="text-2xl font-extrabold text-[#111111]">
-                      {demoShipmentData.status}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#54232F]">
+                        Order #{trackingData.orderNumber}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-[#F4EBDD] text-[#54232F] border border-[#E5DAC8]">
+                        {trackingData.orderStatus}
+                      </span>
+                    </div>
+
+                    <h2 className="text-2xl font-extrabold text-[#111111] capitalize">
+                      Shipment {trackingData.shipmentStatus.replace(/_/g, " ")}
                     </h2>
+
                     <p className="text-xs text-[#666666]">
-                      Carrier: <span className="font-semibold text-[#111111]">{demoShipmentData.courier}</span> · Tracking ID: <span className="font-mono text-[#54232F] font-semibold">{demoShipmentData.trackingNumber}</span>
+                      Carrier: <span className="font-semibold text-[#111111]">{trackingData.courier}</span>
+                      {trackingData.trackingNumber && (
+                        <> · AWB: <span className="font-mono text-[#54232F] font-semibold">{trackingData.trackingNumber}</span></>
+                      )}
+                    </p>
+                    <p className="text-[11px] text-[#888888]">
+                      Delivering to: <span className="text-[#111111] font-medium">{trackingData.destination}</span> ({trackingData.customerName})
                     </p>
                   </div>
 
-                  <div className="sm:text-right space-y-1 bg-[#FAF6F0] sm:bg-transparent p-3 sm:p-0 rounded-xl">
+                  <div className="sm:text-right space-y-1.5 bg-[#FAF6F0] sm:bg-transparent p-4 sm:p-0 rounded-xl border sm:border-0 border-[#EADBCA]">
                     <span className="text-[11px] uppercase tracking-wider text-[#666666]">Estimated Delivery</span>
-                    <p className="text-base font-bold text-[#111111]">{demoShipmentData.estimatedDelivery}</p>
-                    <p className="text-[11px] text-[#059669] font-semibold flex items-center sm:justify-end gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#059669] animate-pulse" />
-                      Complimentary Express Delivery
-                    </p>
+                    <p className="text-base font-bold text-[#111111]">{trackingData.estimatedDelivery}</p>
+
+                    {trackingData.paymentMode === "partial_cod" ? (
+                      <div className="p-2 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-left sm:text-right space-y-0.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#92400E] flex items-center sm:justify-end gap-1">
+                          <CreditCard className="w-3 h-3" />
+                          Partial COD
+                        </span>
+                        <p className="text-xs font-extrabold text-[#92400E]">
+                          Collect on Delivery: ₹{(trackingData.balanceDueInPaise / 100).toFixed(2)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-[#059669] font-semibold flex items-center sm:justify-end gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
+                        Full Prepaid · Nothing to pay on delivery
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -242,10 +296,10 @@ export default function TrackOrderPage() {
                   </p>
 
                   <div className="space-y-6">
-                    {demoShipmentData.timeline.map((step, idx) => (
+                    {trackingData.timeline.map((step, idx) => (
                       <div key={idx} className="flex items-start gap-4 relative">
                         {/* Connecting Line */}
-                        {idx !== demoShipmentData.timeline.length - 1 && (
+                        {idx !== trackingData.timeline.length - 1 && (
                           <div
                             className={`absolute left-4 top-8 w-0.5 h-10 -ml-[1px] ${
                               step.completed ? "bg-[#54232F]" : "bg-[#E5E5E5]"
@@ -302,40 +356,63 @@ export default function TrackOrderPage() {
                   <p className="text-xs font-bold uppercase tracking-wider text-[#171717] mb-3">
                     Items in this Package
                   </p>
-                  {demoShipmentData.items.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF6F0] border border-[#EADBCA]"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-[#FFFFFF] border border-[#E5DAC8] shrink-0">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fill
-                            sizes="48px"
-                            className="object-cover object-center"
-                          />
+                  <div className="space-y-2">
+                    {trackingData.items.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF6F0] border border-[#EADBCA]"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-[#FFFFFF] border border-[#E5DAC8] shrink-0">
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              sizes="48px"
+                              className="object-cover object-center"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-[#111111]">{item.name}</p>
+                            <p className="text-[11px] text-[#666666]">{item.packName}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-bold text-[#111111]">{item.name}</p>
-                          <p className="text-[11px] text-[#666666]">{item.servings}</p>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-[#111111]">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-xs font-bold text-[#111111]">{item.price}</span>
-                        <p className="text-[10px] text-[#888888]">Qty: {item.qty}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+
+                {/* Consumable Quality & Replacement Policy Banner */}
+                {trackingData.shipmentStatus === 'delivered' && (
+                  <div className="p-4 rounded-xl bg-[#FAF6F0] border border-[#EADBCA] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="space-y-0.5">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#54232F] flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#54232F]" />
+                        <span>FSSAI Hygiene Guarantee • Delivered Parcel</span>
+                      </span>
+                      <p className="text-xs text-[#666666]">
+                        Consumable health products are non-returnable. If your parcel suffered transit damage or broken seals, file for a free replacement within 48 hours.
+                      </p>
+                    </div>
+                    <Link
+                      href={`/claims/new?orderId=${trackingData.orderNumber}&phone=${encodeURIComponent(emailOrPhone)}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#54232F] text-[#FAF8F5] rounded-lg text-xs font-bold hover:bg-[#3D1A27] transition shrink-0 self-start sm:self-auto"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Report Damage</span>
+                    </Link>
+                  </div>
+                )}
 
                 {/* Action buttons */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E8E8E8]">
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#666666] hover:text-[#111111] transition-colors py-1"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#666666] hover:text-[#111111] transition-colors py-1 font-semibold"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Track Another Order</span>
@@ -369,7 +446,7 @@ export default function TrackOrderPage() {
               <ShieldCheck className="w-5 h-5 text-[#54232F]" />
               <h3 className="text-sm font-bold text-[#111111]">Tamper-Proof Packaging</h3>
               <p className="text-xs text-[#666666] leading-relaxed">
-                Every jar is double-sealed in protective temperature-controlled boxes for freshness and safety.
+                Every unit is double-sealed in protective temperature-controlled packaging for freshness and safety.
               </p>
             </div>
 

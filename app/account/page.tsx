@@ -20,25 +20,28 @@ import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import {
   User,
   ShoppingBag,
-  Package,
   MapPin,
   Lock,
   Mail,
   ArrowRight,
   CheckCircle2,
-  Clock,
   Truck,
   RotateCcw,
   Sparkles,
   LogOut,
-  Settings,
   Eye,
   EyeOff,
-  Bell,
-  CreditCard,
   Loader2,
   AlertCircle,
+  Plus,
+  Trash2,
+  Edit3,
+  X,
+  Phone,
+  ShieldCheck,
 } from "lucide-react";
+import { INDIAN_GST_STATE_CODES } from "@/lib/validations/addressSchema";
+import type { FirestoreAddress } from "@/types/firestore/user";
 
 export default function AccountPage() {
   // Tabs: 'signin' | 'register' | 'dashboard'
@@ -65,34 +68,104 @@ export default function AccountPage() {
   // Customer Profile State
   const [customer, setCustomer] = useState({
     name: "GutGlow Customer",
+    firstName: "",
+    lastName: "",
     email: "customer@gutglow.com",
     phone: "",
     memberSince: "November 2026",
-    address: {
-      line1: "Flat 402, Sea Green Apartments",
-      line2: "Perry Cross Road, Bandra West",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400050",
-      country: "India",
-    },
+    totalOrders: 0,
+    totalSpendInPaise: 0,
   });
 
+  // Saved Addresses State
+  const [addresses, setAddresses] = useState<FirestoreAddress[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [addressActionLoading, setAddressActionLoading] = useState(false);
+
+  // Address Modal State
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [addressForm, setAddressForm] = useState({
+    fullName: "",
+    phone: "",
+    addressLine1: "",
+    addressLine2: "",
+    landmark: "",
+    city: "",
+    state: "Maharashtra",
+    stateCode: "27",
+    pincode: "",
+    isDefaultShipping: true,
+    isDefaultBilling: false,
+  });
+  const [addressFormError, setAddressFormError] = useState("");
+
+  // Profile Edit Modal State
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState("");
+
   const [notificationMsg, setNotificationMsg] = useState("");
+
+  // Load customer profile & address book from backend
+  const loadCustomerData = async (firebaseUser: any) => {
+    try {
+      setLoadingAddresses(true);
+      const token = await firebaseUser.getIdToken();
+      const res = await fetch("/api/v1/customer/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const u = json.data.user || {};
+          const addrs = json.data.addresses || [];
+          const fName = u.firstName || firebaseUser.displayName?.split(" ")[0] || "";
+          const lName = u.lastName || firebaseUser.displayName?.split(" ").slice(1).join(" ") || "";
+          const fullName = `${fName} ${lName}`.trim() || firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Ritual Member";
+
+          setCustomer({
+            name: fullName,
+            firstName: fName,
+            lastName: lName,
+            email: u.email || firebaseUser.email || "",
+            phone: u.phone || "",
+            memberSince: u.createdAt
+              ? new Date((u.createdAt.seconds || u.createdAt._seconds || Math.floor(Date.now() / 1000)) * 1000).toLocaleDateString("en-IN", {
+                  month: "long",
+                  year: "numeric",
+                })
+              : "November 2026",
+            totalOrders: u.totalOrders || 0,
+            totalSpendInPaise: u.totalSpendInPaise || 0,
+          });
+
+          setProfileForm({
+            firstName: fName,
+            lastName: lName,
+            phone: u.phone || "",
+          });
+
+          setAddresses(addrs);
+        }
+      }
+    } catch (err) {
+      console.error("[Account] Failed to load customer profile:", err);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
 
   // Listen to live Firebase Auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const displayName = firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Ritual Member";
-        const email = firebaseUser.email || "";
-
-        setCustomer((prev) => ({
-          ...prev,
-          name: displayName,
-          email: email,
-        }));
-
+        await loadCustomerData(firebaseUser);
         setActiveTab("dashboard");
       }
     });
@@ -130,12 +203,7 @@ export default function AccountPage() {
 
     try {
       const userCred = await signInWithEmailAndPassword(auth, signInEmail, signInPassword);
-      const name = userCred.user.displayName || signInEmail.split("@")[0];
-      setCustomer((prev) => ({
-        ...prev,
-        email: userCred.user.email || signInEmail,
-        name: name,
-      }));
+      await loadCustomerData(userCred.user);
       setActiveTab("dashboard");
       setNotificationMsg("Signed in successfully. Welcome to your GutGlow portal.");
     } catch (err: unknown) {
@@ -158,12 +226,8 @@ export default function AccountPage() {
       const userCred = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
       await updateProfile(userCred.user, { displayName: fullName });
       await syncUserToFirestore(userCred.user.uid, registerEmail, fullName);
+      await loadCustomerData(userCred.user);
 
-      setCustomer((prev) => ({
-        ...prev,
-        name: fullName,
-        email: registerEmail,
-      }));
       setActiveTab("dashboard");
       setNotificationMsg("Account created successfully! Welcome to the GutGlow community.");
     } catch (err: unknown) {
@@ -186,18 +250,13 @@ export default function AccountPage() {
       const email = userCred.user.email || "";
 
       await syncUserToFirestore(userCred.user.uid, email, name);
+      await loadCustomerData(userCred.user);
 
-      setCustomer((prev) => ({
-        ...prev,
-        name,
-        email,
-      }));
       setActiveTab("dashboard");
       setNotificationMsg("Signed in with Google successfully.");
     } catch (err: unknown) {
       const firebaseErr = err as { code?: string; message?: string };
-      // Ignore if user deliberately closed popup without picking account
-      if (firebaseErr?.code === 'auth/popup-closed-by-user') {
+      if (firebaseErr?.code === "auth/popup-closed-by-user") {
         return;
       }
       console.error("[Google Auth Error]:", err);
@@ -211,10 +270,180 @@ export default function AccountPage() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      setAddresses([]);
       setActiveTab("signin");
       setNotificationMsg("You have been signed out.");
     } catch (err) {
       console.error("[Sign Out Error]:", err);
+    }
+  };
+
+  // Open address modal for creating a new address
+  const handleOpenAddAddress = () => {
+    setEditingAddressId(null);
+    setAddressForm({
+      fullName: customer.name || "",
+      phone: customer.phone || "",
+      addressLine1: "",
+      addressLine2: "",
+      landmark: "",
+      city: "",
+      state: "Maharashtra",
+      stateCode: "27",
+      pincode: "",
+      isDefaultShipping: addresses.length === 0,
+      isDefaultBilling: addresses.length === 0,
+    });
+    setAddressFormError("");
+    setShowAddressModal(true);
+  };
+
+  // Open address modal for editing
+  const handleOpenEditAddress = (addr: FirestoreAddress) => {
+    setEditingAddressId(addr.id);
+    setAddressForm({
+      fullName: addr.fullName || customer.name || "",
+      phone: addr.phone || customer.phone || "",
+      addressLine1: addr.addressLine1 || "",
+      addressLine2: addr.addressLine2 || "",
+      landmark: addr.landmark || "",
+      city: addr.city || "",
+      state: addr.state || "Maharashtra",
+      stateCode: addr.stateCode || "27",
+      pincode: addr.pincode || "",
+      isDefaultShipping: !!addr.isDefaultShipping,
+      isDefaultBilling: !!addr.isDefaultBilling,
+    });
+    setAddressFormError("");
+    setShowAddressModal(true);
+  };
+
+  // Save address (Create or Update)
+  const handleSaveAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddressFormError("");
+    setAddressActionLoading(true);
+
+    try {
+      if (!auth.currentUser) throw new Error("Please log in to save addresses.");
+      const token = await auth.currentUser.getIdToken();
+
+      const url = editingAddressId
+        ? `/api/v1/customer/addresses/${editingAddressId}`
+        : `/api/v1/customer/addresses`;
+      const method = editingAddressId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(addressForm),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to save address.");
+      }
+
+      setShowAddressModal(false);
+      await loadCustomerData(auth.currentUser);
+      setNotificationMsg(
+        editingAddressId
+          ? "Delivery address updated successfully."
+          : "New delivery address added successfully."
+      );
+    } catch (err: unknown) {
+      setAddressFormError(err instanceof Error ? err.message : "Failed to save address");
+    } finally {
+      setAddressActionLoading(false);
+    }
+  };
+
+  // Delete address
+  const handleDeleteAddress = async (addressId: string) => {
+    if (!window.confirm("Are you sure you want to delete this delivery address?")) return;
+    setAddressActionLoading(true);
+
+    try {
+      if (!auth.currentUser) throw new Error("Please log in.");
+      const token = await auth.currentUser.getIdToken();
+
+      const res = await fetch(`/api/v1/customer/addresses/${addressId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Failed to delete address.");
+
+      await loadCustomerData(auth.currentUser);
+      setNotificationMsg("Address removed.");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to delete address");
+    } finally {
+      setAddressActionLoading(false);
+    }
+  };
+
+  // Set default shipping
+  const handleSetDefaultShipping = async (addressId: string) => {
+    setAddressActionLoading(true);
+    try {
+      if (!auth.currentUser) throw new Error("Please log in.");
+      const token = await auth.currentUser.getIdToken();
+
+      const res = await fetch(`/api/v1/customer/addresses/${addressId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isDefaultShipping: true }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Failed to update default address.");
+
+      await loadCustomerData(auth.currentUser);
+      setNotificationMsg("Default shipping address updated.");
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to update default address");
+    } finally {
+      setAddressActionLoading(false);
+    }
+  };
+
+  // Save profile
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileError("");
+    setProfileSaving(true);
+
+    try {
+      if (!auth.currentUser) throw new Error("Please log in.");
+      const token = await auth.currentUser.getIdToken();
+
+      const res = await fetch("/api/v1/customer/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileForm),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Failed to update profile.");
+
+      setShowProfileModal(false);
+      await loadCustomerData(auth.currentUser);
+      setNotificationMsg("Your profile details have been saved.");
+    } catch (err: unknown) {
+      setProfileError(err instanceof Error ? err.message : "Failed to update profile");
+    } finally {
+      setProfileSaving(false);
     }
   };
 
@@ -228,15 +457,15 @@ export default function AccountPage() {
           
           {/* Top Banner / Notification */}
           {notificationMsg && (
-            <div className="p-4 rounded-xl bg-[#F4EBDD] border border-[#E5DAC8] flex items-center justify-between text-xs text-[#54232F] font-medium">
+            <div className="p-4 rounded-xl bg-[#F4EBDD] border border-[#E5DAC8] flex items-center justify-between text-xs text-[#54232F] font-medium animate-fadeIn">
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#54232F]" />
+                <CheckCircle2 className="w-4 h-4 text-[#54232F] shrink-0" />
                 {notificationMsg}
               </span>
               <button
                 type="button"
                 onClick={() => setNotificationMsg("")}
-                className="text-[#54232F] hover:underline font-bold text-[11px]"
+                className="text-[#54232F] hover:underline font-bold text-[11px] ml-4 shrink-0"
               >
                 Dismiss
               </button>
@@ -365,13 +594,12 @@ export default function AccountPage() {
                       </label>
                       <button
                         type="button"
-                        onClick={() => alert("Password reset link will be sent to your email once backend is connected.")}
-                        className="text-[11px] font-semibold text-[#54232F] hover:underline"
+                        onClick={() => alert("Password reset functionality will be sent to your registered email.")}
+                        className="text-[11px] text-[#54232F] hover:underline font-semibold"
                       >
-                        Forgot password?
+                        Forgot Password?
                       </button>
                     </div>
-
                     <div className="relative">
                       <input
                         id="loginPassword"
@@ -380,28 +608,27 @@ export default function AccountPage() {
                         placeholder="••••••••"
                         value={signInPassword}
                         onChange={(e) => setSignInPassword(e.target.value)}
-                        className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-sm text-[#111111] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#54232F]/20 focus:border-[#54232F] transition-all"
+                        className="w-full px-4 py-3 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-sm text-[#111111] placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#54232F]/20 focus:border-[#54232F] transition-all pr-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-3.5 text-[#888888] hover:text-[#111111]"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888888] hover:text-[#111111]"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="remember"
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#E5DAC8] text-[#54232F] focus:ring-[#54232F]"
-                    />
-                    <label htmlFor="remember" className="text-xs text-[#555555]">
-                      Keep me signed in on this device
+                  <div className="flex items-center justify-between pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="w-4 h-4 rounded border-[#E5DAC8] text-[#54232F] focus:ring-[#54232F]"
+                      />
+                      <span className="text-xs text-[#555555]">Keep me signed in on this device</span>
                     </label>
                   </div>
 
@@ -611,7 +838,7 @@ export default function AccountPage() {
             </div>
           ) : (
             /* =========================================================================
-                VIEW 2: AUTHENTICATED CUSTOMER DASHBOARD (Order History & Addresses)
+                VIEW 2: AUTHENTICATED CUSTOMER DASHBOARD (Order History & Address Book)
                 ========================================================================= */
             <div className="space-y-8 animate-fadeIn">
               {/* Profile Welcome Banner */}
@@ -629,11 +856,32 @@ export default function AccountPage() {
                         Ritual Member
                       </span>
                     </div>
-                    <p className="text-xs text-[#666666]">{customer.email} · Member since {customer.memberSince}</p>
+                    <p className="text-xs text-[#666666] flex flex-wrap items-center gap-2">
+                      <span>{customer.email}</span>
+                      {customer.phone && <span>· +91 {customer.phone}</span>}
+                      <span>· Member since {customer.memberSince}</span>
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileForm({
+                        firstName: customer.firstName,
+                        lastName: customer.lastName,
+                        phone: customer.phone,
+                      });
+                      setProfileError("");
+                      setShowProfileModal(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-[#E5DAC8] text-xs font-bold uppercase tracking-wider text-[#111111] hover:bg-[#FFFFFF] transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Edit Profile</span>
+                  </button>
+
                   <Link
                     href="/track-order"
                     className="inline-flex items-center gap-2 bg-[#111111] text-[#FFFFFF] px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors"
@@ -653,11 +901,11 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Grid: Orders (Left 8 cols) & Account Info (Right 4 cols) */}
+              {/* Grid: Orders (Left 7 cols) & Address Book (Right 5 cols) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 {/* LEFT: ORDER HISTORY */}
-                <div className="lg:col-span-8 space-y-6">
+                <div className="lg:col-span-7 space-y-6">
                   <div className="flex items-center justify-between border-b border-[#E8E8E8] pb-3">
                     <div className="flex items-center gap-2">
                       <ShoppingBag className="w-4 h-4 text-[#54232F]" />
@@ -665,7 +913,9 @@ export default function AccountPage() {
                         Your Order History
                       </h2>
                     </div>
-                    <span className="text-xs text-[#666666] font-medium">2 Total Orders</span>
+                    <span className="text-xs text-[#666666] font-medium">
+                      {customer.totalOrders} {customer.totalOrders === 1 ? "Order" : "Orders"}
+                    </span>
                   </div>
 
                   {/* Order 1: Active In-Transit */}
@@ -782,74 +1032,152 @@ export default function AccountPage() {
                   </div>
                 </div>
 
-                {/* RIGHT: ACCOUNT DETAILS & ADDRESSES */}
-                <div className="lg:col-span-4 space-y-6">
-                  {/* Shipping Address */}
-                  <div className="p-6 rounded-2xl bg-[#FAF6F0] border border-[#EADBCA] space-y-3">
-                    <div className="flex items-center justify-between">
+                {/* RIGHT: LIVE ADDRESS BOOK & ACCOUNT STATUS */}
+                <div className="lg:col-span-5 space-y-6">
+                  
+                  {/* Address Book Card */}
+                  <div className="p-6 rounded-2xl bg-[#FAF6F0] border border-[#EADBCA] space-y-4">
+                    <div className="flex items-center justify-between border-b border-[#EADBCA] pb-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-[#54232F]" />
                         <h3 className="text-xs font-bold uppercase tracking-wider text-[#111111]">
-                          Primary Delivery Address
+                          Saved Addresses
                         </h3>
                       </div>
-                    </div>
 
-                    <div className="text-xs text-[#555555] leading-relaxed space-y-0.5 pt-1">
-                      <p className="font-bold text-[#111111]">{customer.name}</p>
-                      <p>{customer.address.line1}</p>
-                      <p>{customer.address.line2}</p>
-                      <p>
-                        {customer.address.city}, {customer.address.state} — {customer.address.pincode}
-                      </p>
-                      <p>{customer.address.country}</p>
-                      <p className="text-[11px] text-[#888888] pt-1">Phone: {customer.phone}</p>
-                    </div>
-
-                    <div className="pt-2">
                       <button
                         type="button"
-                        onClick={() => alert("Address modification will be enabled with backend database.")}
-                        className="text-xs font-semibold text-[#54232F] hover:underline"
+                        onClick={handleOpenAddAddress}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#111111] text-[#FFFFFF] rounded-full text-[11px] font-bold uppercase tracking-wider hover:bg-[#333333] transition-colors shadow-xs"
                       >
-                        Edit Shipping Details
+                        <Plus className="w-3 h-3" />
+                        <span>Add New</span>
                       </button>
                     </div>
+
+                    {loadingAddresses ? (
+                      <div className="py-8 flex flex-col items-center justify-center text-xs text-[#666666] gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin text-[#54232F]" />
+                        <span>Loading address book...</span>
+                      </div>
+                    ) : addresses.length === 0 ? (
+                      <div className="py-6 text-center space-y-3">
+                        <div className="w-10 h-10 rounded-full bg-[#EADBCA]/60 flex items-center justify-center mx-auto text-[#54232F]">
+                          <MapPin className="w-5 h-5" />
+                        </div>
+                        <p className="text-xs text-[#666666]">
+                          No delivery addresses saved yet. Add your primary shipping address for seamless one-click checkout.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddAddress}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#54232F] hover:underline"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Your First Address</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {addresses.map((addr) => (
+                          <div
+                            key={addr.id}
+                            className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E5DAC8] space-y-2 relative shadow-xs"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-xs text-[#111111]">
+                                {addr.fullName || customer.name}
+                              </span>
+                              <div className="flex items-center gap-1.5">
+                                {addr.isDefaultShipping ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                                    Default
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSetDefaultShipping(addr.id)}
+                                    disabled={addressActionLoading}
+                                    className="text-[10px] text-[#666666] hover:text-[#111111] underline"
+                                  >
+                                    Set Default
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="text-xs text-[#555555] leading-relaxed">
+                              <p>{addr.addressLine1}</p>
+                              {addr.addressLine2 && <p>{addr.addressLine2}</p>}
+                              {addr.landmark && <p className="text-[#888888]">Near {addr.landmark}</p>}
+                              <p>
+                                {addr.city}, {addr.state} — <span className="font-mono font-medium">{addr.pincode}</span>
+                              </p>
+                              <p className="text-[11px] text-[#888888] pt-1">
+                                Phone: +91 {addr.phone || customer.phone || "Not provided"} · GST Code: {addr.stateCode}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#F4EBDD]">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditAddress(addr)}
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#54232F] hover:underline"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAddress(addr.id)}
+                                disabled={addressActionLoading}
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#9B1C1C] hover:underline"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Wellness Concierge */}
+                  {/* Account Summary & Trust Card */}
                   <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E8E8E8] space-y-3 shadow-xs">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-[#54232F]" />
+                      <ShieldCheck className="w-4 h-4 text-[#54232F]" />
                       <h3 className="text-xs font-bold uppercase tracking-wider text-[#111111]">
-                        GutGlow Concierge
+                        Verified Member Privileges
                       </h3>
                     </div>
 
-                    <p className="text-xs text-[#666666] leading-relaxed">
-                      Need assistance with your ritual routine, dosage timing, or an ongoing shipment?
-                    </p>
+                    <ul className="text-xs text-[#666666] space-y-2 leading-relaxed">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                        <span>Pan-India Priority Dispatch via Shiprocket</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                        <span>Direct WhatsApp Concierge & Dietary Advice</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#059669] shrink-0" />
+                        <span>Early Batch Allocation (Min. 6 months shelf life)</span>
+                      </li>
+                    </ul>
 
-                    <div className="pt-1">
+                    <div className="pt-2 border-t border-[#F5F5F5]">
                       <Link
                         href="/contact"
                         className="inline-flex items-center gap-1.5 text-xs font-bold text-[#111111] hover:text-[#54232F] transition-colors"
                       >
-                        <span>Contact Support Desk</span>
+                        <span>Need Help? Contact Concierge</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
                   </div>
 
-                  {/* Backend Integration Note */}
-                  <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[#475569]">
-                      Backend Ready Architecture
-                    </p>
-                    <p className="text-[11px] text-[#64748B] leading-relaxed">
-                      This customer portal is prepared to connect with Firebase Auth, Supabase, Shopify Storefront API, or custom PostgreSQL endpoints when you build your backend.
-                    </p>
-                  </div>
                 </div>
 
               </div>
@@ -858,6 +1186,297 @@ export default function AccountPage() {
 
         </div>
       </main>
+
+      {/* =========================================================================
+          MODAL: ADD / EDIT ADDRESS
+          ========================================================================= */}
+      {showAddressModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
+          <div className="w-full max-w-lg bg-[#FAF6F0] border border-[#EADBCA] rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => setShowAddressModal(false)}
+              className="absolute right-5 top-5 p-2 rounded-full hover:bg-[#EADBCA]/60 text-[#666666] hover:text-[#111111] transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="space-y-1 pb-4 border-b border-[#EADBCA]">
+              <h3 className="text-xl font-extrabold text-[#111111]">
+                {editingAddressId ? "Edit Delivery Address" : "Add Delivery Address"}
+              </h3>
+              <p className="text-xs text-[#666666]">
+                Address must have a valid 6-digit Indian PIN code and GST state code.
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveAddress} className="space-y-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    Full Name <span className="text-[#54232F]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={addressForm.fullName}
+                    onChange={(e) => setAddressForm({ ...addressForm, fullName: e.target.value })}
+                    placeholder="Recipient's Name"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    Phone (10 Digits) <span className="text-[#54232F]">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    value={addressForm.phone}
+                    onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, "") })}
+                    placeholder="9876543210"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                  Street Address (Line 1) <span className="text-[#54232F]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={addressForm.addressLine1}
+                  onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
+                  placeholder="Flat / House / Building / Street"
+                  className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    Apartment / Area (Line 2)
+                  </label>
+                  <input
+                    type="text"
+                    value={addressForm.addressLine2}
+                    onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })}
+                    placeholder="Sector / Layout / Colony"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    Landmark
+                  </label>
+                  <input
+                    type="text"
+                    value={addressForm.landmark}
+                    onChange={(e) => setAddressForm({ ...addressForm, landmark: e.target.value })}
+                    placeholder="Near City Hospital"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    City <span className="text-[#54232F]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={addressForm.city}
+                    onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                    placeholder="Mumbai"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    PIN Code <span className="text-[#54232F]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={addressForm.pincode}
+                    onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, "") })}
+                    placeholder="400050"
+                    className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] font-mono focus:outline-none focus:border-[#54232F]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                    State (GST) <span className="text-[#54232F]">*</span>
+                  </label>
+                  <select
+                    value={addressForm.stateCode}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      const name = INDIAN_GST_STATE_CODES[code] || "";
+                      setAddressForm({ ...addressForm, stateCode: code, state: name });
+                    }}
+                    className="w-full px-3 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                  >
+                    {Object.entries(INDIAN_GST_STATE_CODES).map(([code, name]) => (
+                      <option key={code} value={code}>
+                        {name} ({code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  id="defaultShipCheck"
+                  type="checkbox"
+                  checked={addressForm.isDefaultShipping}
+                  onChange={(e) => setAddressForm({ ...addressForm, isDefaultShipping: e.target.checked })}
+                  className="w-4 h-4 rounded border-[#E5DAC8] text-[#54232F] focus:ring-[#54232F]"
+                />
+                <label htmlFor="defaultShipCheck" className="text-xs text-[#555555] cursor-pointer">
+                  Set as default shipping address
+                </label>
+              </div>
+
+              {addressFormError && (
+                <div className="p-3 bg-[#FDF2F2] border border-[#F8D7DA] rounded-xl text-xs text-[#9B1C1C] flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{addressFormError}</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EADBCA]">
+                <button
+                  type="button"
+                  onClick={() => setShowAddressModal(false)}
+                  className="px-5 py-2.5 rounded-full border border-[#E5DAC8] text-xs font-bold uppercase tracking-wider text-[#666666] hover:bg-[#FFFFFF]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addressActionLoading}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#111111] text-[#FFFFFF] text-xs font-bold uppercase tracking-wider hover:bg-[#333333] disabled:opacity-50"
+                >
+                  {addressActionLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span>Save Address</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MODAL: EDIT PROFILE
+          ========================================================================= */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
+          <div className="w-full max-w-md bg-[#FAF6F0] border border-[#EADBCA] rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+            <button
+              type="button"
+              onClick={() => setShowProfileModal(false)}
+              className="absolute right-5 top-5 p-2 rounded-full hover:bg-[#EADBCA]/60 text-[#666666] hover:text-[#111111] transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="space-y-1 pb-4 border-b border-[#EADBCA]">
+              <h3 className="text-xl font-extrabold text-[#111111]">
+                Edit Profile
+              </h3>
+              <p className="text-xs text-[#666666]">
+                Update your contact details for delivery alerts.
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveProfile} className="space-y-4 pt-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                  First Name <span className="text-[#54232F]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={profileForm.firstName}
+                  onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
+                  placeholder="First Name"
+                  className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={profileForm.lastName}
+                  onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
+                  placeholder="Last Name"
+                  className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                  Mobile Phone (10 Digits)
+                </label>
+                <input
+                  type="tel"
+                  maxLength={10}
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, "") })}
+                  placeholder="9876543210"
+                  className="w-full px-3.5 py-2.5 bg-[#FFFFFF] border border-[#E5DAC8] rounded-xl text-xs text-[#111111] focus:outline-none focus:border-[#54232F]"
+                />
+              </div>
+
+              {profileError && (
+                <div className="p-3 bg-[#FDF2F2] border border-[#F8D7DA] rounded-xl text-xs text-[#9B1C1C] flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{profileError}</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EADBCA]">
+                <button
+                  type="button"
+                  onClick={() => setShowProfileModal(false)}
+                  className="px-5 py-2.5 rounded-full border border-[#E5DAC8] text-xs font-bold uppercase tracking-wider text-[#666666] hover:bg-[#FFFFFF]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={profileSaving}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#111111] text-[#FFFFFF] text-xs font-bold uppercase tracking-wider hover:bg-[#333333] disabled:opacity-50"
+                >
+                  {profileSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span>Save Changes</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

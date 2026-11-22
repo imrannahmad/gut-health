@@ -98,7 +98,7 @@ export default function AboutPage() {
                 <span className="text-xs font-bold text-[#111111]">03</span>
                 <h3 className="text-base font-bold text-[#111111]">Sustainable Packaging</h3>
                 <p className="text-xs text-[#666666] leading-relaxed">
-                  Recyclable glass jars protecting active botanicals from UV light.
+                  Recyclable, premium packaging protecting active botanicals from UV light.
                 </p>
               </div>
             </div>

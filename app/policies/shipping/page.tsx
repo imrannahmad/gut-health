@@ -47,7 +47,7 @@ export default function ShippingPage() {
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-[#111111]">3. 14-Day Returns</h2>
               <p>
-                Unopened jars with safety seals intact may be returned within 14 days of
+                Unopened units with safety seals intact may be returned within 14 days of
                 receipt for a full refund or replacement. Email care@gutglow.com to initiate
                 a return.
               </p>

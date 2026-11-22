@@ -30,6 +30,9 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: product });
   } catch (error) {
+    if ((error as any)?.digest?.startsWith?.('NEXT_PRERENDER')) {
+      throw error;
+    }
     console.error('[API] /api/v1/admin/products/[id] GET error:', error);
     return NextResponse.json(
       {
@@ -80,7 +83,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   props: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -90,24 +93,42 @@ export async function DELETE(
     }
 
     const { id } = await props.params;
-    await productService.archiveProduct(id);
+    const { searchParams } = new URL(request.url);
+    const isPermanent = searchParams.get('permanent') !== 'false';
 
-    // Audit Log Entry
-    await adminDb.collection('adminLogs').add({
-      action: 'product.archived',
-      entityType: 'product',
-      entityId: id,
-      performedBy: admin.email || admin.uid,
-      timestamp: FieldValue.serverTimestamp(),
-    });
+    if (isPermanent) {
+      await productService.deleteProduct(id);
 
-    return NextResponse.json({ success: true, message: 'Product archived successfully' });
+      // Audit Log Entry
+      await adminDb.collection('adminLogs').add({
+        action: 'product.deleted',
+        entityType: 'product',
+        entityId: id,
+        performedBy: admin.email || admin.uid,
+        timestamp: FieldValue.serverTimestamp(),
+      });
+
+      return NextResponse.json({ success: true, message: 'Product deleted permanently' });
+    } else {
+      await productService.archiveProduct(id);
+
+      // Audit Log Entry
+      await adminDb.collection('adminLogs').add({
+        action: 'product.archived',
+        entityType: 'product',
+        entityId: id,
+        performedBy: admin.email || admin.uid,
+        timestamp: FieldValue.serverTimestamp(),
+      });
+
+      return NextResponse.json({ success: true, message: 'Product archived successfully' });
+    }
   } catch (error) {
     console.error('[API] /api/v1/admin/products/[id] DELETE error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to archive product',
+        error: error instanceof Error ? error.message : 'Failed to delete product',
       },
       { status: 400 }
     );

@@ -20,5 +20,7 @@ export interface CartContextType {
   openDrawer: () => void;
   closeDrawer: () => void;
   toggleDrawer: () => void;
+  validateCartWithServer?: () => Promise<any>;
+  isSyncing?: boolean;
 }
 
