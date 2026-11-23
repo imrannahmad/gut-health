@@ -31,38 +31,72 @@ export class ProductRepository extends BaseRepository<FirestoreProduct> {
    * List all featured active products for storefront homepage/carousels
    */
   async findFeatured(): Promise<FirestoreProduct[]> {
-    const snap = await this.collection
-      .where('status', '==', 'active')
-      .where('isFeatured', '==', true)
-      .orderBy('createdAt', 'desc')
-      .get();
+    try {
+      const snap = await this.collection
+        .where('status', '==', 'active')
+        .where('isFeatured', '==', true)
+        .orderBy('createdAt', 'desc')
+        .get();
 
-    return snap.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as FirestoreProduct
-    );
+      return snap.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as FirestoreProduct
+      );
+    } catch (err: any) {
+      if (err?.code === 9 || err?.message?.includes('requires an index')) {
+        const snap = await this.collection
+          .where('status', '==', 'active')
+          .where('isFeatured', '==', true)
+          .get();
+        return snap.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as FirestoreProduct
+        );
+      }
+      throw err;
+    }
   }
 
   /**
    * List all active products within a specific category
    */
   async findByCategory(categoryId: string): Promise<FirestoreProduct[]> {
-    const snap = await this.collection
-      .where('status', '==', 'active')
-      .where('category.id', '==', categoryId)
-      .orderBy('createdAt', 'desc')
-      .get();
+    try {
+      const snap = await this.collection
+        .where('status', '==', 'active')
+        .where('category.id', '==', categoryId)
+        .orderBy('createdAt', 'desc')
+        .get();
 
-    return snap.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as FirestoreProduct
-    );
+      return snap.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as FirestoreProduct
+      );
+    } catch (err: any) {
+      if (err?.code === 9 || err?.message?.includes('requires an index')) {
+        const snap = await this.collection
+          .where('status', '==', 'active')
+          .where('category.id', '==', categoryId)
+          .get();
+        return snap.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as FirestoreProduct
+        );
+      }
+      throw err;
+    }
   }
 
   /**

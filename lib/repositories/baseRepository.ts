@@ -110,7 +110,51 @@ export abstract class BaseRepository<T extends BaseFirestoreDocument> {
     const limitCount = options.limit || 20;
     query = query.limit(limitCount);
 
-    const snapshot = await query.get();
+    let snapshot: FirebaseFirestore.QuerySnapshot;
+    try {
+      snapshot = await query.get();
+    } catch (err: any) {
+      // Graceful fallback if Firestore composite index is missing or building
+      if (err?.code === 9 || err?.message?.includes('requires an index')) {
+        let fallbackQuery: FirebaseFirestore.Query = this.collection;
+        if (options.where && options.where.length > 0) {
+          for (const [field, op, val] of options.where) {
+            fallbackQuery = fallbackQuery.where(field, op, val);
+          }
+        }
+        const fallbackSnap = await fallbackQuery.get();
+        let fallbackItems = fallbackSnap.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as unknown as T
+        );
+
+        // In-memory sorting
+        const sortField = options.orderBy ? options.orderBy[0] : 'createdAt';
+        const sortDir = options.orderBy ? options.orderBy[1] : 'desc';
+        fallbackItems.sort((a: any, b: any) => {
+          const valA = a[sortField]?.toMillis ? a[sortField].toMillis() : (a[sortField] || 0);
+          const valB = b[sortField]?.toMillis ? b[sortField].toMillis() : (b[sortField] || 0);
+          return sortDir === 'desc' ? (valB > valA ? 1 : -1) : (valA > valB ? 1 : -1);
+        });
+
+        const pagedItems = fallbackItems.slice(0, limitCount);
+        const nextCursor =
+          fallbackItems.length > limitCount
+            ? (fallbackItems[limitCount - 1] as any)?.id || null
+            : null;
+
+        return {
+          items: pagedItems,
+          nextCursor,
+          hasMore: Boolean(nextCursor),
+        };
+      }
+      throw err;
+    }
+
     const items = snapshot.docs.map(
       (doc) =>
         ({
