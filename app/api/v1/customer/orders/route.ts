@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { verifyCustomerAuth } from '@/lib/auth/customerAuth';
 import { adminDb } from '@/lib/firebase/admin';
 
-export const dynamic = 'force-dynamic';
-
 export async function GET(request: Request) {
   try {
     const auth = await verifyCustomerAuth(request);

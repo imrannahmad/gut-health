@@ -4,8 +4,6 @@ import { verifyAdminSession, hasPermission, ADMIN_COOKIE_NAME } from '@/lib/auth
 import { AdminClaimFilterSchema } from '@/lib/validations/claimSchema';
 import { claimService } from '@/lib/services/claimService';
 
-export const dynamic = 'force-dynamic';
-
 export async function GET(request: Request) {
   try {
     const cookieStore = await cookies();
