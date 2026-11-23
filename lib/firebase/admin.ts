@@ -5,8 +5,11 @@ import { getStorage, type Storage } from 'firebase-admin/storage';
 
 function formatPrivateKey(key: string | undefined): string | undefined {
   if (!key) return undefined;
-  // Replace escaped newlines if passed as single-line string
-  return key.replace(/\\n/g, '\n');
+  let cleanKey = key.trim();
+  if ((cleanKey.startsWith('"') && cleanKey.endsWith('"')) || (cleanKey.startsWith("'") && cleanKey.endsWith("'"))) {
+    cleanKey = cleanKey.slice(1, -1);
+  }
+  return cleanKey.replace(/\\n/g, '\n');
 }
 
 function initializeFirebaseAdmin(): App {
@@ -17,7 +20,7 @@ function initializeFirebaseAdmin(): App {
   const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'gutglow-development';
   const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
   const privateKey = formatPrivateKey(process.env.FIREBASE_ADMIN_PRIVATE_KEY);
-  const storageBucket = process.env.FIREBASE_ADMIN_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'gutglow-development.appspot.com';
+  const storageBucket = process.env.FIREBASE_ADMIN_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'gutglow-development.firebasestorage.app';
 
   // If running with local emulator or explicit credentials
   if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
@@ -28,15 +31,19 @@ function initializeFirebaseAdmin(): App {
   }
 
   if (projectId && clientEmail && privateKey) {
-    return initializeApp({
-      projectId,
-      credential: cert({
+    try {
+      return initializeApp({
         projectId,
-        clientEmail,
-        privateKey,
-      }),
-      storageBucket,
-    });
+        credential: cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
+        storageBucket,
+      });
+    } catch (certErr) {
+      console.error('[Firebase Admin] cert error:', certErr);
+    }
   }
 
   // Fallback to default application credentials if running in GCP runtime
