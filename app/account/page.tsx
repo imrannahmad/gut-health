@@ -82,6 +82,10 @@ export default function AccountPage() {
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [addressActionLoading, setAddressActionLoading] = useState(false);
 
+  // Customer Orders State
+  const [customerOrders, setCustomerOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+
   // Address Modal State
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
@@ -153,6 +157,24 @@ export default function AccountPage() {
 
           setAddresses(addrs);
         }
+      }
+
+      // Fetch customer orders from live database
+      try {
+        setLoadingOrders(true);
+        const ordRes = await fetch("/api/v1/customer/orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (ordRes.ok) {
+          const ordJson = await ordRes.json();
+          if (ordJson.success && Array.isArray(ordJson.data?.orders)) {
+            setCustomerOrders(ordJson.data.orders);
+          }
+        }
+      } catch (ordErr) {
+        console.warn("[Account] Notice fetching customer orders:", ordErr);
+      } finally {
+        setLoadingOrders(false);
       }
     } catch (err) {
       console.error("[Account] Failed to load customer profile:", err);
@@ -914,122 +936,106 @@ export default function AccountPage() {
                       </h2>
                     </div>
                     <span className="text-xs text-[#666666] font-medium">
-                      {customer.totalOrders} {customer.totalOrders === 1 ? "Order" : "Orders"}
+                      {customerOrders.length} {customerOrders.length === 1 ? "Order" : "Orders"}
                     </span>
                   </div>
 
-                  {/* Order 1: Active In-Transit */}
-                  <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E5DAC8] shadow-sm space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#F0EAE1]">
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-mono font-bold text-[#54232F]">Order #GG-84291</span>
-                        <p className="text-[11px] text-[#888888]">Placed on November 8, 2026 · Express Shipping</p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#F4EBDD] text-[#54232F] border border-[#E5DAC8] flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#54232F] animate-pulse" />
-                          In Transit
-                        </span>
-                        <span className="text-sm font-extrabold text-[#111111]">₹4,899</span>
-                      </div>
+                  {loadingOrders ? (
+                    <div className="p-12 text-center text-[#666666] space-y-3 bg-[#FFFFFF] rounded-2xl border border-[#EADBCA]">
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#54232F]" />
+                      <p className="text-xs font-medium">Loading your orders...</p>
                     </div>
-
-                    {/* Item Details */}
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#FAF6F0] border border-[#EADBCA] shrink-0">
-                          <Image
-                            src="/images/gutglow-product-front.jpg"
-                            alt="GutGlow Daily Wellness Formula"
-                            fill
-                            sizes="64px"
-                            className="object-cover object-center"
-                          />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-[#111111]">
-                            GutGlow Daily Wellness Formula — 3-Month Ritual
-                          </p>
-                          <p className="text-xs text-[#666666] mt-0.5">
-                            90 Servings · Net Wt. 600g · Free Precision Brass Scoop Included
-                          </p>
-                          <p className="text-[11px] text-[#888888] mt-1">Quantity: 1</p>
-                        </div>
+                  ) : customerOrders.length === 0 ? (
+                    <div className="p-8 sm:p-12 rounded-2xl bg-[#FFFFFF] border border-[#EADBCA] text-center space-y-4">
+                      <div className="w-14 h-14 rounded-full bg-[#FAF6F0] border border-[#EADBCA] flex items-center justify-center mx-auto text-[#54232F]">
+                        <ShoppingBag className="w-6 h-6 stroke-[1.5]" />
                       </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#F0EAE1]">
-                      <span className="text-xs text-[#059669] font-medium flex items-center gap-1">
-                        <Truck className="w-3.5 h-3.5" />
-                        Estimated delivery: Thursday, Nov 12
-                      </span>
-
-                      <div className="flex items-center gap-3">
+                      <div className="space-y-1.5 max-w-sm mx-auto">
+                        <h3 className="text-base font-bold text-[#111111]">
+                          No orders placed yet
+                        </h3>
+                        <p className="text-xs text-[#666666] leading-relaxed">
+                          When you start your GutGlow daily ritual, your order details, live courier tracking AWB, and delivery milestones will appear here.
+                        </p>
+                      </div>
+                      <div className="pt-2">
                         <Link
-                          href="/track-order"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider bg-[#111111] text-[#FFFFFF] px-4 py-2 rounded-full hover:bg-[#333333] transition-colors"
+                          href="/product"
+                          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8BC5FF] text-[#111111] text-xs font-bold uppercase tracking-wider hover:bg-[#7ABBF7] transition-colors"
                         >
-                          <span>Track Package</span>
+                          <span>Explore Daily Formula</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {customerOrders.map((ord) => (
+                        <div key={ord.id} className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E5DAC8] shadow-sm space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#F0EAE1]">
+                            <div className="space-y-0.5">
+                              <span className="text-xs font-mono font-bold text-[#54232F]">Order #{ord.orderNumber || ord.id}</span>
+                              <p className="text-[11px] text-[#888888]">
+                                {ord.createdAt?.seconds
+                                  ? new Date(ord.createdAt.seconds * 1000).toLocaleDateString("en-IN", {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                    })
+                                  : "Recent"}
+                                {ord.paymentMode ? ` · ${ord.paymentMode === "partial_cod" ? "Partial COD" : "Prepaid"}` : ""}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#F4EBDD] text-[#54232F] border border-[#E5DAC8]">
+                                {ord.shipmentStatus || ord.orderStatus || "Confirmed"}
+                              </span>
+                              <span className="text-sm font-extrabold text-[#111111]">
+                                ₹{ord.pricing?.finalPayablePaise ? (ord.pricing.finalPayablePaise / 100).toLocaleString("en-IN") : "—"}
+                              </span>
+                            </div>
+                          </div>
 
-                  {/* Order 2: Delivered History */}
-                  <div className="p-6 rounded-2xl bg-[#FFFFFF] border border-[#E8E8E8] shadow-xs space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#F5F5F5]">
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-mono font-bold text-[#666666]">Order #GG-61028</span>
-                        <p className="text-[11px] text-[#888888]">Placed on August 14, 2026 · Delivered Aug 17, 2026</p>
-                      </div>
+                          {/* Items */}
+                          <div className="space-y-3">
+                            {ord.items?.map((item: any, idx: number) => (
+                              <div key={idx} className="flex items-center gap-4">
+                                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-[#FAF6F0] border border-[#EADBCA] shrink-0">
+                                  <Image
+                                    src="/images/gutglow-product-front.jpg"
+                                    alt={item.name || "GutGlow Formula"}
+                                    fill
+                                    sizes="56px"
+                                    className="object-cover object-center"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-bold text-[#111111] truncate">{item.name}</p>
+                                  <p className="text-[11px] text-[#666666]">{item.packLabel || "200g jar"} · Qty: {item.quantity}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          Delivered
-                        </span>
-                        <span className="text-sm font-extrabold text-[#111111]">₹1,999</span>
-                      </div>
-                    </div>
-
-                    {/* Item Details */}
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#FAF6F0] border border-[#EADBCA] shrink-0">
-                          <Image
-                            src="/images/philosophy-ritual.webp"
-                            alt="GutGlow Daily Wellness Formula"
-                            fill
-                            sizes="64px"
-                            className="object-cover object-center"
-                          />
+                          {/* Actions */}
+                          <div className="flex items-center justify-between gap-3 pt-3 border-t border-[#F0EAE1]">
+                            <span className="text-xs text-[#059669] font-medium">
+                              Express Insulated Shipping
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <Link
+                                href={`/track-order?orderId=${ord.orderNumber || ord.id}`}
+                                className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider bg-[#111111] text-[#FFFFFF] px-4 py-2 rounded-full hover:bg-[#333333] transition-colors"
+                              >
+                                <span>Track Package</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </Link>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-[#111111]">
-                            GutGlow Daily Wellness Formula — 1-Month Supply
-                          </p>
-                          <p className="text-xs text-[#666666] mt-0.5">
-                            30 Servings · Net Wt. 200g
-                          </p>
-                          <p className="text-[11px] text-[#888888] mt-1">Quantity: 1</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-
-                    {/* Reorder Button */}
-                    <div className="flex items-center justify-end pt-3 border-t border-[#F5F5F5]">
-                      <Link
-                        href="/product"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#54232F] hover:text-[#111111] transition-colors py-1"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                        <span>Reorder Formula</span>
-                      </Link>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* RIGHT: LIVE ADDRESS BOOK & ACCOUNT STATUS */}

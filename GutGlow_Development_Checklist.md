@@ -176,12 +176,12 @@
 
 ---
 
-## PHASE 13 — Returns, Replacements & Refunds Engine
+## PHASE 13 — Returns, Replacements & Refunds Engine (Consumable Safety Architecture)
 
-- [ ] **Task 13.1**: Implement configurable return eligibility validator reading `settings/store_config.returnWindowDays` and `returnPolicyType`.
-- [ ] **Task 13.2**: Create customer return request endpoint `POST /api/v1/returns/request` with damage photo upload to Storage.
-- [ ] **Task 13.3**: Create admin return inspection endpoint `POST /api/v1/admin/returns/[id]/inspect` with `restockEligible` evaluation.
-- [ ] **Task 13.4**: Build extensible refund ledger supporting `refund_required`, `refund_pending`, `refunded`, `refund_failed` (formal policy deferred).
+- [x] **Task 13.1**: Implement configurable return eligibility validator reading `settings/store_config.returnWindowDays` and `returnPolicyType`. *(Completed in `lib/services/claimService.ts` via `checkEligibility` reading `store_config.claimWindowHours`, enforcing 48-hour delivery window & consumable non-returnable food hygiene rule)*
+- [x] **Task 13.2**: Create customer return request endpoint `POST /api/v1/returns/request` with damage photo upload to Storage. *(Completed in `app/api/v1/claims/request/route.ts` & `app/api/v1/returns/request/route.ts`, backed by `lib/validations/claimSchema.ts` & customer claim desk `/claims/new`)*
+- [x] **Task 13.3**: Create admin return inspection endpoint `POST /api/v1/admin/returns/[id]/inspect` with `restockEligible` evaluation. *(Completed in `app/api/v1/admin/returns/[id]/inspect/route.ts` & `review/route.ts`, setting `restockEligible: false` write-off for health consumables, and generating 100% Free Replacement Orders via sequential generator)*
+- [x] **Task 13.4**: Build extensible refund ledger supporting `refund_required`, `refund_pending`, `refunded`, `refund_failed` (formal policy deferred). *(Completed in `lib/services/claimService.ts` with `refunds` collection ledger, admin review overrides, and audit events)*
 
 ---
 
@@ -277,7 +277,7 @@
 4. **Nutraceutical HSN & GST Confirmation** (`Phase 02, 10`):
    - HSN `2106 90 99` at 18% GST confirmed with Chartered Accountant.
 5. **Final Refund & Cancellation Policy** (`Phase 13`):
-   - Specific advance forfeiture rules, cancellation deduction rules, and return refund rules will be defined in a later business planning update. Zero legal claims made regarding advance forfeiture.
+   - **Confirmed & Enforced**: Ingestible consumable wellness product under FSSAI food hygiene regulations. Strictly **Non-Returnable** once delivered. Covered by a **48-Hour Free Replacement Guarantee** for courier transit damage, broken seals, or incorrect fulfillment via `/claims/new`. Pre-dispatch cancellations accepted; courier RTO (undelivered / rejected prior to handover) refunded after warehouse check. Official policies live on `/policies/shipping`, `/policies/terms`, and `/policies/privacy`.
 
 ---
 

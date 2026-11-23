@@ -60,8 +60,8 @@ const shippingFaqs = [
   },
   {
     id: "ship-3",
-    title: "What is the return policy?",
-    content: "Unopened units with safety seals intact can be returned within 14 days of delivery.",
+    title: "What is your return & replacement policy?",
+    content: "As GutGlow is an ingestible consumable wellness formula, delivered units are strictly non-returnable to maintain strict FSSAI food hygiene and safety standards. However, if your package arrives damaged in transit, with a broken seal, or incorrect, we offer a 100% Free Fresh Replacement when reported within 48 hours of delivery via our Damage Claim portal.",
   },
 ];
 

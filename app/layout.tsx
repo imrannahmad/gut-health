@@ -55,6 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${websiteFont.variable} antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-[#FFFFFF] text-[#111111]">

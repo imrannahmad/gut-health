@@ -16,127 +16,10 @@ export default async function AdminDashboardPage() {
     redirect('/admin/login');
   }
 
-  // Base fallback defaults for build-time static evaluation
-  let physicalStockTotal = 1486;
-  let activeBatchesCount = 1;
-  let orders: DashboardOrderRaw[] = [
-    {
-      id: 'GG-2611-000006',
-      orderNumber: 'GG-2611-000006',
-      orderStatus: 'confirmed',
-      paymentMode: 'prepaid',
-      advancePaymentStatus: 'captured',
-      balanceCollectionStatus: 'not_applicable',
-      shipmentStatus: 'unfulfilled',
-      totalAmountInPaise: 199900,
-      advanceAmountInPaise: 199900,
-      balanceAmountInPaise: 0,
-      customerName: 'Imran Ahmad',
-      customerEmail: 'customer.imran@example.com',
-      customerPhone: '9876543210',
-      customerCity: 'Mumbai',
-      customerState: 'Maharashtra',
-      createdAtMillis: Date.now() - 3600000 * 4,
-      items: [
-        {
-          productId: 'gutglow-daily-wellness',
-          productName: 'GutGlow Daily Wellness Formula',
-          packName: '1-Month Supply',
-          packOptionId: 'pack-1-month',
-          quantity: 1,
-          totalPhysicalJars: 1,
-          lineGrossTotalInPaise: 199900,
-        },
-      ],
-    },
-    {
-      id: 'GG-2611-000007',
-      orderNumber: 'GG-2611-000007',
-      orderStatus: 'processing',
-      paymentMode: 'partial_cod',
-      advancePaymentStatus: 'captured',
-      balanceCollectionStatus: 'pending_delivery',
-      shipmentStatus: 'unfulfilled',
-      totalAmountInPaise: 489900,
-      advanceAmountInPaise: 97980,
-      balanceAmountInPaise: 391920,
-      customerName: 'Priya Sharma',
-      customerEmail: 'priya.sharma@example.com',
-      customerPhone: '9812345678',
-      customerCity: 'Bengaluru',
-      customerState: 'Karnataka',
-      createdAtMillis: Date.now() - 3600000 * 18,
-      items: [
-        {
-          productId: 'gutglow-daily-wellness',
-          productName: 'GutGlow Daily Wellness Formula',
-          packName: '3-Month Optimal Ritual',
-          packOptionId: 'pack-3-month',
-          quantity: 1,
-          totalPhysicalJars: 3,
-          lineGrossTotalInPaise: 489900,
-        },
-      ],
-    },
-    {
-      id: 'GG-2611-000010',
-      orderNumber: 'GG-2611-000010',
-      orderStatus: 'confirmed',
-      paymentMode: 'prepaid',
-      advancePaymentStatus: 'captured',
-      balanceCollectionStatus: 'not_applicable',
-      shipmentStatus: 'unfulfilled',
-      totalAmountInPaise: 199900,
-      advanceAmountInPaise: 199900,
-      balanceAmountInPaise: 0,
-      customerName: 'Aarav Patel',
-      customerEmail: 'aarav.patel@example.com',
-      customerPhone: '9823456789',
-      customerCity: 'Ahmedabad',
-      customerState: 'Gujarat',
-      createdAtMillis: Date.now() - 3600000 * 36,
-      items: [
-        {
-          productId: 'gutglow-daily-wellness',
-          productName: 'GutGlow Daily Wellness Formula',
-          packName: '1-Month Supply',
-          packOptionId: 'pack-1-month',
-          quantity: 1,
-          totalPhysicalJars: 1,
-          lineGrossTotalInPaise: 199900,
-        },
-      ],
-    },
-    {
-      id: 'GG-2611-000011',
-      orderNumber: 'GG-2611-000011',
-      orderStatus: 'processing',
-      paymentMode: 'partial_cod',
-      advancePaymentStatus: 'captured',
-      balanceCollectionStatus: 'pending_delivery',
-      shipmentStatus: 'unfulfilled',
-      totalAmountInPaise: 489900,
-      advanceAmountInPaise: 97980,
-      balanceAmountInPaise: 391920,
-      customerName: 'Neha Verma',
-      customerEmail: 'neha.verma@example.com',
-      customerPhone: '9834567890',
-      customerCity: 'New Delhi',
-      customerState: 'Delhi',
-      createdAtMillis: Date.now() - 3600000 * 60,
-      items: [
-        {
-          productId: 'gutglow-daily-wellness',
-          productName: 'GutGlow Daily Wellness Formula',
-          packName: '3-Month Optimal Ritual',
-          packOptionId: 'pack-3-month',
-          quantity: 1,
-          totalPhysicalJars: 3,
-          lineGrossTotalInPaise: 489900,
-        },
-      ],
-    },
-  ];
+  // Live metrics defaults
+  let physicalStockTotal = 0;
+  let activeBatchesCount = 0;
+  let orders: DashboardOrderRaw[] = [];
 
   try {
     // 1. Fetch live orders from Firestore
@@ -146,8 +29,7 @@ export default async function AdminDashboardPage() {
       .limit(100)
       .get();
 
-    if (ordersSnap.docs.length > 0) {
-      orders = ordersSnap.docs.map((doc) => {
+    orders = ordersSnap.docs.map((doc) => {
         const d = doc.data();
         const totalAmountInPaise =
           d.pricing?.totalAmountInPaise || d.pricing?.totalPayableInPaise || 0;
@@ -193,7 +75,6 @@ export default async function AdminDashboardPage() {
           })),
         };
       });
-    }
 
     // 2. Fetch inventory stock from Firestore
     const inventoryDoc = await adminDb.collection('inventory').doc('GG-DWF-200G').get();

@@ -111,8 +111,11 @@ export class ClaimService {
         const config = storeConfigDoc.data();
         if (config?.claimWindowHours) {
           windowHours = Number(config.claimWindowHours);
-        } else if (config?.returnWindowDays) {
-          windowHours = Number(config.returnWindowDays) * 24;
+        } else if (config?.damageClaimWindowHours) {
+          windowHours = Number(config.damageClaimWindowHours);
+        } else {
+          // Consumable health products: strict 48-hour transit damage reporting window
+          windowHours = 48;
         }
       }
     } catch (cfgErr) {

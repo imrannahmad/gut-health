@@ -195,12 +195,17 @@ export function Footer() {
                 </li>
                 <li>
                   <Link href="/policies/shipping" className="text-[#FFFFFF]/70 hover:text-[#8BC5FF] transition-colors">
-                    Shipping & Returns
+                    Shipping & Replacements
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/claims/new" className="text-[#FFFFFF]/70 hover:text-[#8BC5FF] transition-colors">
+                    Damage Claims
                   </Link>
                 </li>
                 <li>
                   <a
-                    href="https://instagram.com"
+                    href="https://instagram.com/gutglowofficial"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#FFFFFF]/70 hover:text-[#8BC5FF] transition-colors inline-block"
