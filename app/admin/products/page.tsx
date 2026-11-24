@@ -9,8 +9,8 @@ import {
   CheckCircle2,
   AlertCircle,
   RefreshCw,
-  ToggleLeft,
-  ToggleRight,
+  Eye,
+  EyeOff,
   Sparkles,
   Edit3,
   Trash2,
@@ -375,7 +375,15 @@ export default function AdminProductsPage() {
                                 : 'bg-[#4B5563]'
                             }`}
                           />
-                          <span>{updatingId === p.id ? 'Updating...' : p.status}</span>
+                          <span>
+                            {updatingId === p.id
+                              ? 'Updating...'
+                              : p.status === 'active'
+                              ? 'Live (Active)'
+                              : p.status === 'draft'
+                              ? 'Draft (Hidden)'
+                              : p.status}
+                          </span>
                         </button>
                       </td>
 
@@ -447,13 +455,13 @@ export default function AdminProductsPage() {
                 >
                   {isProdActive ? (
                     <>
-                      <ToggleLeft className="w-3.5 h-3.5 text-[#92400E]" />
-                      <span>Set as Draft (Hide)</span>
+                      <EyeOff className="w-3.5 h-3.5 text-[#857B72]" />
+                      <span>Hide from Store (Draft)</span>
                     </>
                   ) : (
                     <>
-                      <ToggleRight className="w-3.5 h-3.5 text-[#166534]" />
-                      <span>Publish (Set Active)</span>
+                      <Eye className="w-3.5 h-3.5 text-[#166534]" />
+                      <span>Publish to Store (Active)</span>
                     </>
                   )}
                 </button>
