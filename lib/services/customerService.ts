@@ -163,6 +163,11 @@ export class CustomerService {
     const snap = await query.get();
     let customers = snap.docs.map((d) => ({ uid: d.id, ...d.data() } as FirestoreUser));
 
+    // Exclude store administrators from customer CRM directory
+    const adminsSnap = await adminDb.collection('admins').get();
+    const adminUids = new Set(adminsSnap.docs.map((d) => d.id));
+    customers = customers.filter((c) => !adminUids.has(c.uid));
+
     if (search && search.trim()) {
       const q = search.toLowerCase().trim();
       customers = customers.filter(

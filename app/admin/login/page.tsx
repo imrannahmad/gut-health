@@ -45,6 +45,8 @@ export default function AdminLoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const idToken = await userCredential.user.getIdToken();
       await handleCreateSession(idToken);
+      // Immediately sign out from client Firebase Auth so storefront customer session is not affected
+      await auth.signOut();
     } catch (err: unknown) {
       console.error('[Admin Login Security Notice]:', err);
       // Security: Prevent username/email enumeration by giving a generic credential error
