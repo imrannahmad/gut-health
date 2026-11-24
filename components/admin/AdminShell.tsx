@@ -57,8 +57,15 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Refined user profile presentation
+  const adminEmail = adminSession.email || 'imrannahmd@gmail.com';
+  const isOwner = adminEmail.toLowerCase().includes('imran') || adminSession.role === 'super_admin';
+  const displayName = isOwner ? 'Imran Ahmad' : adminEmail.split('@')[0];
+  const roleDisplay = adminSession.role === 'super_admin' ? 'Super Admin' : 'Admin';
+  const initials = isOwner ? 'IA' : (displayName.slice(0, 2).toUpperCase() || 'AD');
+
+  const handleLogout = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
@@ -175,44 +182,51 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
               })}
             </nav>
 
-            {/* User Info & Logout Footer */}
-            <div className="p-4 border-t border-[#3D1D28] space-y-3 bg-[#1A0A10]">
-              <div className="flex items-center gap-2 px-1 text-xs text-[#C5BDB5]">
-                <ShieldCheck className="w-4 h-4 text-[#7BB896] shrink-0" />
-                <div className="truncate">
-                  <p className="font-semibold text-[#FAF8F5] text-xs truncate">
-                    {adminSession.email}
-                  </p>
-                  <p className="text-[9px] text-[#E8C5A5] uppercase tracking-wider font-mono">
-                    {adminSession.role}
+            {/* User Info & Quick Action Footer */}
+            <div className="p-3.5 border-t border-[#3D1D28] space-y-2.5 bg-[#17080E]">
+              <div className="flex items-center gap-3 p-2 rounded-lg bg-[#210D15] border border-[#3D1D28]/60">
+                <div className="w-8 h-8 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-xs font-semibold shrink-0">
+                  {initials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-medium text-[#FAF8F5] truncate text-xs">
+                      {displayName}
+                    </p>
+                    <span className="text-[9px] px-1.5 py-0.5 text-[#E8C5A5] bg-[#321721] rounded border border-[#E8C5A5]/20 font-mono">
+                      {roleDisplay}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
+                    {adminEmail}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-between text-xs text-[#A89F95] px-1 border-t border-[#2D141C]">
+              {/* Quick Actions: Settings & Sign Out */}
+              <div className="grid grid-cols-2 gap-2 pt-0.5">
                 <Link
-                  href="/"
-                  target="_blank"
-                  className="flex items-center gap-1 hover:text-[#FFFFFF] transition"
+                  href="/admin/settings"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#DDD6CF] hover:text-[#FAF8F5] transition text-xs font-medium"
                 >
-                  <span>View Store</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <Settings className="w-3.5 h-3.5 text-[#E8C5A5]" />
+                  <span>Settings</span>
                 </Link>
 
-                <form onSubmit={handleLogout}>
-                  <button
-                    type="submit"
-                    disabled={isLoggingOut}
-                    className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition disabled:opacity-50"
-                  >
-                    {isLoggingOut ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    ) : (
-                      <LogOut className="w-3 h-3" />
-                    )}
-                    <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
-                  </button>
-                </form>
+                <button
+                  type="button"
+                  onClick={() => handleLogout()}
+                  disabled={isLoggingOut}
+                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#E08A8A] hover:text-[#FFB4B4] transition text-xs font-medium disabled:opacity-50"
+                >
+                  {isLoggingOut ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <LogOut className="w-3.5 h-3.5" />
+                  )}
+                  <span>{isLoggingOut ? 'Exiting...' : 'Sign Out'}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -263,44 +277,50 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
           })}
         </nav>
 
-        {/* User Info & Footer */}
-        <div className="p-4 border-t border-[#3D1D28] space-y-3 bg-[#1A0A10]">
-          <div className="flex items-center gap-2 px-2 text-xs text-[#C5BDB5]">
-            <ShieldCheck className="w-4 h-4 text-[#7BB896] shrink-0" />
-            <div className="truncate">
-              <p className="font-semibold text-[#FAF8F5] truncate text-xs">
-                {adminSession.email}
-              </p>
-              <p className="text-[10px] text-[#E8C5A5] uppercase tracking-wider font-mono">
-                {adminSession.role}
+        {/* User Info & Quick Action Footer */}
+        <div className="p-3.5 border-t border-[#3D1D28] space-y-2.5 bg-[#17080E]">
+          <div className="flex items-center gap-3 p-2 rounded-lg bg-[#210D15] border border-[#3D1D28]/60">
+            <div className="w-8 h-8 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-xs font-semibold shrink-0 shadow-inner">
+              {initials}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <p className="font-medium text-[#FAF8F5] truncate text-xs">
+                  {displayName}
+                </p>
+                <span className="text-[9px] px-1.5 py-0.5 text-[#E8C5A5] bg-[#321721] rounded border border-[#E8C5A5]/20 font-mono">
+                  {roleDisplay}
+                </span>
+              </div>
+              <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
+                {adminEmail}
               </p>
             </div>
           </div>
 
-          <div className="pt-2 flex items-center justify-between text-xs text-[#A89F95] px-2 border-t border-[#2D141C]">
+          {/* Quick Actions: Settings & Sign Out */}
+          <div className="grid grid-cols-2 gap-2 pt-0.5">
             <Link
-              href="/"
-              target="_blank"
-              className="flex items-center gap-1 hover:text-[#FFFFFF] transition"
+              href="/admin/settings"
+              className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#DDD6CF] hover:text-[#FAF8F5] transition text-xs font-medium"
             >
-              <span>View Store</span>
-              <ExternalLink className="w-3 h-3" />
+              <Settings className="w-3.5 h-3.5 text-[#E8C5A5]" />
+              <span>Settings</span>
             </Link>
 
-            <form onSubmit={handleLogout}>
-              <button
-                type="submit"
-                disabled={isLoggingOut}
-                className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition disabled:opacity-50"
-              >
-                {isLoggingOut ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : (
-                  <LogOut className="w-3 h-3" />
-                )}
-                <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={() => handleLogout()}
+              disabled={isLoggingOut}
+              className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#E08A8A] hover:text-[#FFB4B4] transition text-xs font-medium disabled:opacity-50"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <LogOut className="w-3.5 h-3.5" />
+              )}
+              <span>{isLoggingOut ? 'Exiting...' : 'Sign Out'}</span>
+            </button>
           </div>
         </div>
       </aside>

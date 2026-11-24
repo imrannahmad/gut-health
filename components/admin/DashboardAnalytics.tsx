@@ -240,7 +240,7 @@ export function DashboardAnalytics({
             Executive Operations & Analytics
           </h1>
           <p className="text-xs text-[#70675E] mt-1 font-sans">
-            Logged in as <strong className="text-[#210D15]">{adminSession.email}</strong> ({adminSession.role})
+            Real-time commerce telemetry, FEFO batch allocations, and inventory velocity across India.
           </p>
         </div>
 
