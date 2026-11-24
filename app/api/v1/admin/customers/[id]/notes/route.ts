@@ -61,7 +61,7 @@ export async function POST(
       {
         id: admin.uid,
         name: admin.email?.split('@')[0] || 'Admin',
-        email: admin.email || 'imrannahmd@gmail.com',
+        email: admin.email || 'super.admin',
       },
       body
     );

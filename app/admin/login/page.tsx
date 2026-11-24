@@ -46,9 +46,14 @@ export default function AdminLoginPage() {
       const idToken = await userCredential.user.getIdToken();
       await handleCreateSession(idToken);
     } catch (err: unknown) {
-      console.error('[Admin Login Error]:', err);
-      const msg = err instanceof Error ? err.message : 'Invalid credentials';
-      setErrorMsg(msg);
+      console.error('[Admin Login Security Notice]:', err);
+      // Security: Prevent username/email enumeration by giving a generic credential error
+      const rawMsg = err instanceof Error ? err.message : '';
+      if (rawMsg.includes('not authorized') || rawMsg.includes('Access denied')) {
+        setErrorMsg('Access denied: Account does not possess administrative privileges.');
+      } else {
+        setErrorMsg('Invalid administrative credentials or unauthorized session.');
+      }
       setLoading(false);
     }
   };
@@ -88,10 +93,11 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="username"
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck="false"
-                placeholder="imrannahmd@gmail.com"
+                placeholder="admin@organization.com"
                 className="w-full pl-9 pr-3 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition font-sans normal-case"
               />
             </div>
@@ -108,6 +114,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck="false"
