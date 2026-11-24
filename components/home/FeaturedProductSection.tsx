@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,14 +22,41 @@ export function FeaturedProductSection() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [addedNotice, setAddedNotice] = useState(false);
+  const [isDraft, setIsDraft] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function checkLiveProduct() {
+      try {
+        const res = await fetch("/api/v1/products/gutglow-daily-wellness");
+        if (res.status === 404) {
+          if (isMounted) setIsDraft(true);
+          return;
+        }
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success && json.data && isMounted) {
+          setIsDraft(json.data.status !== 'active');
+        }
+      } catch (err) {
+        console.warn("[FeaturedProductSection] Notice fetching live status:", err);
+      }
+    }
+    checkLiveProduct();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleAddToCart = () => {
+    if (isDraft) return;
     addItem(selectedPack, quantity);
     setAddedNotice(true);
     setTimeout(() => setAddedNotice(false), 2000);
   };
 
   const handleBuyNow = () => {
+    if (isDraft) return;
     addItem(selectedPack, quantity);
     router.push("/checkout");
   };
@@ -177,13 +204,21 @@ export function FeaturedProductSection() {
 
             {/* Quantity & Actions (rounded-lg buttons) */}
             <div className="space-y-3 pt-2">
+              {isDraft && (
+                <div className="p-3 bg-[#FEF3C7] border border-[#FCD34D] rounded-lg text-xs text-[#92400E] flex flex-col gap-0.5">
+                  <span className="font-semibold uppercase tracking-wider text-[10px]">Draft Formulation</span>
+                  <span>This product is currently in draft mode (unlisted). Store orders are temporarily paused.</span>
+                </div>
+              )}
+
               <div className="flex items-center gap-3">
                 {/* Quantity Stepper */}
-                <div className="flex items-center border border-[#E5E5E5] rounded-lg bg-[#F5F5F5] px-3 py-2.5">
+                <div className={`flex items-center border border-[#E5E5E5] rounded-lg bg-[#F5F5F5] px-3 py-2.5 ${isDraft ? 'opacity-50 pointer-events-none' : ''}`}>
                   <button
                     type="button"
+                    disabled={isDraft}
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="p-1 text-[#666666] hover:text-[#111111]"
+                    className="p-1 text-[#666666] hover:text-[#111111] disabled:opacity-50"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-3.5 h-3.5" />
@@ -193,8 +228,9 @@ export function FeaturedProductSection() {
                   </span>
                   <button
                     type="button"
+                    disabled={isDraft}
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="p-1 text-[#666666] hover:text-[#111111]"
+                    className="p-1 text-[#666666] hover:text-[#111111] disabled:opacity-50"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -204,21 +240,31 @@ export function FeaturedProductSection() {
                 {/* Primary: Add to Cart */}
                 <button
                   type="button"
+                  disabled={isDraft}
                   onClick={handleAddToCart}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#8BC5FF] text-[#111111] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:bg-[#7ABBF7] transition-colors"
+                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold transition-colors ${
+                    isDraft
+                      ? 'bg-[#E5E5E5] text-[#888888] cursor-not-allowed'
+                      : 'bg-[#8BC5FF] text-[#111111] hover:bg-[#7ABBF7]'
+                  }`}
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  <span>Add to Cart</span>
+                  <span>{isDraft ? 'Unavailable (Draft)' : 'Add to Cart'}</span>
                 </button>
               </div>
 
               {/* Secondary: Buy Now */}
               <button
                 type="button"
+                disabled={isDraft}
                 onClick={handleBuyNow}
-                className="w-full flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#111111] border border-[#E5E5E5] py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold hover:border-[#111111] hover:bg-[#F5F5F5] transition-colors"
+                className={`w-full flex items-center justify-center gap-2 border py-3.5 px-6 rounded-lg text-xs uppercase tracking-[0.14em] font-semibold transition-colors ${
+                  isDraft
+                    ? 'border-[#E5E5E5] text-[#888888] bg-[#F5F5F5] cursor-not-allowed'
+                    : 'bg-[#FFFFFF] text-[#111111] border-[#E5E5E5] hover:border-[#111111] hover:bg-[#F5F5F5]'
+                }`}
               >
-                <span>Buy Now · Direct Checkout</span>
+                <span>{isDraft ? 'Orders Paused' : 'Buy Now · Direct Checkout'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
