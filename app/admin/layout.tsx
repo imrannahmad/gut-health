@@ -24,7 +24,7 @@ export default async function AdminLayout({
     <AdminShell
       adminSession={{
         uid: adminSession.uid,
-        email: adminSession.email || 'admin@gutglow.com',
+        email: adminSession.email || 'imrannahmd@gmail.com',
         role: adminSession.role,
       }}
     >

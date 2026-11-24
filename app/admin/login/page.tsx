@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col justify-center items-center px-4 py-12 text-[#2D2A26]">
+    <div className="admin-portal min-h-screen bg-[#FDFBF7] flex flex-col justify-center items-center px-4 py-12 text-[#2D2A26]">
       <div className="w-full max-w-md bg-[#FFFFFF] border border-[#ECE6DE] rounded-xl shadow-lg p-8 space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
@@ -88,8 +88,11 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="admin@gutglow.com"
-                className="w-full pl-9 pr-3 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
+                placeholder="imrannahmd@gmail.com"
+                className="w-full pl-9 pr-3 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition font-sans normal-case"
               />
             </div>
           </div>
@@ -105,8 +108,11 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-10 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition"
+                className="w-full pl-9 pr-10 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition font-sans normal-case"
               />
               <button
                 type="button"

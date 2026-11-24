@@ -58,8 +58,15 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-button, input, select, textarea, p, span, a, label {
+button, p, span, a, label {
   font-family: var(--font-website), 'WebsiteFont', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Form inputs & textareas must ALWAYS use clean, legible system typography with standard casing */
+input, select, textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
 /* Scrollbar styling */
