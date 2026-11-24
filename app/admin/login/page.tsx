@@ -84,7 +84,7 @@ export default function AdminLoginPage() {
         <form onSubmit={handleEmailSignIn} className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-[#524B43] mb-1.5">
-              Authorized Email
+              Email
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-[#A89F95] absolute left-3 top-3" />
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck="false"
-                placeholder="admin@organization.com"
+                placeholder="Email address"
                 className="w-full pl-9 pr-3 py-2.5 text-xs bg-[#FAF8F5] border border-[#D5CCC1] rounded-lg focus:outline-none focus:border-[#210D15] focus:bg-[#FFFFFF] transition font-sans normal-case"
               />
             </div>
