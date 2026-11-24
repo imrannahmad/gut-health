@@ -17,6 +17,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const acceptHeader = request.headers.get('accept') || '';
+    const contentType = request.headers.get('content-type') || '';
+    const isFetchJson = contentType.includes('application/json');
+
+    // If browser form submission (not client fetch JSON), redirect back to login page
+    if (!isFetchJson && (acceptHeader.includes('text/html') || contentType.includes('application/x-www-form-urlencoded'))) {
+      const redirectUrl = new URL('/admin/login', request.url);
+      const response = NextResponse.redirect(redirectUrl, { status: 303 });
+      response.cookies.delete(ADMIN_COOKIE_NAME);
+      return response;
+    }
+
     const response = NextResponse.json(
       { status: 'success', message: 'Logged out successfully' },
       { status: 200 }
@@ -33,4 +45,11 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: NextRequest) {
+  const redirectUrl = new URL('/admin/login', request.url);
+  const response = NextResponse.redirect(redirectUrl, { status: 303 });
+  response.cookies.delete(ADMIN_COOKIE_NAME);
+  return response;
 }

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Package,
@@ -18,6 +18,7 @@ import {
   ExternalLink,
   Menu,
   X,
+  Loader2,
 } from 'lucide-react';
 
 interface AdminSession {
@@ -52,7 +53,27 @@ const NAV_ITEMS: NavItem[] = [
 
 export function AdminShell({ adminSession, children }: AdminShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      await fetch('/api/v1/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (err) {
+      console.error('[Admin Logout] Error:', err);
+    } finally {
+      router.push('/admin/login');
+      router.refresh();
+    }
+  };
 
   const isCurrent = (href: string) => {
     if (href === '/admin') return pathname === '/admin';
@@ -178,13 +199,18 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
                   <ExternalLink className="w-3 h-3" />
                 </Link>
 
-                <form action="/api/v1/auth/logout" method="POST">
+                <form onSubmit={handleLogout}>
                   <button
                     type="submit"
-                    className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition"
+                    disabled={isLoggingOut}
+                    className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition disabled:opacity-50"
                   >
-                    <LogOut className="w-3 h-3" />
-                    <span>Logout</span>
+                    {isLoggingOut ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <LogOut className="w-3 h-3" />
+                    )}
+                    <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
                   </button>
                 </form>
               </div>
@@ -261,13 +287,18 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
               <ExternalLink className="w-3 h-3" />
             </Link>
 
-            <form action="/api/v1/auth/logout" method="POST">
+            <form onSubmit={handleLogout}>
               <button
                 type="submit"
-                className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition"
+                disabled={isLoggingOut}
+                className="flex items-center gap-1 text-[#E08A8A] hover:text-[#FFB4B4] transition disabled:opacity-50"
               >
-                <LogOut className="w-3 h-3" />
-                <span>Logout</span>
+                {isLoggingOut ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <LogOut className="w-3 h-3" />
+                )}
+                <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
               </button>
             </form>
           </div>
