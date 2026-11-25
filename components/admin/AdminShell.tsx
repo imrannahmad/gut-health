@@ -24,6 +24,7 @@ import {
 interface AdminSession {
   uid: string;
   email?: string;
+  name?: string;
   role: string;
 }
 
@@ -48,7 +49,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/coupons', label: 'Coupons', icon: Tag, dividerBefore: true },
   { href: '/admin/reviews', label: 'Reviews', icon: Star },
   { href: '/admin/returns', label: 'Returns & Claims', icon: RotateCcw },
-  { href: '/admin/settings', label: 'Store Policies', icon: Settings, dividerBefore: true },
 ];
 
 export function AdminShell({ adminSession, children }: AdminShellProps) {
@@ -59,10 +59,8 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
 
   // Refined user profile presentation
   const adminEmail = adminSession.email || 'imrannahmd@gmail.com';
-  const isOwner = adminEmail.toLowerCase().includes('imran') || adminSession.role === 'super_admin';
-  const displayName = isOwner ? 'Imran Ahmad' : adminEmail.split('@')[0];
-  const roleDisplay = adminSession.role === 'super_admin' ? 'Super Admin' : 'Admin';
-  const initials = isOwner ? 'IA' : (displayName.slice(0, 2).toUpperCase() || 'AD');
+  const displayName = adminSession.name || (adminEmail.toLowerCase().includes('imran') ? 'Imran Ahmad' : adminEmail.split('@')[0]);
+  const initials = displayName.slice(0, 2).toUpperCase() || 'AD';
 
   const handleLogout = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -189,14 +187,9 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-medium text-[#FAF8F5] truncate text-xs">
-                      {displayName}
-                    </p>
-                    <span className="text-[9px] px-1.5 py-0.5 text-[#E8C5A5] bg-[#321721] rounded border border-[#E8C5A5]/20 font-mono">
-                      {roleDisplay}
-                    </span>
-                  </div>
+                  <p className="font-medium text-[#FAF8F5] truncate text-xs">
+                    {displayName}
+                  </p>
                   <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
                     {adminEmail}
                   </p>
@@ -284,14 +277,9 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
               {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="font-medium text-[#FAF8F5] truncate text-xs">
-                  {displayName}
-                </p>
-                <span className="text-[9px] px-1.5 py-0.5 text-[#E8C5A5] bg-[#321721] rounded border border-[#E8C5A5]/20 font-mono">
-                  {roleDisplay}
-                </span>
-              </div>
+              <p className="font-medium text-[#FAF8F5] truncate text-xs">
+                {displayName}
+              </p>
               <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
                 {adminEmail}
               </p>
