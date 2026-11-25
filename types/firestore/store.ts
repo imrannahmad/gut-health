@@ -157,3 +157,20 @@ export interface FirestoreCounterShard {
   sequence: number;
   updatedAt: Timestamp;
 }
+
+export type SupportQueryStatus = 'new' | 'in_progress' | 'resolved';
+
+export interface FirestoreSupportQuery {
+  id: string; // Document ID (e.g. "QRY-XXXXXX")
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+  status: SupportQueryStatus;
+  adminNotes?: string;
+  resolvedAt?: Timestamp;
+  resolvedBy?: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
