@@ -51,10 +51,10 @@ export async function POST(request: NextRequest) {
     // Set Secure HTTP-Only Cookie
     const isProduction = process.env.NODE_ENV === 'production';
     response.cookies.set(ADMIN_COOKIE_NAME, sessionCookie, {
-      maxAge: 60 * 60 * 24 * 5, // 5 days in seconds
+      maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
     });
 

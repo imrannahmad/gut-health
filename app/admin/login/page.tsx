@@ -22,18 +22,18 @@ export default function AdminLoginPage() {
       body: JSON.stringify({ idToken }),
     });
 
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
       throw new Error(data.error || 'Access denied. Account is not authorized for admin operations.');
     }
 
-    const data = await res.json();
     if (!data.user?.role) {
       throw new Error('Access denied. No active administrative role assigned.');
     }
 
-    router.push('/admin');
-    router.refresh();
+    // Force hard navigation to load admin layout with fresh HttpOnly session cookie
+    window.location.href = '/admin';
   };
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -42,19 +42,27 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPassword = password.trim();
+
+      const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       const idToken = await userCredential.user.getIdToken();
       await handleCreateSession(idToken);
       // Immediately sign out from client Firebase Auth so storefront customer session is not affected
       await auth.signOut();
-    } catch (err: unknown) {
-      console.error('[Admin Login Security Notice]:', err);
-      // Security: Prevent username/email enumeration by giving a generic credential error
+    } catch (err: any) {
+      console.error('[Admin Login Error]:', err);
+      const rawCode = err?.code || '';
       const rawMsg = err instanceof Error ? err.message : '';
-      if (rawMsg.includes('not authorized') || rawMsg.includes('Access denied')) {
-        setErrorMsg('Access denied: Account does not possess administrative privileges.');
+
+      if (rawCode === 'auth/too-many-requests' || rawMsg.includes('too-many-requests')) {
+        setErrorMsg('Too many failed attempts. Firebase has temporarily paused logins for security. Please wait 1-2 minutes and try again.');
+      } else if (rawCode === 'auth/network-request-failed' || rawMsg.includes('network-request-failed')) {
+        setErrorMsg('Network error. Unable to connect to Firebase. Please check your internet connection.');
+      } else if (rawMsg.includes('not authorized') || rawMsg.includes('Access denied') || rawMsg.includes('administrative role')) {
+        setErrorMsg('Access denied: Account does not possess active administrative privileges.');
       } else {
-        setErrorMsg('Invalid administrative credentials or unauthorized session.');
+        setErrorMsg('Invalid email or password. Please check your credentials (no trailing spaces) and try again.');
       }
       setLoading(false);
     }
