@@ -109,16 +109,19 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#3FB950] animate-pulse" title="Cloud Firestore Connected" />
-          <Link
-            href="/"
-            target="_blank"
-            className="text-[10px] text-[#C5BDB5] hover:text-[#FFFFFF] flex items-center gap-1 border border-[#3D1D28] px-2 py-1 rounded"
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-[11px] font-bold shrink-0">
+            {initials}
+          </div>
+          <button
+            type="button"
+            onClick={() => handleLogout()}
+            disabled={isLoggingOut}
+            className="text-[11px] text-[#FFB4B4] hover:text-[#FFFFFF] flex items-center gap-1 border border-[#3D1D28] px-2 py-1 rounded-md bg-[#2D121D] transition disabled:opacity-50"
           >
-            <span>Store</span>
-            <ExternalLink className="w-2.5 h-2.5" />
-          </Link>
+            {isLoggingOut ? <Loader2 className="w-3 h-3 animate-spin" /> : <LogOut className="w-3 h-3" />}
+            <span>Sign Out</span>
+          </button>
         </div>
       </div>
 
@@ -136,7 +139,7 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
           {/* Drawer Panel */}
           <div className="relative w-72 max-w-[85vw] bg-[#210D15] text-[#FAF8F5] flex flex-col h-full shadow-2xl z-10 border-r border-[#3D1D28]">
             {/* Drawer Header */}
-            <div className="p-5 border-b border-[#3D1D28] flex items-center justify-between">
+            <div className="p-4 border-b border-[#3D1D28] flex items-center justify-between">
               <div>
                 <span className="text-xl tracking-wider font-bold text-[#FDFBF7]">
                   GUTGLOW
@@ -152,6 +155,21 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* Mobile User Identity Bar */}
+            <div className="p-3 bg-[#17080E] border-b border-[#3D1D28] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-xs font-semibold shrink-0">
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-[#FAF8F5] truncate text-xs">
+                  {displayName}
+                </p>
+                <p className="text-[10px] text-[#A89F95] truncate">
+                  {adminEmail}
+                </p>
+              </div>
             </div>
 
             {/* Navigation Links */}
@@ -182,47 +200,25 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
               })}
             </nav>
 
-            {/* User Info & Quick Action Footer */}
-            <div className="p-3.5 border-t border-[#3D1D28] space-y-2.5 bg-[#17080E]">
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-[#210D15] border border-[#3D1D28]/60">
-                <div className="w-8 h-8 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-xs font-semibold shrink-0">
-                  {initials}
+            {/* Mobile Pinned Bottom: Store Settings */}
+            <div className="p-3 border-t border-[#3D1D28] bg-[#17080E]">
+              <Link
+                href="/admin/settings"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center justify-between w-full px-3.5 py-2.5 rounded-lg font-medium transition ${
+                  isCurrent('/admin/settings')
+                    ? 'bg-[#321721] text-[#E8C5A5] border border-[#E8C5A5]/30 shadow-xs'
+                    : 'text-[#DDD6CF] hover:bg-[#321721]/60 hover:text-[#FFFFFF]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Settings className="w-4 h-4 text-[#E8C5A5]" />
+                  <span className="text-xs">Store Settings</span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-[#FAF8F5] truncate text-xs">
-                    {displayName}
-                  </p>
-                  <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
-                    {adminEmail}
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Actions: Settings & Sign Out */}
-              <div className="grid grid-cols-2 gap-2 pt-0.5">
-                <Link
-                  href="/admin/settings"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#DDD6CF] hover:text-[#FAF8F5] transition text-xs font-medium"
-                >
-                  <Settings className="w-3.5 h-3.5 text-[#E8C5A5]" />
-                  <span>Settings</span>
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={() => handleLogout()}
-                  disabled={isLoggingOut}
-                  className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#E08A8A] hover:text-[#FFB4B4] transition text-xs font-medium disabled:opacity-50"
-                >
-                  {isLoggingOut ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <LogOut className="w-3.5 h-3.5" />
-                  )}
-                  <span>{isLoggingOut ? 'Exiting...' : 'Sign Out'}</span>
-                </button>
-              </div>
+                <span className="text-[10px] font-mono uppercase bg-[#210D15] text-[#A89F95] px-2 py-0.5 rounded border border-[#3D1D28]">
+                  Config
+                </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -272,46 +268,24 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
           })}
         </nav>
 
-        {/* User Info & Quick Action Footer */}
-        <div className="p-3.5 border-t border-[#3D1D28] space-y-2.5 bg-[#17080E]">
-          <div className="flex items-center gap-3 p-2 rounded-lg bg-[#210D15] border border-[#3D1D28]/60">
-            <div className="w-8 h-8 rounded-full bg-[#321721] border border-[#E8C5A5]/30 text-[#E8C5A5] flex items-center justify-center text-xs font-semibold shrink-0 shadow-inner">
-              {initials}
+        {/* Pinned Bottom Store Settings (Shopify Style) */}
+        <div className="p-3 border-t border-[#3D1D28] bg-[#17080E]">
+          <Link
+            href="/admin/settings"
+            className={`flex items-center justify-between w-full px-3.5 py-2.5 rounded-lg font-medium transition group ${
+              isCurrent('/admin/settings')
+                ? 'bg-[#321721] text-[#E8C5A5] border border-[#E8C5A5]/30 shadow-xs'
+                : 'text-[#DDD6CF] hover:bg-[#321721]/60 hover:text-[#FFFFFF] border border-transparent'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Settings className="w-4 h-4 text-[#E8C5A5] transition-transform duration-300 group-hover:rotate-45" />
+              <span className="text-xs font-medium">Store Settings</span>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-[#FAF8F5] truncate text-xs">
-                {displayName}
-              </p>
-              <p className="text-[10px] text-[#A89F95] truncate mt-0.5">
-                {adminEmail}
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Actions: Settings & Sign Out */}
-          <div className="grid grid-cols-2 gap-2 pt-0.5">
-            <Link
-              href="/admin/settings"
-              className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#DDD6CF] hover:text-[#FAF8F5] transition text-xs font-medium"
-            >
-              <Settings className="w-3.5 h-3.5 text-[#E8C5A5]" />
-              <span>Settings</span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => handleLogout()}
-              disabled={isLoggingOut}
-              className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-md bg-[#210D15] hover:bg-[#2D121D] border border-[#3D1D28] text-[#E08A8A] hover:text-[#FFB4B4] transition text-xs font-medium disabled:opacity-50"
-            >
-              {isLoggingOut ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <LogOut className="w-3.5 h-3.5" />
-              )}
-              <span>{isLoggingOut ? 'Exiting...' : 'Sign Out'}</span>
-            </button>
-          </div>
+            <span className="text-[10px] font-mono uppercase bg-[#210D15] text-[#A89F95] px-2 py-0.5 rounded border border-[#3D1D28] tracking-wider">
+              Config
+            </span>
+          </Link>
         </div>
       </aside>
 
@@ -320,18 +294,59 @@ export function AdminShell({ adminSession, children }: AdminShellProps) {
           ===================================================================== */}
       <div className="flex-1 flex flex-col min-w-0 md:pl-64">
         {/* Desktop Header */}
-        <header className="hidden md:flex h-16 bg-[#FFFFFF] border-b border-[#ECE6DE] items-center justify-between px-6 shrink-0 sticky top-0 z-20">
+        <header className="hidden md:flex h-16 bg-[#FFFFFF] border-b border-[#ECE6DE] items-center justify-between px-6 shrink-0 sticky top-0 z-20 shadow-2xs">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono uppercase tracking-widest text-[#857B72] bg-[#F5F0E9] px-2.5 py-1 rounded border border-[#E8E2D9]">
               GUTGLOW OPS v2.3.1
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-[#6B6158]">
-            <span className="flex items-center gap-1.5 bg-[#FAF8F5] px-3 py-1 rounded-full border border-[#ECE6DE]">
-              <span className="w-2 h-2 rounded-full bg-[#3FB950] animate-pulse" />
-              <span>Cloud Firestore Connected (asia-south1)</span>
-            </span>
+          {/* Top Right Admin Profile & Actions (Shopify Style) */}
+          <div className="flex items-center gap-3">
+            {/* View Storefront Link */}
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#70675E] hover:text-[#210D15] hover:bg-[#FAF8F5] rounded-lg border border-[#E5E0D8] transition cursor-pointer"
+            >
+              <span>View Store</span>
+              <ExternalLink className="w-3 h-3 text-[#8C827A]" />
+            </Link>
+
+            {/* User Profile Card & Sign Out */}
+            <div className="flex items-center gap-3 pl-3 pr-2 py-1 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-[#210D15] border border-[#E8C5A5]/40 text-[#E8C5A5] flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
+                {initials}
+              </div>
+              <div className="text-left min-w-0 pr-1">
+                <p className="text-xs font-semibold text-[#210D15] leading-tight truncate max-w-[150px]">
+                  {displayName}
+                </p>
+                <p className="text-[10px] text-[#8C827A] truncate max-w-[150px]">
+                  {adminEmail}
+                </p>
+              </div>
+
+              {/* Vertical Divider */}
+              <div className="h-6 w-px bg-[#E5E0D8] mx-0.5" />
+
+              {/* Sign Out Action Button */}
+              <button
+                type="button"
+                onClick={() => handleLogout()}
+                disabled={isLoggingOut}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg text-[#9B1C1C] hover:bg-[#FDF2F2] hover:text-[#771D1D] transition disabled:opacity-50 cursor-pointer"
+                title="Sign out of administrative session"
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <LogOut className="w-3.5 h-3.5" />
+                )}
+                <span>{isLoggingOut ? 'Exiting...' : 'Sign Out'}</span>
+              </button>
+            </div>
           </div>
         </header>
 
